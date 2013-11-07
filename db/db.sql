@@ -31,29 +31,29 @@ create table books
 	);
 	
 create table bookshelf
-	(	bid					int,
-		acc_id				int,
-		primary key(bid, acc_id),
-		foreign key(bid) references books
-			on delete cascade,
+	(	acc_id					int,
+		bid				        int,
+		primary key(acc_id, bid),
 		foreign key(acc_id) references account
+			on delete cascade,
+		foreign key(bid) references books
 			on delete cascade
 	);	
 	
 create table photos
 	(	pid					SERIAL,
-		photos_name			varchar(50) not null,	
-		book_description	varchar(100),
+		photo_name			varchar(50) not null,
+		photo_description	varchar(100),
 		primary key(pid)
 	);
 	
 create table photo_album
-	(	pid					int,
-		acc_id				int,
-		primary key(pid, acc_id),
-		foreign key(pid) references photos
-			on delete cascade,
+	(	acc_id				int,
+		pid				    int,
+		primary key(acc_id, pid),
 		foreign key(acc_id) references account
+			on delete cascade,
+		foreign key(pid) references photos
 			on delete cascade
 	);	
 
@@ -65,12 +65,12 @@ create table audios
 	);
 	
 create table jukebox
-	(	aid					int,
-		acc_id				int,
-		primary key(aid, acc_id),
-		foreign key(aid) references audios
-			on delete cascade,
+	(	acc_id				int,
+		aid				    int,
+		primary key(acc_id, aid),
 		foreign key(acc_id) references account
+			on delete cascade,
+		foreign key(aid) references audios
 			on delete cascade
 	);		
 	
@@ -82,13 +82,11 @@ create table videos
 	);
 	
 create table tv
-	(	vid					int,
-		acc_id				int,
-		primary key(vid, acc_id),
-		foreign key(vid) references videos
-			on delete cascade,
+	(	acc_id				int,
+		vid				    int,
+		primary key(acc_id, vid),
 		foreign key(acc_id) references account
+			on delete cascade,
+		foreign key(vid) references videos
 			on delete cascade
-	);		
-		
-	
+	);
