@@ -1,6 +1,7 @@
 html, body {
+  margin: 0;
   height: 100%;
-  width: 100%;
+  width: auto;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -13,7 +14,6 @@ a {
     vertical-align: middle;
     opacity: 0.7;
     height: 40px;
-
 }
 
 #logo {
@@ -42,14 +42,15 @@ a {
 
 
 #viewer {
-    min-height: 80%;
+    min-height: 86%;
+    width: 100%;
     background-color: darkgrey;
 }
 
 #footer {
     background-color: maroon;
     opacity: 0.7;
-    height: 40px;
+    height: 30px;
     width: 100%;
     display: table;
 }
@@ -62,5 +63,5 @@ a {
     background-color: lightgray;
     border-radius: 10px;
     opacity: 0.8;
-    min-height: 100%;
+    min-height: 80%;
 }
