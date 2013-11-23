@@ -5,7 +5,9 @@ $(function() {
         // Your options here
         'fileTypeExts' : '*.gif; *.jpg; *.png; *.txt; *.wmv;',
         'buttonText' : 'Choose file',
-        'removeCompleted' : false,
+        'removeCompleted' : true,
         'multi' : true
       });
    });
+
+
