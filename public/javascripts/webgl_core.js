@@ -18,23 +18,9 @@ $(document).ready(function () {
     var floor;
     var light;
 
-
-// used when resizing windows and moving mouse, i.e. rotating camera
-    var windowHalfX, windowHalfY;
-    var mouseX, mouseY;
-
     var target;
 
     function init() {
-        windowHalfX = $('#viewer').width() / 2;
-        windowHalfY =  $('#viewer').height() / 2;
-
-        // initialize mouseX and mouseY
-        mouseX = 0;
-        mouseY = 0;
-
-        // add mouse move listener (remember we heard about it in class?)
-        document.addEventListener('mousemove', onDocumentMouseMove, false);
         document.addEventListener('mousedown', onDocumentMouseDown, false);
 
         //##########################################################################
@@ -95,22 +81,6 @@ $(document).ready(function () {
         light.intensity = 2.0;
         light.castShadow = true;
         scene.add(light);
-    }
-
-// knowing where the center is, and some other non-important stuff
-    function onWindowResize() {
-        windowHalfX = window.innerWidth / 2;
-        windowHalfY = window.innerHeight / 2;
-
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    function onDocumentMouseMove(event) {
-        mouseX = ( event.clientX - windowHalfX ) / 2;
-        mouseY = ( event.clientY - windowHalfY ) / 2;
     }
 
     function zoomInCamera() {
