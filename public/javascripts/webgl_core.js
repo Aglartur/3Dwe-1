@@ -4,13 +4,16 @@
 
 $(document).ready(function () {
     init();
-    render();
+    animate(new Date().getTime());
 });
 
     var renderer;
     var camera;
     var scene;
     var projector;
+
+    var controls;
+    var clock;
 
     var interactObjects = [];
 
@@ -36,23 +39,25 @@ $(document).ready(function () {
 
         // initializing camera - used to show stuff
         camera = new THREE.PerspectiveCamera(60, $('#viewer').width() / $('#viewer').height(), 1, 10000);       // don't worry about parameters
-        camera.position.set(0, 300, 100);
+        camera.position.set(0, 50, -200);
         target = new THREE.Vector3(0, 0, 0);
+        camera.lookAt(target);
 
-        // finally initializing scene - you'll be adding stuff to it
         scene = new THREE.Scene();
-
-        // projector is used for tracing where you click
         projector = new THREE.Projector();
-
-        // initializing array for objects being clicked
         interactObjectsobjects = new Array()
 
-        // initializing every part of the WebGL - initGUI is optional (that's another library)
         initGeometry();
         initLights();
 
         THREEx.WindowResize(renderer, camera);
+
+        // to freeze camera press Q, to move camera up R, to move camera down F
+        controls = new THREE.FirstPersonControls(camera, target);
+        controls.movementSpeed = 35;
+        controls.activeLook = false;
+        controls.lookSpeed = 0.3;
+        clock = new THREE.Clock();
     }
 
     function initGeometry() {
@@ -83,112 +88,22 @@ $(document).ready(function () {
         scene.add(light);
     }
 
-    function zoomInCamera() {
-        if (camera.position.distanceTo(target) > 60) {
-            var offset = new THREE.Vector3(0, 0, 0);
-            var dist = camera.position.distanceTo(target);
-            offset.add(camera.position);
-            offset.x += (target.x - camera.position.x) / (dist / 10);
-            offset.y += (target.y - camera.position.y) / (dist / 10);
-            offset.z += (target.z - camera.position.z) / (dist / 10);
-            camera.position = offset;
-            render();
-        }
-    }
-
-    function zoomOutCamera() {
-        var offset = new THREE.Vector3(0, 0, 0);
-        var dist = camera.position.distanceTo(target);
-        offset.add(camera.position);
-        offset.x -= (target.x - camera.position.x) / (dist / 10);
-        offset.y -= (target.y - camera.position.y) / (dist / 10);
-        offset.z -= (target.z - camera.position.z) / (dist / 10);
-        camera.position.set(offset.x, offset.y, offset.z);
+    function animate(t)
+    {
+        window.requestAnimationFrame(animate, renderer.domElement);
         render();
     }
 
-// used to show stuff, also updates the camera
     function render() {
-        camera.lookAt(target);
+
+        controls.update(clock.getDelta());
         renderer.render(scene, camera);
-    }
-
-    function rotateCameraLeft() {
-        var offset = new THREE.Vector3(0, 0, 0);
-        offset.add(target);
-        offset.sub(camera.position);
-        offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 100);
-        offset.add(camera.position);
-
-        target = offset;
-        camera.lookAt(target);
-        render();
-    }
-
-    function rotateCameraRight() {
-        var offset = new THREE.Vector3(0, 0, 0);
-        offset.add(target);
-        offset.sub(camera.position);
-        offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 100);
-        offset.add(camera.position);
-
-        target = offset;
-        camera.lookAt(target);
-        render();
-    }
-
-    function rotateCameraUp() {
-        var offset = new THREE.Vector3(0, 0, 0);
-        var rotationAxis = new THREE.Vector3(0, 0, 0);
-        offset.add(target);
-        offset.sub(camera.position);
-        rotationAxis.crossVectors(offset, new THREE.Vector3(0, 1, 0)).normalize();
-        offset.applyAxisAngle(rotationAxis, Math.PI / 72);
-        offset.add(camera.position);
-
-        target = offset;
-
-        camera.lookAt(target);
-        render();
-    }
-
-    function rotateCameraDown() {
-        var offset = new THREE.Vector3(0, 0, 0);
-        var rotationAxis = new THREE.Vector3(0, 0, 0);
-        offset.add(target);
-        offset.sub(camera.position);
-        rotationAxis.crossVectors(offset, new THREE.Vector3(0, 1, 0)).normalize();
-        offset.applyAxisAngle(rotationAxis, -Math.PI / 72);
-        offset.add(camera.position);
-
-        target = offset;
-        camera.lookAt(target);
-        render();
     }
 
     document.onkeypress = function (event) {
         var key = event.keyCode ? event.keyCode : event.which;
-        var s = String.fromCharCode(key);
-        if (s == 'w')
-            zoomInCamera();
-        else if (s == 's')
-            zoomOutCamera();
-        else if (s == 'a')
-            rotateCameraLeft();
-        else if (s == 'd')
-            rotateCameraRight();
-    }
-
-    document.onkeydown = function (event) {
-        var key = event.keyCode ? event.keyCode : event.which;
-        if (key == 38)
-            rotateCameraUp();
-        else if (key == 40)
-            rotateCameraDown();
-        else if (key == 37)
-            rotateCameraLeft();
-        else if (key == 39)
-            rotateCameraRight();
+        if (key === 32)
+            alert("You are clicking Space");
     }
 
     function onDocumentMouseDown(event) {
