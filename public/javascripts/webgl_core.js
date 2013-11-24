@@ -26,22 +26,17 @@ function CORE() {
     var clock;
     var cameraTarget;
 
+    var interactObjects = [];
+
     this.init = function() {
-
-        //##########################################################################
-        //                           WebGL starts here!
-        //##########################################################################
-
-        // initializing renderer - used to display entire WebGL thing in the browser
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize($('#viewer').width(), $('#viewer').height());    // take up entire space
         renderer.shadowMapEnabled = true;                           // enable shadows
 
         $('#viewer').html(renderer.domElement);
 
-        // initializing camera - used to show stuff
         this.camera = new THREE.PerspectiveCamera(60, $('#viewer').width() / $('#viewer').height(), 1, 10000);       // don't worry about parameters
-        this.camera.position.set(0, 50, -200);
+        this.camera.position.set(-25, 25, -100);
         cameraTarget = new THREE.Vector3(0, 0, 0);
         this.camera.lookAt(cameraTarget);
 
@@ -52,13 +47,13 @@ function CORE() {
 
         // to freeze camera press Q, to move camera up R, to move camera down F
         controls = new THREE.FirstPersonControls(this.camera, cameraTarget);
-        controls.movementSpeed = 35;
+        controls.movementSpeed = 10;
         controls.activeLook = false;
-        controls.lookSpeed = 0.3;
+        controls.lookSpeed = 0.1;
         clock = new THREE.Clock();
 
-        SAMPLE.load(this.scene);
-        document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+        JUKEBOX.load();
+        document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
     }
 
     // Notice we use 'that' instead of 'this', because next time we call this.animate we want to keep old reference 'this'
@@ -71,7 +66,19 @@ function CORE() {
 
     document.onkeypress = function (event) {
         var key = event.keyCode ? event.keyCode : event.which;
-        if (key === 32)
-            alert("You are clicking Space");
+        if (key === 32 && JUKEBOX.isLoaded)
+        {
+            JUKEBOX.unload();
+            document.removeEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
+            SAMPLE.load();
+            document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+        }
+        if (key === 98 && SAMPLE.isLoaded)
+        {
+            SAMPLE.unload();
+            document.removeEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+            JUKEBOX.load();
+            document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
+        }
     }
 }

@@ -14,10 +14,26 @@ function SAMPLE() {
     var floor;
     var light;
 
+    this.isLoaded = false;
+
     this.load = function ()
     {
         initGeometry();
         initLights();
+
+        this.isLoaded = true;
+    }
+
+    this.unload = function ()
+    {
+        CORE.scene.remove(cube);
+        CORE.scene.remove(floor);
+        CORE.scene.remove(light);
+
+        CORE.intersectObjects.splice(jQuery.inArray(cube), 1);
+        CORE.intersectObjects.splice(jQuery.inArray(floor), 1);
+
+        this.isLoaded = false;
     }
 
     this.onDocumentMouseDown = function(event){
@@ -33,17 +49,14 @@ function SAMPLE() {
         if (intersects.length > 0) {
             object = intersects[ 0 ].object;
             object.material.color.setHex(Math.random() * 0xffffff);
-//            if(object === cube)
-//                alert("You pressed the cube!");
-//            if (object === floor)
-//                alert("You pressed on the floor!");
         }
     }
 
     function initGeometry() {
         cube = new THREE.Mesh(
-            new THREE.CubeGeometry(25, 50, 100),
+            new THREE.CubeGeometry(10, 10, 10),
             new THREE.MeshLambertMaterial({color: 0x0000FF}));            // supply color of the cube
+        cube.position.set(-25, 25, 100);
         cube.castShadow = true;
         cube.receiveShadow = true;
         CORE.scene.add(cube);
