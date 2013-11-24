@@ -2,29 +2,30 @@
  * Created by Aibek on 11/2/13.
  */
 
+var CORE = new CORE();
+
 $(document).ready(function () {
-    init();
-    animate(new Date().getTime());
+    window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                                   window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+    CORE.init();
+    CORE.animate(new Date().getTime());
 });
 
+function CORE() {
+    var that = this;        // 'that' keeps reference to the CORE, since 'this' can change depending on the scope, i.e. animate()
+
     var renderer;
-    var camera;
-    var scene;
-    var projector;
+    this.camera;
+    this.scene;
+    this.projector;
+    this.intersectObjects =[];
 
     var controls;
     var clock;
+    var cameraTarget;
 
-    var interactObjects = [];
-
-    var cube;
-    var floor;
-    var light;
-
-    var target;
-
-    function init() {
-        document.addEventListener('mousedown', onDocumentMouseDown, false);
+    this.init = function() {
 
         //##########################################################################
         //                           WebGL starts here!
@@ -38,66 +39,33 @@ $(document).ready(function () {
         $('#viewer').html(renderer.domElement);
 
         // initializing camera - used to show stuff
-        camera = new THREE.PerspectiveCamera(60, $('#viewer').width() / $('#viewer').height(), 1, 10000);       // don't worry about parameters
-        camera.position.set(0, 50, -200);
-        target = new THREE.Vector3(0, 0, 0);
-        camera.lookAt(target);
+        this.camera = new THREE.PerspectiveCamera(60, $('#viewer').width() / $('#viewer').height(), 1, 10000);       // don't worry about parameters
+        this.camera.position.set(0, 50, -200);
+        cameraTarget = new THREE.Vector3(0, 0, 0);
+        this.camera.lookAt(cameraTarget);
 
-        scene = new THREE.Scene();
-        projector = new THREE.Projector();
-        interactObjectsobjects = new Array()
+        this.scene = new THREE.Scene();
+        this.projector = new THREE.Projector();
 
-        initGeometry();
-        initLights();
-
-        THREEx.WindowResize(renderer, camera);
+        THREEx.WindowResize(renderer, this.camera);
 
         // to freeze camera press Q, to move camera up R, to move camera down F
-        controls = new THREE.FirstPersonControls(camera, target);
+        controls = new THREE.FirstPersonControls(this.camera, cameraTarget);
         controls.movementSpeed = 35;
         controls.activeLook = false;
         controls.lookSpeed = 0.3;
         clock = new THREE.Clock();
+
+        SAMPLE.load(this.scene);
+        document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
     }
 
-    function initGeometry() {
-        // just cube in the center, by default it is at 0,0,0 position
-        cube = new THREE.Mesh(
-            new THREE.CubeGeometry(25, 50, 100),
-            new THREE.MeshLambertMaterial({color: 0x0000FF}));            // supply color of the cube
-        cube.castShadow = true;
-        cube.receiveShadow = true;
-        scene.add(cube);
-        interactObjects.push(cube);
-
-        // making a floor - just a plane 500x500, with 10 width/height segments - they affect lightning/reflection I believe
-        floor = new THREE.Mesh(
-            new THREE.PlaneGeometry(500, 500, 10, 10),
-            new THREE.MeshLambertMaterial({color: 0xCEB2B3}));    // color
-        floor.receiveShadow = true;
-        floor.rotation.x = -Math.PI / 2;                    // make it horizontal, by default planes are vertical
-        floor.position.y = -25;                                   // move it a little, to match bottom of the cube
-        scene.add(floor);
-    }
-
-    function initLights() {
-        light = new THREE.SpotLight();
-        light.position.set(0, 500, 0);
-        light.intensity = 2.0;
-        light.castShadow = true;
-        scene.add(light);
-    }
-
-    function animate(t)
+    // Notice we use 'that' instead of 'this', because next time we call this.animate we want to keep old reference 'this'
+    this.animate = function(t)
     {
-        window.requestAnimationFrame(animate, renderer.domElement);
-        render();
-    }
-
-    function render() {
-
+        requestAnimationFrame(that.animate, renderer.domElement);
         controls.update(clock.getDelta());
-        renderer.render(scene, camera);
+        renderer.render(that.scene, that.camera);
     }
 
     document.onkeypress = function (event) {
@@ -105,22 +73,4 @@ $(document).ready(function () {
         if (key === 32)
             alert("You are clicking Space");
     }
-
-    function onDocumentMouseDown(event) {
-        event.preventDefault();
-
-        var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
-        projector.unprojectVector(vector, camera);
-
-        var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-
-        var intersects = raycaster.intersectObjects(interactObjects);
-
-        // if you clicked on something
-        if (intersects.length > 0) {
-            intersects[ 0 ].object.material.color.setHex(Math.random() * 0xffffff);
-        }
-
-        render();
-    }
-
+}
