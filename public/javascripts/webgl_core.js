@@ -14,6 +14,7 @@ $(document).ready(function () {
 
 function CORE() {
     var that = this;        // 'that' keeps reference to the CORE, since 'this' can change depending on the scope, i.e. animate()
+    this.socket;
 
     var renderer;
     this.camera;

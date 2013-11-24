@@ -1,23 +1,19 @@
-<!DOCTYPE html>
-<!doctype html>
-<html lang="en">
-<head>
-<title><%= title %></title>
-<link rel='stylesheet' href='/stylesheets/style.css' />
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<%include header%>
 
-<script type="text/javascript" src="libs/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="javascripts/sampleScene.js"></script>
-<script type="text/javascript" src="javascripts/webgl_core.js"></script>
-<script type="text/javascript" src="libs/three.min.js"></script>
-<script type="text/javascript" src="libs/FirstPersonControls.js"></script>
-<script type="text/javascript" src="libs/threex.windowresize.js"></script>
+<!-- Side Menu -->
+<%include sidemenu %>
+<!-- /Side Menu -->
 
-</head>
 
-<body>
-    <div id="viewer"></div>
-</body>
+<div id="viewer">
 
-</html>
+</div>
+<div id="breadcrumb">
+    <ul class="crumbs" id = "hierarchy">
+        <li class="h_node" id = "/home"><a href="#" style="z-index:9;"><i class="glyphicon glyphicon-home"></i></a></li>
+    </ul>
+    <div class = 'custom-menu' hidden = 'true'>Delete</div>
+</div>
+
+<%include footer%>
+
