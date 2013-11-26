@@ -10,6 +10,7 @@ function JUKEBOX() {
     arguments.callee._singletonInstance = this;
 
     // private variables
+    var that = this;        // to reference JUKEBOX inside function that override 'this'
     var radioBody, radioSeeker;
     var radioPlay;
     var radioVolume, radioPower;
@@ -17,38 +18,50 @@ function JUKEBOX() {
     var radioReplay, radioShuffle;
 
     var isPlaying = false;
+    var isReplaying = false;
+    var isShuffling = false;
+
+    this.currentSongID = 0;
 
     var floor;
     var light;
 
-    var elements = [];
+    modelElements = [];
+    buttonsPressed = [];
+
+    this.songs = [];
 
     this.isLoaded = false;
+
+    this.request = {LOADSONGS : 'loadSongs'};
 
     this.load = function ()
     {
         initGeometry();
         initLights();
 
-        elements.push(radioBody);
-        elements.push(radioSeeker);
-        elements.push(radioPlay);
-        elements.push(radioVolume);
-        elements.push(radioPower);
-        elements.push(radioNext);
-        elements.push(radioPrev);
-        elements.push(radioReplay);
-        elements.push(radioShuffle);
-        elements.push(floor);
-        elements.push(light);
+        specialRequest = this.request.LOADSONGS;
+        openDir('Jukebox');
+        // after this this.songs contains filenames of songs in /home/Jukebox
+
+        modelElements.push(radioBody);
+        modelElements.push(radioSeeker);
+        modelElements.push(radioPlay);
+        modelElements.push(radioVolume);
+        modelElements.push(radioPower);
+        modelElements.push(radioNext);
+        modelElements.push(radioPrev);
+        modelElements.push(radioReplay);
+        modelElements.push(radioShuffle);
+        modelElements.push(floor);
+        modelElements.push(light);
 
         this.isLoaded = true;
     }
 
     this.unload = function ()
     {
-        elements.forEach(function(value){
-//            CORE.scene.remove(value);
+        modelElements.forEach(function(value){
             CORE.intersectObjects.splice(jQuery.inArray(value, CORE.intersectObjects), 1);
         });
 
@@ -82,12 +95,41 @@ function JUKEBOX() {
             if (object === radioPlay)
             {
                 if (!isPlaying)
+                {
+                    radioPlay.position.set(0,0,1.5);
                     document.getElementById("audio").play();
+                }
                 else
+                {
+                    radioPlay.position.set(0,0,0);
                     document.getElementById("audio").pause();
+                }
                 isPlaying = !isPlaying;
             }
+            if (object === radioNext)
+            {
+                radioNext.position.set(0,0,1.5);
+                that.currentSongID = (that.songs.length + that.currentSongID + 1) % that.songs.length;
+                that.changeSong(that.songs[ that.currentSongID ]);
+                setTimeout(function(){radioNext.position.set(0,0,0);}, 300);
+            }
+            if (object === radioPrev)
+            {
+                radioPrev.position.set(0,0,1.5);
+                that.currentSongID = (that.songs.length + that.currentSongID - 1) % that.songs.length;
+                that.changeSong(that.songs[ that.currentSongID ]);
+                setTimeout(function(){radioPrev.position.set(0,0,0);}, 300);
+            }
         }
+    }
+
+    this.changeSong = function(filepath) {
+        console.log('changing song: ' + filepath);
+        $('#audio > source').attr('src', filepath);
+        $('#audio > embed').attr('src', filepath);
+        $('#audio').load();
+        if (isPlaying)
+            document.getElementById("audio").play();
     }
 
     function initGeometry() {
@@ -101,39 +143,39 @@ function JUKEBOX() {
         CORE.scene.add(floor);
 
         var loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioBody = loadModel( geometry, materials, 0, 0, 0 ) };
+            callbackModel   = function( geometry, materials ) { radioBody = loadModel( geometry, materials, 0, 0, 0, false ) };
         loader.load( "obj/radio-body.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioPlay = loadModel( geometry, materials, 0, 0, 0 ) };
+            callbackModel   = function( geometry, materials ) { radioPlay = loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-play.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioPrev = loadModel( geometry, materials, 0, 0, 0 ) };
+            callbackModel   = function( geometry, materials ) { radioPrev = loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-prev.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioNext = loadModel( geometry, materials, 0, 0, 0 ) };
+            callbackModel   = function( geometry, materials ) { radioNext = loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-next.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioReplay = loadModel( geometry, materials, 0, 0, 0 ) };
+            callbackModel   = function( geometry, materials ) { radioReplay = loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-replay.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioShuffle = loadModel( geometry, materials, 0, 0, 0 ) };
+            callbackModel   = function( geometry, materials ) { radioShuffle = loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-shuffle.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioSeeker = loadModel( geometry, materials, 0, 0, 0 ) };
+            callbackModel   = function( geometry, materials ) { radioSeeker = loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-seeker.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioVolume = loadModel( geometry, materials, 0, 0, 0 ) };
+            callbackModel   = function( geometry, materials ) { radioVolume = loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-volume.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) {  radioPower = loadModel( geometry, materials, 0, 0, 0 ) };
+            callbackModel   = function( geometry, materials ) {  radioPower = loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-power.js", callbackModel );
     }
 
@@ -144,21 +186,22 @@ function JUKEBOX() {
         light.castShadow = true;
         CORE.scene.add(light);
 
-        var pointLight = new THREE.PointLight(0xff0000, 2, 200);
-        pointLight.position.set(-60,0,-60);
+        var pointLight = new THREE.PointLight(0xff0000, 4, 150);
+        pointLight.position.set(-30,20,-40);
         CORE.scene.add(pointLight);
     }
 
-    function loadModel ( geometry, materials, x, y, z) {
+    function loadModel ( geometry, materials, x, y, z, clickable) {
         var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial(materials) );
         mesh.position.set( x, y, z );
-        mesh.scale.set( 7, 7, 7 );
+        mesh.scale.set( 0.5, 0.5, 0.5 );
         mesh.receiveShadow = true;
         mesh.castShadow = true;
         mesh.rotation.y = - Math.PI;
 //        mesh.rotation.y = 0;
         CORE.scene.add( mesh );
-        CORE.intersectObjects.push(mesh);
+        if (clickable)
+            CORE.intersectObjects.push(mesh);
         return mesh;
     }
 }

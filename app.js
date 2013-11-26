@@ -32,6 +32,7 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 
 var io = require('socket.io').listen(app.listen(app.get('port')));
+io.set('log level', 1);
 
 io.sockets.on('connection', function (socket) {
     console.log("Web Socket Connection Established");

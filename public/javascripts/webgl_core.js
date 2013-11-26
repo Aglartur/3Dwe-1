@@ -10,6 +10,8 @@ $(document).ready(function () {
 
     CORE.init();
     CORE.animate(new Date().getTime());
+
+//    $('#breadcrumb').css('display', 'none');
 });
 
 function CORE() {
@@ -47,13 +49,13 @@ function CORE() {
 
         // to freeze camera press Q, to move camera up R, to move camera down F
         controls = new THREE.FirstPersonControls(this.camera, cameraTarget);
-        controls.movementSpeed = 10;
+        controls.movementSpeed = 15;
         controls.activeLook = false;
         controls.lookSpeed = 0.1;
         clock = new THREE.Clock();
 
-        JUKEBOX.load();
-        document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
+        SAMPLE.load();
+        document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
     }
 
     // Notice we use 'that' instead of 'this', because next time we call this.animate we want to keep old reference 'this'
@@ -66,15 +68,16 @@ function CORE() {
 
     document.onkeypress = function (event) {
         var key = event.keyCode ? event.keyCode : event.which;
-        if (key === 32 && JUKEBOX.isLoaded)
+        if (key === 98 && JUKEBOX.isLoaded)                     // press B to go to SAMPLE
         {
             JUKEBOX.unload();
             document.removeEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
             SAMPLE.load();
             document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
         }
-        if (key === 98 && SAMPLE.isLoaded)
+        if (key === 32 && SAMPLE.isLoaded)                      // press Space to go to JUKEBOX
         {
+            $('#breadcrumb').css('display', 'block');
             SAMPLE.unload();
             document.removeEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
             JUKEBOX.load();

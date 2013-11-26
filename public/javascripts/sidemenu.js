@@ -4,10 +4,13 @@
 
 /******************************************LISTEN FOR SERVER RESPONSE*******************************************/
 
-
+var currentDirectory;
+var specialRequest = ""
 
 window.onload = function() {
     CORE.socket = io.connect('http://localhost:3000'); //initialize socket io on local server
+
+    currentDirectory = $('.h_node').last().attr('id');
 
     //user navigated to a folder
     CORE.socket.on('showfiles', function (data) {
@@ -22,6 +25,12 @@ window.onload = function() {
                 }
             }
             initSubfolder(); //make clickable
+
+            if (specialRequest === JUKEBOX.request.LOADSONGS){
+                loadSongs(currentDirectory);
+            }
+
+
          } else {
             $('#folder_contents').append("<div>No Available Files/Folders</div>");
          }
@@ -41,7 +50,26 @@ function initSubfolder(){
     //if the user clicks on a subfolder, add the navigation node & navigate to that folder
     $('.subfolder').click(function(){
         $('#file_input').val(this.id); //change the value of the text field for adding the node
-        openDir(); //add the node
+        openDir($('#file_input').val()); //add the node
+    });
+
+    //place in initSubfolder():
+    $('.subfile').click(function(e){
+        var filename = this.getAttribute("id");
+//        var dirPath = $('.h_node').last().attr('id');
+        var extension = filename.split('.').pop();
+        if (extension === 'mp3'){
+            JUKEBOX.changeSong(currentDirectory + '/' + filename);
+        }else if (extension === 'mp4'){
+            alert("It's a video!");
+//            loadVideo(filePath + "/" + fileName); //load selected video
+        }else if (extension === 'pdf'){
+            alert("It's a PDF!");
+        }else if (extension === 'png'){
+            alert("It's an image!");
+        }else if (extension === 'txt'){
+            alert("It's a text!");
+        }
     });
 }
 
@@ -52,20 +80,23 @@ function initClick(){
         navigate(this);
         e.preventDefault(); //in case the user right-clicks
     });
+
     //show subfolders of the current folder:
-    showSubfolders($('.h_node').last().attr('id'));
+//    showSubfolders($('.h_node').last().attr('id'));
+    showSubfolders(currentDirectory);
     rightClick();
 }
 
 /****************************************DISPLAY FOLDERS/FILES********************************************/
 
 function navigate(node){
-    var path = node.id + "/";
-    $('[id*="' + path + '"]').each(function(){
+//    var path = node.id + "/";
+    currentDirectory = node.id;
+    $('[id*="' + currentDirectory + '"]').each(function(){
         if (this !== node)
             this.remove();
     });
-    showSubfolders(path); //show subfolders of the selected folder
+    showSubfolders(currentDirectory); //show subfolders of the selected folder
 }
 
 //displays the subfolders in the specified folder
@@ -75,11 +106,13 @@ function showSubfolders(path){
 }
 
 //navigates to the folder specified by the text field
-var openDir = function(){
-    var filename = $('#file_input').val();
+var openDir = function(filename){
+    console.log("Opening DIR: " + filename);
     if (filename.trim()){ //check if not empty (might extend)
-        var path = $('.h_node').last().attr('id') + "\/" + filename;
+//        var path = $('.h_node').last().attr('id') + "\/" + filename;
+        var path = currentDirectory + "\/" + filename;
         $("#hierarchy").append('<li id = "' +  path + '"class = "h_node"><a href="#" style="z-index:8;">' + filename + '</a></li>');
+        currentDirectory = path;
         initClick(); //re-initialize click events so that the newly added node will be clickable
     }
 };
@@ -89,7 +122,8 @@ var openDir = function(){
 var createDir = function(){
     var filename = $('#file_input').val();
     if (filename.trim()){ //check if not empty (might extend)
-        var path = $('.h_node').last().attr('id') + "\/" + filename;
+//        var path = $('.h_node').last().attr('id') + "\/" + filename;
+        var path = currentDirectory + "\/" + filename;
         //SUBMIT:
         CORE.socket.emit('mkdir', { dir: path });
         statusMessage("Created folder: " + filename);
@@ -108,14 +142,13 @@ var deleteDir = function(path){
 //create the directory when the user presses enter or clicks on the submit button:
 $("#createDir").click(function(e){
     createDir();
-    var currentDirectory = $('.h_node').last().attr('id');
+//    var currentDirectory = $('.h_node').last().attr('id');
     var dir = $('#file_input').val();
+
 
     showSubfolders(currentDirectory);
 
     $('#file_input').val('');
-
-
 });
 
 //hide menu
@@ -137,3 +170,18 @@ $("li .create_directory").click(function(e){
 });
 
 // ---------------------------------------------------------------------------
+
+
+// ********************* LOADING MEDIA ******************************
+
+// load songs from the directory
+function loadSongs(directory)
+{
+    console.log("loading songs:");
+    var collection = $('#folder_contents > .subfile');
+    console.log(collection.length);
+    collection.each(function(){
+        JUKEBOX.songs.push(currentDirectory + '/' + this.id);
+    });
+    JUKEBOX.changeSong(JUKEBOX.songs[JUKEBOX.currentSongID]);
+}
