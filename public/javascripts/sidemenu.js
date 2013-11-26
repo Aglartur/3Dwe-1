@@ -77,7 +77,7 @@ function initSubfolder(){
 function initClick(){
     //if the user clicks on a node, navigate to that folder:
     $('.h_node').click(function(e){
-        navigate(this);
+        navigate(this.id);
         e.preventDefault(); //in case the user right-clicks
     });
 
@@ -89,11 +89,12 @@ function initClick(){
 
 /****************************************DISPLAY FOLDERS/FILES********************************************/
 
-function navigate(node){
+function navigate(path){
 //    var path = node.id + "/";
-    currentDirectory = node.id;
+    console.log("navigating:" + path);
+    currentDirectory = path;
     $('[id*="' + currentDirectory + '"]').each(function(){
-        if (this !== node)
+        if (this.id !== path)
             this.remove();
     });
     showSubfolders(currentDirectory); //show subfolders of the selected folder

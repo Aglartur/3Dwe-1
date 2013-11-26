@@ -24,7 +24,7 @@ function JUKEBOX() {
     this.currentSongID = 0;
 
     var floor;
-    var light;
+    var light, pointLight;
 
     modelElements = [];
     buttonsPressed = [];
@@ -41,6 +41,7 @@ function JUKEBOX() {
         initLights();
 
         specialRequest = this.request.LOADSONGS;
+        currentDirectory = '/home';
         openDir('Jukebox');
         // after this this.songs contains filenames of songs in /home/Jukebox
 
@@ -55,6 +56,7 @@ function JUKEBOX() {
         modelElements.push(radioShuffle);
         modelElements.push(floor);
         modelElements.push(light);
+        modelElements.push(pointLight);
 
         this.isLoaded = true;
     }
@@ -64,6 +66,8 @@ function JUKEBOX() {
         modelElements.forEach(function(value){
             CORE.intersectObjects.splice(jQuery.inArray(value, CORE.intersectObjects), 1);
         });
+
+        modelElements = [];
 
         CORE.scene.remove(radioBody);
         CORE.scene.remove(radioSeeker);
@@ -76,7 +80,10 @@ function JUKEBOX() {
         CORE.scene.remove(radioShuffle);
         CORE.scene.remove(floor);
         CORE.scene.remove(light);
+        CORE.scene.remove(pointLight);
 
+        navigate('/home');
+        isPlaying = false;
         this.isLoaded = false;
     }
 
@@ -96,29 +103,33 @@ function JUKEBOX() {
             {
                 if (!isPlaying)
                 {
-                    radioPlay.position.set(0,0,1.5);
+//                    radioPlay.position.set(0,0,1.5);
+                    pushTheButton(radioPlay, true);
                     document.getElementById("audio").play();
                 }
                 else
                 {
-                    radioPlay.position.set(0,0,0);
+//                    radioPlay.position.set(0,0,0);
+                    pushTheButton(radioPlay, false);
                     document.getElementById("audio").pause();
                 }
                 isPlaying = !isPlaying;
             }
             if (object === radioNext)
             {
-                radioNext.position.set(0,0,1.5);
+//                radioNext.position.set(0,0,1.5);
+                pushTheButton(radioNext, true);
                 that.currentSongID = (that.songs.length + that.currentSongID + 1) % that.songs.length;
                 that.changeSong(that.songs[ that.currentSongID ]);
-                setTimeout(function(){radioNext.position.set(0,0,0);}, 300);
+                setTimeout(function(){pushTheButton(radioNext, false);}, 300);
             }
             if (object === radioPrev)
             {
-                radioPrev.position.set(0,0,1.5);
+//                radioPrev.position.set(0,0,1.5);
+                pushTheButton(radioPrev, true);
                 that.currentSongID = (that.songs.length + that.currentSongID - 1) % that.songs.length;
                 that.changeSong(that.songs[ that.currentSongID ]);
-                setTimeout(function(){radioPrev.position.set(0,0,0);}, 300);
+                setTimeout(function(){pushTheButton(radioPrev, false);}, 300);
             }
         }
     }
@@ -186,7 +197,7 @@ function JUKEBOX() {
         light.castShadow = true;
         CORE.scene.add(light);
 
-        var pointLight = new THREE.PointLight(0xff0000, 4, 150);
+        pointLight = new THREE.PointLight(0xff0000, 4, 150);
         pointLight.position.set(-30,20,-40);
         CORE.scene.add(pointLight);
     }
@@ -198,10 +209,26 @@ function JUKEBOX() {
         mesh.receiveShadow = true;
         mesh.castShadow = true;
         mesh.rotation.y = - Math.PI;
-//        mesh.rotation.y = 0;
+//        mesh.rotation.y = - Math.PI * 3 / 4;
+
         CORE.scene.add( mesh );
         if (clickable)
             CORE.intersectObjects.push(mesh);
         return mesh;
+    }
+
+    function pushTheButton ( button, mode) {
+        if (mode === true)
+        {
+//            button.position.set(Math.cos(button.rotation.y) * 1.5, 0, Math.sin(button.rotation.y) * 1.5);
+            button.position.x -= Math.sin(button.rotation.y) * 1.5;
+            button.position.z -= Math.cos(button.rotation.y) * 1.5;
+        }
+        else
+        {
+//            button.position.set(0,0,0);
+            button.position.x += Math.sin(button.rotation.y) * 1.5;
+            button.position.z += Math.cos(button.rotation.y) * 1.5;
+        }
     }
 }

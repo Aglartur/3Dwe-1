@@ -18,7 +18,7 @@ function CORE() {
     var that = this;        // 'that' keeps reference to the CORE, since 'this' can change depending on the scope, i.e. animate()
     this.socket;
 
-    var renderer;
+    this.renderer;
     this.camera;
     this.scene;
     this.projector;
@@ -31,11 +31,11 @@ function CORE() {
     var interactObjects = [];
 
     this.init = function() {
-        renderer = new THREE.WebGLRenderer({antialias: true});
-        renderer.setSize($('#viewer').width(), $('#viewer').height());    // take up entire space
-        renderer.shadowMapEnabled = true;                           // enable shadows
+        this.renderer = new THREE.WebGLRenderer({antialias: true});
+        this.renderer.setSize($('#viewer').width(), $('#viewer').height());    // take up entire space
+        this.renderer.shadowMapEnabled = true;                           // enable shadows
 
-        $('#viewer').html(renderer.domElement);
+        $('#viewer').html(this.renderer.domElement);
 
         this.camera = new THREE.PerspectiveCamera(60, $('#viewer').width() / $('#viewer').height(), 1, 10000);       // don't worry about parameters
         this.camera.position.set(-25, 25, -100);
@@ -45,7 +45,7 @@ function CORE() {
         this.scene = new THREE.Scene();
         this.projector = new THREE.Projector();
 
-        THREEx.WindowResize(renderer, this.camera);
+        THREEx.WindowResize(this.renderer, this.camera);
 
         // to freeze camera press Q, to move camera up R, to move camera down F
         controls = new THREE.FirstPersonControls(this.camera, cameraTarget);
@@ -61,9 +61,9 @@ function CORE() {
     // Notice we use 'that' instead of 'this', because next time we call this.animate we want to keep old reference 'this'
     this.animate = function(t)
     {
-        requestAnimationFrame(that.animate, renderer.domElement);
+        requestAnimationFrame(that.animate, that.renderer.domElement);
         controls.update(clock.getDelta());
-        renderer.render(that.scene, that.camera);
+        that.renderer.render(that.scene, that.camera);
     }
 
     document.onkeypress = function (event) {
@@ -83,5 +83,13 @@ function CORE() {
             JUKEBOX.load();
             document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
         }
+//        if (key === 118 && SAMPLE.isLoaded)                         // press V to go to ROOM
+//        {
+//            SAMPLE.unload();
+//            document.removeEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+//            ROOM.load();
+//            document.addEventListener('mousedown', ROOM.onDocumentMouseDown, false);
+//            controls.movementSpeed = 50;
+//        }
     }
 }
