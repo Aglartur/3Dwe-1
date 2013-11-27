@@ -3,6 +3,7 @@
  */
 
 var CORE = new CORE();
+var current_window; //the currently loaded window (SAMPLE, JUKBOX, TV, etc.)
 
 $(document).ready(function () {
     window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
@@ -55,7 +56,23 @@ function CORE() {
         clock = new THREE.Clock();
 
         SAMPLE.load();
+        current_window = SAMPLE;
         document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+    }
+
+    this.loadModel = function ( geometry, materials, x, y, z, clickable) {
+        var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial(materials) );
+        mesh.position.set( x, y, z );
+        mesh.scale.set( 0.5, 0.5, 0.5 );
+        mesh.receiveShadow = true;
+        mesh.castShadow = true;
+        mesh.rotation.y = - Math.PI;
+//        mesh.rotation.y = - Math.PI * 3 / 4;
+
+        this.scene.add( mesh );
+        if (clickable)
+            this.intersectObjects.push(mesh);
+        return mesh;
     }
 
     // Notice we use 'that' instead of 'this', because next time we call this.animate we want to keep old reference 'this'
@@ -64,24 +81,36 @@ function CORE() {
         requestAnimationFrame(that.animate, that.renderer.domElement);
         controls.update(clock.getDelta());
         that.renderer.render(that.scene, that.camera);
+        if (TVObject.isLoaded)
+            TVObject.renderVideo();
     }
 
     document.onkeypress = function (event) {
         var key = event.keyCode ? event.keyCode : event.which;
-        if (key === 98 && JUKEBOX.isLoaded)                     // press B to go to SAMPLE
+        if (key === 98 && !SAMPLE.isLoaded)                     // press B to go to SAMPLE
         {
-            JUKEBOX.unload();
-            document.removeEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
+            current_window.unload();
+            document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
             SAMPLE.load();
             document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+            current_window = SAMPLE;
         }
-        if (key === 32 && SAMPLE.isLoaded)                      // press Space to go to JUKEBOX
+        if (key === 116 && !TVObject.isLoaded)                     // press T to go to TV
+        {
+            current_window.unload();
+            document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
+            TVObject.load();
+            document.addEventListener('mousedown', TVObject.onDocumentMouseDown, false);
+            current_window = TVObject;
+        }
+        if (key === 32 && !JUKEBOX.isLoaded)                      // press Space to go to JUKEBOX
         {
             $('#breadcrumb').css('display', 'block');
-            SAMPLE.unload();
-            document.removeEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+            current_window.unload();
+            document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
             JUKEBOX.load();
             document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
+            current_window = JUKEBOX;
         }
 //        if (key === 118 && SAMPLE.isLoaded)                         // press V to go to ROOM
 //        {

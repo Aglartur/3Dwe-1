@@ -154,39 +154,39 @@ function JUKEBOX() {
         CORE.scene.add(floor);
 
         var loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioBody = loadModel( geometry, materials, 0, 0, 0, false ) };
+            callbackModel   = function( geometry, materials ) { radioBody = CORE.loadModel( geometry, materials, 0, 0, 0, false ) };
         loader.load( "obj/radio-body.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioPlay = loadModel( geometry, materials, 0, 0, 0, true ) };
+            callbackModel   = function( geometry, materials ) { radioPlay = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-play.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioPrev = loadModel( geometry, materials, 0, 0, 0, true ) };
+            callbackModel   = function( geometry, materials ) { radioPrev = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-prev.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioNext = loadModel( geometry, materials, 0, 0, 0, true ) };
+            callbackModel   = function( geometry, materials ) { radioNext = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-next.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioReplay = loadModel( geometry, materials, 0, 0, 0, true ) };
+            callbackModel   = function( geometry, materials ) { radioReplay = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-replay.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioShuffle = loadModel( geometry, materials, 0, 0, 0, true ) };
+            callbackModel   = function( geometry, materials ) { radioShuffle = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-button-shuffle.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioSeeker = loadModel( geometry, materials, 0, 0, 0, true ) };
+            callbackModel   = function( geometry, materials ) { radioSeeker = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-seeker.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioVolume = loadModel( geometry, materials, 0, 0, 0, true ) };
+            callbackModel   = function( geometry, materials ) { radioVolume = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-volume.js", callbackModel );
 
         loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) {  radioPower = loadModel( geometry, materials, 0, 0, 0, true ) };
+            callbackModel   = function( geometry, materials ) {  radioPower = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
         loader.load( "obj/radio-power.js", callbackModel );
     }
 
@@ -200,21 +200,6 @@ function JUKEBOX() {
         pointLight = new THREE.PointLight(0xff0000, 4, 150);
         pointLight.position.set(-30,20,-40);
         CORE.scene.add(pointLight);
-    }
-
-    function loadModel ( geometry, materials, x, y, z, clickable) {
-        var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial(materials) );
-        mesh.position.set( x, y, z );
-        mesh.scale.set( 0.5, 0.5, 0.5 );
-        mesh.receiveShadow = true;
-        mesh.castShadow = true;
-        mesh.rotation.y = - Math.PI;
-//        mesh.rotation.y = - Math.PI * 3 / 4;
-
-        CORE.scene.add( mesh );
-        if (clickable)
-            CORE.intersectObjects.push(mesh);
-        return mesh;
     }
 
     function pushTheButton ( button, mode) {

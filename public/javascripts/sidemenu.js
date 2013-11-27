@@ -61,8 +61,7 @@ function initSubfolder(){
         if (extension === 'mp3'){
             JUKEBOX.changeSong(currentDirectory + '/' + filename);
         }else if (extension === 'mp4'){
-            alert("It's a video!");
-//            loadVideo(filePath + "/" + fileName); //load selected video
+            TVObject.loadVideo(currentDirectory + '/' + filename);
         }else if (extension === 'pdf'){
             alert("It's a PDF!");
         }else if (extension === 'png'){
