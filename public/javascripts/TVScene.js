@@ -99,7 +99,7 @@ function TVObject() {
         CORE.scene.add(floor);
 
         var loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { TV_set = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
+            callbackModel   = function( geometry, materials ) { TV_set = CORE.loadModel( geometry, materials, 0, 0, 0, false ) };
         loader.load( "obj/tv.js", callbackModel );
 
         var WIDTH = 78, HEIGHT = 43;

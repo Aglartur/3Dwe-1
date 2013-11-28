@@ -1,9 +1,9 @@
+
 /**
  * Created by Aibek on 11/24/13.
  */
 
 var SAMPLE = new SAMPLE();
-
 function SAMPLE() {
     if ( arguments.callee._singletonInstance )
         return arguments.callee._singletonInstance;
@@ -56,7 +56,7 @@ function SAMPLE() {
         cube = new THREE.Mesh(
             new THREE.CubeGeometry(10, 10, 10),
             new THREE.MeshLambertMaterial({color: 0x0000FF}));            // supply color of the cube
-        cube.position.set(-25, 25, 100);
+        cube.position.set(0, 0, 0);
         cube.castShadow = true;
         cube.receiveShadow = true;
         CORE.scene.add(cube);

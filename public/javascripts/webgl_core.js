@@ -3,7 +3,7 @@
  */
 
 var CORE = new CORE();
-var current_window; //the currently loaded window (SAMPLE, JUKBOX, TV, etc.)
+var current_window; //the currently loaded window (SAMPLE, JUKEBOX, TV, etc.)
 
 $(document).ready(function () {
     window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
@@ -55,9 +55,9 @@ function CORE() {
         controls.lookSpeed = 0.1;
         clock = new THREE.Clock();
 
-        SAMPLE.load();
         current_window = SAMPLE;
-        document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+        current_window.load();
+        document.addEventListener('mousedown', current_window.onDocumentMouseDown, false);
     }
 
     this.loadModel = function ( geometry, materials, x, y, z, clickable) {
@@ -89,36 +89,58 @@ function CORE() {
         var key = event.keyCode ? event.keyCode : event.which;
         if (key === 98 && !SAMPLE.isLoaded)                     // press B to go to SAMPLE
         {
-            current_window.unload();
-            document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
+            unloadCurrent();
             SAMPLE.load();
             document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
             current_window = SAMPLE;
         }
-        if (key === 116 && !TVObject.isLoaded)                     // press T to go to TV
-        {
-            current_window.unload();
-            document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
-            TVObject.load();
-            document.addEventListener('mousedown', TVObject.onDocumentMouseDown, false);
-            current_window = TVObject;
-        }
         if (key === 32 && !JUKEBOX.isLoaded)                      // press Space to go to JUKEBOX
         {
-            $('#breadcrumb').css('display', 'block');
-            current_window.unload();
-            document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
+            unloadCurrent();
             JUKEBOX.load();
             document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
             current_window = JUKEBOX;
         }
-//        if (key === 118 && SAMPLE.isLoaded)                         // press V to go to ROOM
-//        {
-//            SAMPLE.unload();
-//            document.removeEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
-//            ROOM.load();
-//            document.addEventListener('mousedown', ROOM.onDocumentMouseDown, false);
-//            controls.movementSpeed = 50;
-//        }
+        if (key === 118 && !ROOM.isLoaded)                         // press V to go to ROOM
+        {
+            unloadCurrent();
+            ROOM.load();
+            document.addEventListener('mousedown', ROOM.onDocumentMouseDown, false);
+            controls.movementSpeed = 50;
+            current_window = ROOM;
+        }
+        if (key === 110 && !BOOK.isLoaded)                      // press N to go to BOOK
+        {
+            unloadCurrent();
+            BOOK.load();
+            document.addEventListener('mousedown', BOOK.onDocumentMouseDown, false);
+            current_window = BOOK;
+        }
+        if (key === 116 && !TVObject.isLoaded)                     // press T to go to TV
+        {
+            unloadCurrent();
+            TVObject.load();
+            document.addEventListener('mousedown', TVObject.onDocumentMouseDown, false);
+            current_window = TVObject;
+        }
+    }
+
+    function unloadCurrent()
+    {
+        current_window.unload();
+        document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
+    }
+
+    function unloadAll()
+    {
+        SAMPLE.unload();
+        JUKEBOX.unload();
+        BOOK.unload();
+        ROOM.unload();
+
+        document.removeEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+        document.removeEventListener('mousedown', ROOM.onDocumentMouseDown, false);
+        document.removeEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
+        document.removeEventListener('mousedown', BOOK.onDocumentMouseDown, false);
     }
 }

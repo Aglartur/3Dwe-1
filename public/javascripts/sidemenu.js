@@ -5,7 +5,7 @@
 /******************************************LISTEN FOR SERVER RESPONSE*******************************************/
 
 var currentDirectory;
-var specialRequest = ""
+var specialRequest = "";
 
 window.onload = function() {
     CORE.socket = io.connect('http://localhost:3000'); //initialize socket io on local server
