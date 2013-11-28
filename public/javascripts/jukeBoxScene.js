@@ -209,4 +209,10 @@ function JUKEBOX() {
             button.position.z += Math.cos(button.rotation.y) * 1.5;
         }
     }
+
+    this.update = function(){
+        var d = Math.sqrt(Math.pow(CORE.camera.position.x, 2) +
+            Math.pow(CORE.camera.position.y, 2) + Math.pow(CORE.camera.position.z, 2));
+        document.getElementById("audio").volume = 5*Math.abs(Math.log(d)/d);
+    }
 }

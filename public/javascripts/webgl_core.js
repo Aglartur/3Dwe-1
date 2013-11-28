@@ -23,9 +23,9 @@ function CORE() {
     this.camera;
     this.scene;
     this.projector;
-    this.intersectObjects =[];
+    this.intersectObjects = [];
 
-    var controls;
+    var camera_controls;
     var clock;
     var rendererStats;
     var stats;
@@ -65,10 +65,10 @@ function CORE() {
         document.getElementById('viewer').appendChild( stats.domElement );
 
         // to freeze camera press Q, to move camera up R, to move camera down F
-        controls = new THREE.FirstPersonControls(this.camera, cameraTarget);
-        controls.movementSpeed = 15;
-        controls.activeLook = false;
-        controls.lookSpeed = 0.1;
+        camera_controls = new THREE.FirstPersonControls(this.camera, cameraTarget);
+        camera_controls.movementSpeed = 15;
+        camera_controls.activeLook = false;
+        camera_controls.lookSpeed = 0.1;
         clock = new THREE.Clock();
 
         // attaching microcache to the renderer
@@ -99,12 +99,14 @@ function CORE() {
     this.animate = function(t)
     {
         requestAnimationFrame(that.animate, that.renderer.domElement);
-        controls.update(clock.getDelta());
+        camera_controls.update(clock.getDelta());
         that.renderer.render(that.scene, that.camera);
         rendererStats.update(that.renderer);
         stats.update();
         if (TVObject.isLoaded)
             TVObject.renderVideo();
+        else if (JUKEBOX.isLoaded)
+            JUKEBOX.update();
     }
 
     document.onkeypress = function (event) {
@@ -135,7 +137,7 @@ function CORE() {
             unloadCurrent();
             ROOM.load();
             document.addEventListener('mousedown', ROOM.onDocumentMouseDown, false);
-            controls.movementSpeed = 50;
+            camera_controls.movementSpeed = 50;
             current_window = ROOM;
         }
         if (key === 110 && !BOOK.isLoaded)                      // press N to go to BOOK
@@ -150,12 +152,15 @@ function CORE() {
             unloadCurrent();
             TVObject.load();
             document.addEventListener('mousedown', TVObject.onDocumentMouseDown, false);
+            document.addEventListener('keydown', TVObject.flyToObject, false);
             current_window = TVObject;
         }
     }
 
     function unloadCurrent()
     {
+        if (current_window === TVObject)
+            document.removeEventListener('keydown', TVObject.flyToObject, false);
         current_window.unload();
         document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
     }
@@ -191,5 +196,9 @@ function CORE() {
         });
 
         modelElements = [];
+    }
+
+    this.freezeCamera = function(bFreeze){
+        camera_controls.freeze = bFreeze;
     }
 }

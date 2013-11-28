@@ -146,4 +146,53 @@ function TVObject() {
         });
         screen.material = videoMaterial;
     }
+
+    var rotateView = 0, flyTo = 0;
+
+    this.flyToObject = function(event){
+        if (event.keyCode === 73){
+            if (rotateView !== 0 || flyTo !== 0) return;
+            CORE.freezeCamera(true);
+            //CORE.camera.position.set(-11.1, 35.12, -39.13);
+            //CORE.camera.position.set(-11 + 78/2, 35 + 43/2, -40);
+            //CORE.camera.rotation.set(-Math.PI, 0, -Math.PI);
+
+            var X_FINAL = -11.1, Y_FINAL = 35.12, Z_FINAL = -39.13;
+            var xGreater = CORE.camera.position.x > X_FINAL,
+                yGreater = CORE.camera.position.y > Y_FINAL,
+                zGreater = CORE.camera.position.z > Z_FINAL;
+            var speed = 2;
+
+            CORE.camera.rotation.set(-Math.PI, 0, -Math.PI);
+
+            flyTo = setInterval(function(){
+                var noXChange = false, noYChange = false, noZChange = false;
+                if (CORE.camera.position.x > X_FINAL && xGreater)
+                    CORE.camera.position.x-=speed;
+                else if (CORE.camera.position.x < X_FINAL && !xGreater)
+                    CORE.camera.position.x+=speed;
+                else
+                    noXChange = true;
+
+                if (CORE.camera.position.y > Y_FINAL && yGreater)
+                    CORE.camera.position.y-=speed;
+                else if (CORE.camera.position.y < Y_FINAL && !yGreater)
+                    CORE.camera.position.y+=speed;
+                else
+                    noYChange = true;
+
+                if (CORE.camera.position.z > Z_FINAL && zGreater)
+                    CORE.camera.position.z-=speed;
+                else if (CORE.camera.position.z < Z_FINAL && !zGreater)
+                    CORE.camera.position.z+=speed;
+                else
+                    noZChange = true;
+
+                if (noXChange && noYChange && noZChange){
+                    clearInterval(flyTo);
+                    flyTo = 0;
+                }
+            }, 50);
+        }
+    }
 }
