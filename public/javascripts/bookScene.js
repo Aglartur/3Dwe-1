@@ -9,6 +9,8 @@ function BOOK() {
     arguments.callee._singletonInstance = this;
 
     // private variables
+    var frontCover;
+    var backCover;
     var pageRight1;
     var pageLeft1;
     var pageRight2;
@@ -18,6 +20,8 @@ function BOOK() {
 
     var bookLoaded = false;
     var currentPage = 10;
+
+    var modelElements = [];
 
     this.isLoaded = false;
 
@@ -31,17 +35,7 @@ function BOOK() {
 
     this.unload = function ()
     {
-        CORE.scene.remove(pageRight1);
-        CORE.scene.remove(pageLeft1);
-        CORE.scene.remove(pageRight2);
-        CORE.scene.remove(pageLeft2);
-        CORE.scene.remove(floor);
-        CORE.scene.remove(light);
-
-        CORE.intersectObjects.splice(jQuery.inArray(pageRight1), 1);
-        CORE.intersectObjects.splice(jQuery.inArray(pageLeft1), 1);
-        CORE.intersectObjects.splice(jQuery.inArray(pageRight2), 1);
-        CORE.intersectObjects.splice(jQuery.inArray(pageLeft2), 1);
+        CORE.disposeSceneElements(modelElements);
 
         this.isLoaded = false;
     }
@@ -88,6 +82,7 @@ function BOOK() {
         floor.rotation.x = -Math.PI / 2;                    // make it horizontal, by default planes are vertical
         floor.position.y = -25;                                   // move it a little, to match bottom of the cube
         CORE.scene.add(floor);
+        modelElements.push(floor);
     }
 
     function initLights() {
@@ -96,6 +91,7 @@ function BOOK() {
         light.intensity = 2.0;
         light.castShadow = true;
         CORE.scene.add(light);
+        modelElements.push(light);
     }
 
     function loadPage(object, canvas) {
@@ -158,6 +154,7 @@ function BOOK() {
         pageRight1.scale.set(0.1, 0.1, 0.1);
         CORE.scene.add(pageRight1);
         CORE.intersectObjects.push(pageRight1);
+        modelElements.push(pageRight1);
 
         pageLeft1 = new THREE.Mesh(
             new THREE.PlaneGeometry(canvas.width, canvas.height, 1, 1), coverMaterial);
@@ -170,6 +167,7 @@ function BOOK() {
         pageLeft1.scale.set(0.1, 0.1, 0.1);
         CORE.scene.add(pageLeft1);
         CORE.intersectObjects.push(pageLeft1);
+        modelElements.push(pageLeft1);
 
         pageRight2 = new THREE.Mesh(
             new THREE.PlaneGeometry(canvas.width, canvas.height, 1, 1), coverMaterial);
@@ -180,6 +178,7 @@ function BOOK() {
         pageRight2.scale.set(0.1, 0.1, 0.1);
         CORE.scene.add(pageRight2);
         CORE.intersectObjects.push(pageRight2);
+        modelElements.push(pageRight2);
 
         pageLeft2 = new THREE.Mesh(
             new THREE.PlaneGeometry(canvas.width, canvas.height, 1, 1), coverMaterial);
@@ -192,6 +191,7 @@ function BOOK() {
         pageLeft2.scale.set(0.1, 0.1, 0.1);
         CORE.scene.add(pageLeft2);
         CORE.intersectObjects.push(pageLeft2);
+        modelElements.push(pageLeft2);
 
         bookLoaded = true;
         console.log("Hey there, switched bookLoaded to: " + bookLoaded);

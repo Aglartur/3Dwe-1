@@ -27,9 +27,13 @@ function CORE() {
 
     var controls;
     var clock;
+    var rendererStats;
+    var stats;
     var cameraTarget;
-
     var interactObjects = [];
+
+    var tempMesh;
+
 
     this.init = function() {
         this.renderer = new THREE.WebGLRenderer({antialias: true});
@@ -48,6 +52,18 @@ function CORE() {
 
         THREEx.WindowResize(this.renderer, this.camera);
 
+        // display renderer stats
+        rendererStats = new THREEx.RendererStats();
+        rendererStats.domElement.style.position = 'absolute';
+        rendererStats.domElement.style.left = '0px';
+        rendererStats.domElement.style.top   = '80px';
+        document.getElementById('viewer').appendChild( rendererStats.domElement );
+
+        stats = new Stats();
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.top = '30px';
+        document.getElementById('viewer').appendChild( stats.domElement );
+
         // to freeze camera press Q, to move camera up R, to move camera down F
         controls = new THREE.FirstPersonControls(this.camera, cameraTarget);
         controls.movementSpeed = 15;
@@ -55,24 +71,28 @@ function CORE() {
         controls.lookSpeed = 0.1;
         clock = new THREE.Clock();
 
+        // attaching microcache to the renderer
+        this.renderer._microCache = new MicroCache();
+
+        // setting and loading the current window
         current_window = SAMPLE;
         current_window.load();
         document.addEventListener('mousedown', current_window.onDocumentMouseDown, false);
     }
 
     this.loadModel = function ( geometry, materials, x, y, z, clickable) {
-        var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial(materials) );
-        mesh.position.set( x, y, z );
-        mesh.scale.set( 0.5, 0.5, 0.5 );
-        mesh.receiveShadow = true;
-        mesh.castShadow = true;
-        mesh.rotation.y = - Math.PI;
-//        mesh.rotation.y = - Math.PI * 3 / 4;
+        tempMesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial(materials) );
+        tempMesh.position.set( x, y, z );
+        tempMesh.scale.set( 0.5, 0.5, 0.5 );
+        tempMesh.receiveShadow = true;
+        tempMesh.castShadow = true;
+        tempMesh.rotation.y = - Math.PI;
 
-        this.scene.add( mesh );
+        this.scene.add( tempMesh );
         if (clickable)
-            this.intersectObjects.push(mesh);
-        return mesh;
+            this.intersectObjects.push(tempMesh);
+
+        return tempMesh;
     }
 
     // Notice we use 'that' instead of 'this', because next time we call this.animate we want to keep old reference 'this'
@@ -81,12 +101,21 @@ function CORE() {
         requestAnimationFrame(that.animate, that.renderer.domElement);
         controls.update(clock.getDelta());
         that.renderer.render(that.scene, that.camera);
+        rendererStats.update(that.renderer);
+        stats.update();
         if (TVObject.isLoaded)
             TVObject.renderVideo();
     }
 
     document.onkeypress = function (event) {
         var key = event.keyCode ? event.keyCode : event.which;
+        if (key === 109 && !EMPTY.isLoaded)                     // press M to go to EMPTY
+        {
+            unloadCurrent();
+            EMPTY.load();
+            document.addEventListener('mousedown', EMPTY.onDocumentMouseDown, false);
+            current_window = EMPTY;
+        }
         if (key === 98 && !SAMPLE.isLoaded)                     // press B to go to SAMPLE
         {
             unloadCurrent();
@@ -131,16 +160,36 @@ function CORE() {
         document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
     }
 
-    function unloadAll()
-    {
-        SAMPLE.unload();
-        JUKEBOX.unload();
-        BOOK.unload();
-        ROOM.unload();
+    this.disposeSceneElements = function(modelElements) {
+        modelElements.forEach(function(element){
+            CORE.intersectObjects.splice(jQuery.inArray(element, CORE.intersectObjects), 1);
+            CORE.scene.remove(element);
+            if (element.geometry) {
+                delete element.geometry.geometryGroups;
+                $.each(element.geometry.geometryGroupsList, function (idx, elem) {
+                    delete elem;
+                });
+                element.geometry.geometryGroupsList = [];
+                element.geometry.dispose();
+            }
+            if (element.material) {
+                if (element.material instanceof THREE.MeshFaceMaterial) {
+                    $.each(element.material.materials, function(idx, elem) {
+                        elem.dispose();
+                    });
+                } else {
+                    element.material.dispose();
+                }
 
-        document.removeEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
-        document.removeEventListener('mousedown', ROOM.onDocumentMouseDown, false);
-        document.removeEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
-        document.removeEventListener('mousedown', BOOK.onDocumentMouseDown, false);
+                if (element.material.map) {
+                    element.material.map.dispose();
+                }
+            }
+            if (element.dispose) {
+                element.dispose();
+            }
+        });
+
+        modelElements = [];
     }
 }

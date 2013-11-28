@@ -14,6 +14,8 @@ function SAMPLE() {
     var floor;
     var light;
 
+    var modelElements = [];
+
     this.isLoaded = false;
 
     this.load = function ()
@@ -26,12 +28,7 @@ function SAMPLE() {
 
     this.unload = function ()
     {
-        CORE.scene.remove(cube);
-        CORE.scene.remove(floor);
-        CORE.scene.remove(light);
-
-        CORE.intersectObjects.splice(jQuery.inArray(cube), 1);
-        CORE.intersectObjects.splice(jQuery.inArray(floor), 1);
+        CORE.disposeSceneElements(modelElements);
 
         this.isLoaded = false;
     }
@@ -61,6 +58,7 @@ function SAMPLE() {
         cube.receiveShadow = true;
         CORE.scene.add(cube);
         CORE.intersectObjects.push(cube);
+        modelElements.push(cube);
 
         // making a floor - just a plane 500x500, with 10 width/height segments - they affect lightning/reflection I believe
         floor = new THREE.Mesh(
@@ -71,14 +69,16 @@ function SAMPLE() {
         floor.position.y = -25;                                   // move it a little, to match bottom of the cube
         CORE.scene.add(floor);
         CORE.intersectObjects.push(floor);
+        modelElements.push(floor);
     }
 
     function initLights() {
         light = new THREE.SpotLight();
-        light.position.set(0, 500, 0);
+        light.position.set(0, 100, 0);
         light.intensity = 2.0;
         light.castShadow = true;
         CORE.scene.add(light);
+        modelElements.push(light);
     }
 }
 

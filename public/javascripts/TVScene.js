@@ -10,7 +10,7 @@ function TVObject() {
     arguments.callee._singletonInstance = this;
 
     // private variables
-    var that = this;        // to reference JUKEBOX inside function that override 'this'
+    var that = this;        // to reference TVObject inside function that override 'this'
     var TV_set, screen;
 
     var video, videoTexture;
@@ -21,9 +21,11 @@ function TVObject() {
     var floor;
     var light, pointLight;
 
-    modelElements = [];
+    var modelElements = [];
 
     this.isLoaded = false;
+
+    this.TV_set;
 
     this.load = function ()
     {
@@ -33,28 +35,12 @@ function TVObject() {
         currentDirectory = '/home';
         openDir('videos');
 
-        modelElements.push(TV_set);
-        modelElements.push(screen);
-        modelElements.push(floor);
-        modelElements.push(light);
-        modelElements.push(pointLight);
-
         this.isLoaded = true;
     }
 
     this.unload = function ()
     {
-        modelElements.forEach(function(value){
-            CORE.intersectObjects.splice(jQuery.inArray(value, CORE.intersectObjects), 1);
-        });
-
-        modelElements = [];
-
-        CORE.scene.remove(TV_set);
-        CORE.scene.remove(screen);
-        CORE.scene.remove(floor);
-        CORE.scene.remove(light);
-        CORE.scene.remove(pointLight);
+        CORE.disposeSceneElements(modelElements);
 
         navigate('/home');
         isPlaying = false;
@@ -97,9 +83,13 @@ function TVObject() {
         floor.rotation.x = -Math.PI / 2;                    // make it horizontal, by default planes are vertical
         floor.position.y = -25;                                   // move it a little, to match bottom of the cube
         CORE.scene.add(floor);
+        modelElements.push(floor);
 
-        var loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { TV_set = CORE.loadModel( geometry, materials, 0, 0, 0, false ) };
+        var loader = new THREE.JSONLoader();
+        var callbackModel   = function( geometry, materials ) {
+            TV_set = CORE.loadModel( geometry, materials, 0, 0, 0, false );
+            modelElements.push(TV_set);
+        };
         loader.load( "obj/tv.js", callbackModel );
 
         var WIDTH = 78, HEIGHT = 43;
@@ -113,6 +103,7 @@ function TVObject() {
         screen.position.y = 35;                   // move it up
         CORE.scene.add(screen);
         CORE.intersectObjects.push(screen);
+        modelElements.push(screen);
 
         video = document.createElement('video');
         video.width = WIDTH;
@@ -131,10 +122,12 @@ function TVObject() {
         light.intensity = 2.0;
         light.castShadow = true;
         CORE.scene.add(light);
+        modelElements.push(light);
 
         pointLight = new THREE.PointLight(0x55557f, 4, 150);
         pointLight.position.set(-30,20,-40);
         CORE.scene.add(pointLight);
+        modelElements.push(pointLight);
     }
 
     this.renderVideo = function() {

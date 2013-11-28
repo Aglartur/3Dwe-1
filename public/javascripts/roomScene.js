@@ -26,6 +26,8 @@ function ROOM() {
     // main light
     var light;
 
+    var modelElements = [];
+
     this.isLoaded = false;
 
     this.load = function ()
@@ -38,25 +40,7 @@ function ROOM() {
 
     this.unload = function ()
     {
-        CORE.scene.remove(floor);
-        CORE.scene.remove(light);
-        CORE.scene.remove(wall1);
-        CORE.scene.remove(wall2);
-        CORE.scene.remove(wall3);
-        CORE.scene.remove(wall4);
-
-        CORE.scene.remove(shelf1);
-        CORE.scene.remove(shelf2);
-        CORE.scene.remove(shelf3);
-        CORE.scene.remove(shelf4);
-
-        CORE.scene.remove(table);
-
-        CORE.intersectObjects.splice(jQuery.inArray(table), 1);
-        CORE.intersectObjects.splice(jQuery.inArray(shelf1), 1);
-        CORE.intersectObjects.splice(jQuery.inArray(shelf2), 1);
-        CORE.intersectObjects.splice(jQuery.inArray(shelf3), 1);
-        CORE.intersectObjects.splice(jQuery.inArray(shelf4), 1);
+        CORE.disposeSceneElements(modelElements);
 
         this.isLoaded = false;
     }
@@ -94,6 +78,7 @@ function ROOM() {
         shelf1.receiveShadow = true;
         CORE.scene.add(shelf1);
         CORE.intersectObjects.push(shelf1);
+        modelElements.push(shelf1);
 
         shelf2 = new THREE.Mesh(
             new THREE.CubeGeometry(100,5,400),                           // supply size of the cube
@@ -103,6 +88,7 @@ function ROOM() {
         shelf2.receiveShadow = true;
         CORE.scene.add(shelf2);
         CORE.intersectObjects.push(shelf2);
+        modelElements.push(shelf2);
 
         shelf3 = new THREE.Mesh(
             new THREE.CubeGeometry(100,5,400),                           // supply size of the cube
@@ -112,6 +98,7 @@ function ROOM() {
         shelf3.receiveShadow = true;
         CORE.scene.add(shelf3);
         CORE.intersectObjects.push(shelf3);
+        modelElements.push(shelf3);
 
         shelf4 = new THREE.Mesh(
             new THREE.CubeGeometry(100,5,400),                           // supply size of the cube
@@ -121,6 +108,7 @@ function ROOM() {
         shelf4.receiveShadow = true;
         CORE.scene.add(shelf4);
         CORE.intersectObjects.push(shelf4);
+        modelElements.push(shelf4);
 
         blackWoodTexture = new THREE.ImageUtils.loadTexture('/images/black-wood.png', {}, function () {
             CORE.renderer.render(CORE.scene, CORE.camera);
@@ -137,6 +125,7 @@ function ROOM() {
         table.receiveShadow = true;
         CORE.scene.add(table);
         CORE.intersectObjects.push(table);
+        modelElements.push(table);
 
         floorTexture = new THREE.ImageUtils.loadTexture('/images/floor-texture.jpg', {}, function () {
             CORE.renderer.render(CORE.scene, CORE.camera);
@@ -152,6 +141,7 @@ function ROOM() {
         floor.rotation.x = - Math.PI / 2;                    // make it horizontal, by default planes are vertical
         floor.position.y = 0;                                   // move it a little, to match bottom of the cube
         CORE.scene.add(floor);
+        modelElements.push(floor);
 
         // since we will be adding similar walls, we can reuse the geometry and material
         var wallGeometry = new THREE.PlaneGeometry(1000, 500, 10, 10);
@@ -163,6 +153,7 @@ function ROOM() {
         wall1.position.z = -500;                // move it back
         wall1.position.y = 250;             // move it up
         CORE.scene.add(wall1);
+        modelElements.push(wall1);
 
         // here is a wall, by default planes are vertical
         wall2 = new THREE.Mesh(wallGeometry, wallMaterial);
@@ -171,6 +162,7 @@ function ROOM() {
         wall2.position.x = -500;                // move it left
         wall2.position.y = 250;             // move it up
         CORE.scene.add(wall2);
+        modelElements.push(wall2);
 
         // here is a wall, by default planes are vertical
         wall3 = new THREE.Mesh(wallGeometry, wallMaterial);
@@ -179,6 +171,7 @@ function ROOM() {
         wall3.rotation.y = - Math.PI / 2;       // rotate to get perpendicular wall
         wall3.receiveShadow = true;
         CORE.scene.add(wall3);
+        modelElements.push(wall3);
 
         // here is a wall, by default planes are vertical
         wall4 = new THREE.Mesh(wallGeometry, wallMaterial);
@@ -187,6 +180,7 @@ function ROOM() {
         wall4.rotation.y = Math.PI;             // rotate it 180 degrees, so the "front" will face towards us,
         wall4.receiveShadow = true;
         CORE.scene.add(wall4);
+        modelElements.push(wall4);
     }
 
     function initLights() {
@@ -195,5 +189,6 @@ function ROOM() {
         light.intensity = 2.0;
         light.castShadow = true;
         CORE.scene.add(light);
+        modelElements.push(light);
     }
 }

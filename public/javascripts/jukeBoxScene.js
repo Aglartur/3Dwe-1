@@ -26,8 +26,8 @@ function JUKEBOX() {
     var floor;
     var light, pointLight;
 
-    modelElements = [];
-    buttonsPressed = [];
+    var modelElements = [];
+    var buttonsPressed = [];
 
     this.songs = [];
 
@@ -45,42 +45,12 @@ function JUKEBOX() {
         openDir('Jukebox');
         // after this this.songs contains filenames of songs in /home/Jukebox
 
-        modelElements.push(radioBody);
-        modelElements.push(radioSeeker);
-        modelElements.push(radioPlay);
-        modelElements.push(radioVolume);
-        modelElements.push(radioPower);
-        modelElements.push(radioNext);
-        modelElements.push(radioPrev);
-        modelElements.push(radioReplay);
-        modelElements.push(radioShuffle);
-        modelElements.push(floor);
-        modelElements.push(light);
-        modelElements.push(pointLight);
-
         this.isLoaded = true;
     }
 
     this.unload = function ()
     {
-        modelElements.forEach(function(value){
-            CORE.intersectObjects.splice(jQuery.inArray(value, CORE.intersectObjects), 1);
-        });
-
-        modelElements = [];
-
-        CORE.scene.remove(radioBody);
-        CORE.scene.remove(radioSeeker);
-        CORE.scene.remove(radioPlay);
-        CORE.scene.remove(radioVolume);
-        CORE.scene.remove(radioPower);
-        CORE.scene.remove(radioNext);
-        CORE.scene.remove(radioPrev);
-        CORE.scene.remove(radioReplay);
-        CORE.scene.remove(radioShuffle);
-        CORE.scene.remove(floor);
-        CORE.scene.remove(light);
-        CORE.scene.remove(pointLight);
+        CORE.disposeSceneElements(modelElements);
 
         navigate('/home');
         isPlaying = false;
@@ -99,6 +69,7 @@ function JUKEBOX() {
         // if you clicked on something
         if (intersects.length > 0) {
             object = intersects[ 0 ].object;
+
             if (object === radioPlay)
             {
                 if (!isPlaying)
@@ -152,41 +123,61 @@ function JUKEBOX() {
         floor.rotation.x = -Math.PI / 2;                    // make it horizontal, by default planes are vertical
         floor.position.y = -25;                                   // move it a little, to match bottom of the cube
         CORE.scene.add(floor);
+        modelElements.push(floor);
 
-        var loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioBody = CORE.loadModel( geometry, materials, 0, 0, 0, false ) };
+        var loader = new THREE.JSONLoader();
+        var callbackModel   = function( geometry, materials ) {
+            radioBody = CORE.loadModel( geometry, materials, 0, 0, 0, false );
+            modelElements.push(radioBody);
+        };
         loader.load( "obj/radio-body.js", callbackModel );
 
-        loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioPlay = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
+        callbackModel   = function( geometry, materials ) {
+            radioPlay = CORE.loadModel( geometry, materials, 0, 0, 0, true );
+            modelElements.push(radioPlay);
+        };
         loader.load( "obj/radio-button-play.js", callbackModel );
 
-        loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioPrev = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
+        callbackModel   = function( geometry, materials ) {
+            radioPrev = CORE.loadModel( geometry, materials, 0, 0, 0, true );
+            modelElements.push(radioPrev);
+        };
         loader.load( "obj/radio-button-prev.js", callbackModel );
 
-        loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioNext = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
+        callbackModel   = function( geometry, materials ) {
+            radioNext = CORE.loadModel( geometry, materials, 0, 0, 0, true );
+            modelElements.push(radioNext);
+        };
         loader.load( "obj/radio-button-next.js", callbackModel );
 
-        loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioReplay = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
+        callbackModel   = function( geometry, materials ) {
+            radioReplay = CORE.loadModel( geometry, materials, 0, 0, 0, true );
+            modelElements.push(radioReplay);
+        };
         loader.load( "obj/radio-button-replay.js", callbackModel );
 
-        loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioShuffle = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
+        callbackModel   = function( geometry, materials ) {
+            radioShuffle = CORE.loadModel( geometry, materials, 0, 0, 0, true );
+            modelElements.push(radioShuffle);
+        };
         loader.load( "obj/radio-button-shuffle.js", callbackModel );
 
-        loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioSeeker = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
+        callbackModel   = function( geometry, materials ) {
+            radioSeeker = CORE.loadModel( geometry, materials, 0, 0, 0, true );
+            modelElements.push(radioSeeker);
+        };
         loader.load( "obj/radio-seeker.js", callbackModel );
 
-        loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) { radioVolume = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
+        callbackModel   = function( geometry, materials ) {
+            radioVolume = CORE.loadModel( geometry, materials, 0, 0, 0, true );
+            modelElements.push(radioVolume);
+        };
         loader.load( "obj/radio-volume.js", callbackModel );
 
-        loader = new THREE.JSONLoader(),
-            callbackModel   = function( geometry, materials ) {  radioPower = CORE.loadModel( geometry, materials, 0, 0, 0, true ) };
+        callbackModel   = function( geometry, materials ) {
+            radioPower = CORE.loadModel( geometry, materials, 0, 0, 0, true );
+            modelElements.push(radioPower);
+        };
         loader.load( "obj/radio-power.js", callbackModel );
     }
 
@@ -196,10 +187,12 @@ function JUKEBOX() {
         light.intensity = 2.0;
         light.castShadow = true;
         CORE.scene.add(light);
+        modelElements.push(light);
 
         pointLight = new THREE.PointLight(0xff0000, 4, 150);
         pointLight.position.set(-30,20,-40);
         CORE.scene.add(pointLight);
+        modelElements.push(pointLight);
     }
 
     function pushTheButton ( button, mode) {
