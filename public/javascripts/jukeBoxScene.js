@@ -45,6 +45,10 @@ function JUKEBOX() {
         openDir('Jukebox');
         // after this this.songs contains filenames of songs in /home/Jukebox
 
+        CORE.freezeCamera(true);
+        CORE.camera.position.set(-10, 2, -70);
+        CORE.camera.rotation.set(-3.5, 0, -Math.PI);
+
         this.isLoaded = true;
     }
 

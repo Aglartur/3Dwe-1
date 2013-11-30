@@ -30,6 +30,7 @@ THREEx.WindowResize	= function(renderer, camera){
 		// update the camera
 		camera.aspect	= window.innerWidth / window.innerHeight
 		camera.updateProjectionMatrix()
+        THREE.PerspectiveCamera
 	}
 	// bind the resize event
 	window.addEventListener('resize', callback, false)

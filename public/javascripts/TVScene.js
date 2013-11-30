@@ -25,12 +25,15 @@ function TVObject() {
 
     this.isLoaded = false;
 
-    this.TV_set;
-
     this.load = function ()
     {
+        initOptions();
         initGeometry();
         initLights();
+
+        CORE.freezeCamera(true);
+        CORE.camera.position.set(0, 1.5, -4);
+        CORE.camera.rotation.set(-Math.PI, 0, Math.PI);
 
         currentDirectory = '/home';
         openDir('videos');
@@ -77,30 +80,31 @@ function TVObject() {
     function initGeometry() {
         // making a floor - just a plane 500x500, with 10 width/height segments - they affect lightning/reflection I believe
         floor = new THREE.Mesh(
-            new THREE.PlaneGeometry(500, 500, 10, 10),
+            new THREE.PlaneGeometry(20, 20, 10, 10),
             new THREE.MeshLambertMaterial({color: 0xCEB2B3}));    // color
         floor.receiveShadow = true;
         floor.rotation.x = -Math.PI / 2;                    // make it horizontal, by default planes are vertical
-        floor.position.y = -25;                                   // move it a little, to match bottom of the cube
+        floor.position.y = -1;                                   // move it a little, to match bottom of the cube
         CORE.scene.add(floor);
         modelElements.push(floor);
 
         var loader = new THREE.JSONLoader();
         var callbackModel   = function( geometry, materials ) {
             TV_set = CORE.loadModel( geometry, materials, 0, 0, 0, false );
+            TV_set.scale.multiplyScalar(1/25);
             modelElements.push(TV_set);
         };
         loader.load( "obj/tv.js", callbackModel );
 
-        var WIDTH = 78, HEIGHT = 43;
+        var WIDTH = 78/25, HEIGHT = 43/25;
         screen = new THREE.Mesh(
             new THREE.PlaneGeometry(WIDTH, HEIGHT, 10, 10),
             new THREE.MeshPhongMaterial({color: 0xFFFFFF}));
         screen.receiveShadow = true;
         //screen.rotation.y = Math.PI;
-        screen.position.x = -11;                    // align to screen
-        screen.position.z = -1;                    // move in front
-        screen.position.y = 35;                   // move it up
+        screen.position.x = -11/25;                    // align to screen
+        screen.position.z = -1/25;                    // move in front
+        screen.position.y = 35/25;                   // move it up
         CORE.scene.add(screen);
         CORE.intersectObjects.push(screen);
         modelElements.push(screen);
@@ -118,14 +122,14 @@ function TVObject() {
 
     function initLights() {
         light = new THREE.SpotLight();
-        light.position.set(0, 200, -50);
+        light.position.set(0, 8, -2);
         light.intensity = 2.0;
         light.castShadow = true;
         CORE.scene.add(light);
         modelElements.push(light);
 
         pointLight = new THREE.PointLight(0x55557f, 4, 150);
-        pointLight.position.set(-30,20,-40);
+        pointLight.position.set(-30/25,20/25,-40/25);
         CORE.scene.add(pointLight);
         modelElements.push(pointLight);
     }
@@ -157,11 +161,11 @@ function TVObject() {
             //CORE.camera.position.set(-11 + 78/2, 35 + 43/2, -40);
             //CORE.camera.rotation.set(-Math.PI, 0, -Math.PI);
 
-            var X_FINAL = -11.1, Y_FINAL = 35.12, Z_FINAL = -39.13;
+            var X_FINAL = -11.1/25, Y_FINAL = 35.12/25, Z_FINAL = -39.13/25;
             var xGreater = CORE.camera.position.x > X_FINAL,
                 yGreater = CORE.camera.position.y > Y_FINAL,
                 zGreater = CORE.camera.position.z > Z_FINAL;
-            var speed = 2;
+            var speed = 2/25;
 
             CORE.camera.rotation.set(-Math.PI, 0, -Math.PI);
 
@@ -194,5 +198,48 @@ function TVObject() {
                 }
             }, 50);
         }
+    }
+
+    this.playVideo = function(){
+        if (video)
+            video.play();
+    }
+
+    this.pauseVideo = function(){
+        if (video)
+            video.pause();
+    }
+
+    function initOptions(){
+        updateFcts = [];
+        //////////////////////////////////////////////////////////////////////////////////
+        //		create THREEx.HtmlMixer						//
+        //////////////////////////////////////////////////////////////////////////////////
+
+        var mixerContext= new THREEx.HtmlMixer.Context(CORE.renderer, CORE.scene, CORE.camera);
+        updateFcts.push(function(delta, now){
+            mixerContext.update(delta, now);
+        });
+
+        //////////////////////////////////////////////////////////////////////////////////
+        //		create a Plane for THREEx.HtmlMixer				//
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // create the iframe element
+        var domElement	= document.getElementById('TV_options');
+        //domElement.src	= '/TV_options';
+        //domElement.style.border	= 'none';
+        // create the plane
+        var mixerPlane	= new THREEx.HtmlMixer.Plane(mixerContext, domElement);
+        mixerPlane.object3d.scale.multiplyScalar(70/25);
+        mixerPlane.object3d.position.set(0, 2, -1/5);
+        mixerPlane.object3d.rotation.set(0, -Math.PI, 0);
+        CORE.scene.add(mixerPlane.object3d);
+        modelElements.push(mixerPlane.object3d);
+
+        updateFcts.push(function(delta, now){
+            //mixerPlane.object3d.rotation.y += Math.PI * 2 * delta * 0.1;
+        });
+        domElement.show();
     }
 }

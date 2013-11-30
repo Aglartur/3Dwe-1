@@ -4,17 +4,17 @@
  */
 
 THREE.CSS3DObject = function ( element ) {
+
 	THREE.Object3D.call( this );
 
 	this.element = element;
-	/*this.element.style.position = 'absolute';
+	this.element.style.position = 'absolute';
 	this.element.style.WebkitTransformStyle = 'preserve-3d';
 	this.element.style.MozTransformStyle = 'preserve-3d';
 	this.element.style.oTransformStyle = 'preserve-3d';
-	this.element.style.transformStyle = 'preserve-3d';*/
+	this.element.style.transformStyle = 'preserve-3d';
 
-	this.
-        addEventListener( 'removed', function ( event ) {
+	this.addEventListener( 'removed', function ( event ) {
 
 		if ( this.element.parentNode !== null ) {
 

@@ -30,6 +30,11 @@ function BOOK() {
         initGeometry();
         initLights();
         initPDF(pageRight1, currentPage++);
+
+        CORE.freezeCamera(true);
+        CORE.camera.position.set(45, 80, -65);
+        CORE.camera.rotation.set(-2.09, 0, -Math.PI);
+
         this.isLoaded = true;
     }
 
