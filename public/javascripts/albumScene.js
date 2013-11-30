@@ -73,6 +73,19 @@ function ALBUM() {
         // if you clicked on something
         if (intersects.length > 0) {
 
+        	if (intersects[0].object === albumL) {
+                clickAlbum(intersects[0].object, 25);
+            }
+                
+
+            if (intersects[0].object === frame ) {
+                show_image(intersects[0].object, current++, 25);
+            }
+            
+             if (intersects[0].object === frame2 ) {
+                show_image2(intersects[0].object, current++, 25);
+             }   
+
        	}
     }
 
@@ -116,32 +129,32 @@ function ALBUM() {
 
 
         //frame texture
-        frameTexture1 = new THREE.ImageUtils.loadTexture('/home/Photos' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
-            CORE.renderer.render(scene, camera);
+        frameTexture1 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
         }); 
 
         frameTexture1.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
         frameTexture1.repeat.set(1, 1);
         frameTexture1.needsUpdate = true;
 
-        frameTexture2 = new THREE.ImageUtils.loadTexture('/home/Photos' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
-            CORE.renderer.render(scene, camera);
+        frameTexture2 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
         }); 
 
         frameTexture2.wrapS = frameTexture2.wrapT = THREE.RepeatWrapping;
         frameTexture2.repeat.set(1, 1);
         frameTexture2.needsUpdate = true;
 
-        frameTexture3 = new THREE.ImageUtils.loadTexture('/home/Photos' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
-            CORE.renderer.render(scene, camera);
+        frameTexture3 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
         }); 
 
         frameTexture3.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
         frameTexture3.repeat.set(1, 1);
         frameTexture3.needsUpdate = true;
 
-        frameTexture4 = new THREE.ImageUtils.loadTexture('/home/Photos' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
-            CORE.renderer.render(scene, camera);
+        frameTexture4 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
         }); 
 
         frameTexture4.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
@@ -265,6 +278,77 @@ function ALBUM() {
         modelElements.push(wall4);
     }
 
+    function clickAlbum (object, radius)
+    {
+        var angle = 0;
+        animateAlbum();
+        var startX = object.position.x;
+        var startY = object.position.y;
+        function animateAlbum()
+        {
+            if (angle <= Math.PI)
+            {
+                object.position.x = radius - Math.cos(angle) * radius; 
+                object.position.y = Math.sin(angle) * radius;
+                object.rotation.z = -angle;
+                angle += Math.PI/18;
+                render();
+                setTimeout(animateAlbum, 10);
+            }
+        }
+    }
+
+    function show_image(object, num, radius) {
+        frameTexture3 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[num % picArray.length], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        }); 
+        object.material = new THREE.MeshLambertMaterial({map: frameTexture3});
+    
+        var angle = 0;
+        animateFrame();
+        function animateFrame()
+        {
+            if (angle <= Math.PI)
+            {
+                object.position.x = radius - Math.cos(angle) * radius; 
+                object.position.y = Math.sin(angle) * radius + 3;
+                object.rotation.z = -angle;
+                angle += Math.PI/18;
+                render();
+                frame3.material = new THREE.MeshLambertMaterial({map: frameTexture3});
+                setTimeout(animateFrame, 10);
+                
+            }
+
+        }
+
+    }
+
+    function show_image2(object, num, radius) {
+        frameTexture4 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[num % picArray.length], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        }); 
+        object.material = new THREE.MeshLambertMaterial({map: frameTexture4});
+        
+        var angle = 0;
+        animateFrame();
+        function animateFrame()
+        {
+            if (angle <= Math.PI)
+            {
+                object.position.x = radius - Math.cos(angle) * radius; 
+                object.position.y = Math.sin(angle) * radius + 3;
+                object.rotation.z = -angle;
+                angle += Math.PI/18;
+                render();
+                frame4.material = new THREE.MeshLambertMaterial({map: frameTexture4});
+                setTimeout(animateFrame, 10);
+                
+            }
+
+        }
+    }
+
   	function initLights() {
         light = new THREE.SpotLight();
         light.position.set(0, 500, 0);
@@ -272,5 +356,10 @@ function ALBUM() {
         light.castShadow = true;
         CORE.scene.add(light);
         modelElements.push(light);
+    }
+    
+    function render() {
+
+        CORE.renderer.render(CORE.scene, CORE.camera);
     }
 }
