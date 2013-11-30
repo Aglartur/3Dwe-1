@@ -158,7 +158,7 @@ function CORE() {
             document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
             current_window = JUKEBOX;
         }
-        if (key === 118 && !ROOM.isLoaded)                         // press V to go to ROOM
+        if (key === 115 && !ROOM.isLoaded)                         // press V to go to ROOM
         {
             unloadCurrent();
             ROOM.load();
@@ -172,6 +172,13 @@ function CORE() {
             BOOK.load();
             document.addEventListener('mousedown', BOOK.onDocumentMouseDown, false);
             current_window = BOOK;
+        }
+        if (key === 118 && !ALBUM.isLoaded)                      // press ?? to go to ALBUM
+        {
+            unloadCurrent();
+            ALBUM.load();
+            document.addEventListener('mousedown', ALBUM.onDocumentMouseDown, false);
+            current_window = ALBUM;
         }
         if (key === 116 && !TVObject.isLoaded)                     // press T to go to TV
         {
