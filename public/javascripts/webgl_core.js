@@ -3,8 +3,6 @@
  */
 var CORE = new CORE();
 var current_window; //the currently loaded window (SAMPLE, JUKEBOX, TV, etc.)
-var windowListener;
-var updateFcts;
 
 $(document).ready(function () {
     window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
@@ -12,22 +10,6 @@ $(document).ready(function () {
 
     CORE.init();
     CORE.animate(new Date().getTime());
-
-    /*$('#viewer').focusout(function(e){
-       CORE.freezeCamera(true);
-    });*/
-
-//    $('#breadcrumb').css('display', 'none');
-
-    $('#TV_play').click(function(e){
-        if (TVObject)
-            TVObject.playVideo();
-    });
-
-    $('#TV_pause').click(function(e){
-        if (TVObject)
-            TVObject.pauseVideo();
-    });
 });
 
 function CORE() {
@@ -39,7 +21,6 @@ function CORE() {
     this.scene;
     this.projector;
     this.intersectObjects = [];
-    this.lastTimeMsec = null;
 
     var camera_controls;
     var clock;
@@ -65,7 +46,7 @@ function CORE() {
         this.scene = new THREE.Scene();
         this.projector = new THREE.Projector();
 
-        //windowListener = THREEx.WindowResize(this.renderer, this.camera);
+        THREEx.WindowResize(this.renderer, this.camera);
 
         // display renderer stats
         rendererStats = new THREEx.RendererStats();
@@ -92,9 +73,9 @@ function CORE() {
         // setting and loading the current window
         current_window = SAMPLE;
         current_window.load();
+
         document.addEventListener('mousedown', current_window.onDocumentMouseDown, false);
         // update the camera
-        //windowListener.trigger();
         updateFcts = [];
     }
 
@@ -124,15 +105,6 @@ function CORE() {
         }else if (JUKEBOX.isLoaded){
             JUKEBOX.update();
         }
-
-        // measure time
-        that.lastTimeMsec	= that.lastTimeMsec || nowMsec-1000/60;
-        var deltaMsec	= Math.min(200, nowMsec - that.lastTimeMsec);
-        that.lastTimeMsec	= nowMsec;
-        // call each update function
-        updateFcts.forEach(function(updateFn){
-            updateFn(deltaMsec/1000, nowMsec/1000);
-        });
     }
 
     document.onkeypress = function (event) {
@@ -178,6 +150,8 @@ function CORE() {
             unloadCurrent();
             TVObject.load();
             document.addEventListener('mousedown', TVObject.onDocumentMouseDown, false);
+            document.addEventListener('mouseup', TVObject.onDocumentMouseUp, false);
+            document.addEventListener('mousemove', TVObject.onDocumentMouseMove, false);
             document.addEventListener('keydown', TVObject.flyToObject, false);
             current_window = TVObject;
         }
