@@ -28,6 +28,7 @@ window.onload = function() {
 
             if (specialRequest === JUKEBOX.request.LOADSONGS){
                 loadSongs(currentDirectory);
+                console.log("loading songs...");
             }
 
 
@@ -113,6 +114,7 @@ var openDir = function(filename){
         var path = currentDirectory + "\/" + filename;
         $("#hierarchy").append('<li id = "' +  path + '"class = "h_node"><a href="#" style="z-index:8;">' + filename + '</a></li>');
         currentDirectory = path;
+        console.log(path);
         initClick(); //re-initialize click events so that the newly added node will be clickable
     }
 };
