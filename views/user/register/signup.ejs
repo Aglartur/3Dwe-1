@@ -1,0 +1,33 @@
+<%include ../../header %>
+
+<!-- Side Menu -->
+<%include sidemenu %>
+<!-- /Side Menu -->
+<h1><%= title%></h1>
+
+<form action="/user/add" method="get">
+    <table>
+        <tr>
+            <td>Email:</td>
+            <td><input name="email" type="text"/></td>
+        </tr>
+        <tr>
+            <td>First Name:</td>
+            <td><input name="fname" type="text"/></td>
+        </tr>
+        <tr>
+            <td>Last Name:</td>
+            <td><input name="lname" type="text"/></td>
+        </tr>
+        <tr>
+            <td>Password:</td>
+            <td><input name="password" type="text"/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Add User"/></td>
+        </tr>
+    </table>
+</form>
+
+<%include ../../footer %>
