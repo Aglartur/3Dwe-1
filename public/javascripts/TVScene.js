@@ -337,6 +337,7 @@ function TVObject() {
                 }
             }
         ];
+        play_buttons = [];
 
         play_panel = new THREE.Mesh(
             new THREE.PlaneGeometry(15.5*BUTTON_WIDTH, 1.7*BUTTON_HEIGHT, 10, 10),
