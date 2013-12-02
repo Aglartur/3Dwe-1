@@ -1,0 +1,26 @@
+<a id="menu-toggle" href="#" class="btn btn-primary btn-lg toggle"><i class="glyphicon glyphicon-user"></i></a>
+<div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+        <a id="menu-close" href="#" class="btn btn-default btn-lg pull-right toggle"><i class="glyphicon glyphicon-user"></i></a>
+        <li class="sidebar-brand"><a href="/">3DExplorer</a></li>
+        <li><a class="create_directory" href="#">Create Directory</a></li>
+        <li id = "directory_name">
+
+            <form id = "file_form" align = "center"> <!-- action = "/create" method = "post" align="center"> -->
+                <fieldset >
+                    <legend>Directory Name</legend>
+                    <input type="text" id="file_input" placeholder="enter filename">
+                    <button type="submit" class="btn" id="createDir">Submit</button>
+                </fieldset>
+            </form>
+            <div id="message" align ="center" hidden = true></div>
+            <div id="folder_contents"></div>
+            <div>
+                <input type="file" name="file_upload" id="file_upload" />
+            </div>
+            <div id="delete_div" align = "center">
+                <li><a class="delete_dir" href="#">Delete Directory</a></li>
+            </div>
+        </li>
+    </ul>
+</div>

@@ -63,7 +63,7 @@ function ROOM() {
 
     function initGeometry()
     {
-        lightWoodTexture = new THREE.ImageUtils.loadTexture('/images/light-wood_small.jpg', {}, function () {
+        lightWoodTexture = new THREE.ImageUtils.loadTexture('/images/light-wood.jpg', {}, function () {
             CORE.renderer.render(CORE.scene, CORE.camera);
         });
         lightWoodTexture.wrapS = lightWoodTexture.wrapT = THREE.RepeatWrapping;

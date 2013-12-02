@@ -30,6 +30,11 @@ function BOOK() {
         initGeometry();
         initLights();
         initPDF(pageRight1, currentPage++);
+
+        CORE.freezeCamera(true);
+        CORE.camera.position.set(45, 80, -65);
+        CORE.camera.rotation.set(-2.09, 0, -Math.PI);
+
         this.isLoaded = true;
     }
 
@@ -57,7 +62,7 @@ function BOOK() {
                 initPDF(pageLeft1, currentPage++);
                 initPDF(pageRight2, currentPage++);
                 flipPage(pageRight1);
-//                flipPage(pageLeft1);
+                flipPage(pageLeft1);
             }
 //            if (object === pageLeft1)
 //            {
@@ -137,7 +142,7 @@ function BOOK() {
 
     function initPages(canvas)
     {
-        var coverTexture = new THREE.ImageUtils.loadTexture('/images/bookCover_small.jpg', {}, function () {
+        var coverTexture = new THREE.ImageUtils.loadTexture('/images/bookCover.jpg', {}, function () {
             CORE.renderer.render(CORE.scene, CORE.camera);
         });
         coverTexture.wrapS = coverTexture.wrapT = THREE.RepeatWrapping;
@@ -199,20 +204,19 @@ function BOOK() {
 
     function flipPage(object) {
         var animation = true;
-        var initPosX = object.position.x;
         var initPosY = object.position.y;
         var initRotY = object.rotation.y;
 
-        setTimeout(stopAnimation, 500);
+        setTimeout(stopAnimation, 1000);
         animateFlip();
 
         function animateFlip()
         {
             if (animation === true)
             {
-                object.rotation.y += Math.PI / 18;
-                object.position.x = initPosX + Math.sin(object.rotation.y / 2) * object.geometry.width * object.scale.x;
-                object.position.y = initPosY + Math.cos(object.rotation.y - Math.PI / 2) * object.geometry.width / 2 * object.scale.x;
+                object.rotation.y += Math.PI / 40;
+                object.position.x += 1.5 * object.geometry.width * object.scale.x / 40;
+                object.position.y = initPosY + Math.sin(object.rotation.y);
                 setTimeout(animateFlip, 25);
             }
         }
@@ -220,8 +224,8 @@ function BOOK() {
         function stopAnimation()
         {
             animation = false;
-//            object.rotation.y = initRotY + Math.PI;
-//            object.position.y = 20 - initPosY;
+            object.rotation.y = initRotY + Math.PI;
+            object.position.y = 20 - initPosY;
         }
     }
 }
