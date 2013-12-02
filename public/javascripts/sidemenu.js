@@ -29,6 +29,9 @@ window.onload = function() {
             if (specialRequest === JUKEBOX.request.LOADSONGS){
                 loadSongs(currentDirectory);
             }
+            if (specialRequest === ALBUM.request.LOADPHOTOS){
+                loadPhotos(currentDirectory);
+            }
 
 
          } else {
@@ -64,8 +67,8 @@ function initSubfolder(){
             TVObject.loadVideo(currentDirectory + '/' + filename);
         }else if (extension === 'pdf'){
             alert("It's a PDF!");
-        }else if (extension === 'png'){
-            alert("It's an image!");
+        }else if (extension === 'jpg'){
+            ALBUM.changePhoto(currentDirectory + '/' + filename);
         }else if (extension === 'txt'){
             alert("It's a text!");
         }
@@ -184,4 +187,17 @@ function loadSongs(directory)
         JUKEBOX.songs.push(currentDirectory + '/' + this.id);
     });
     JUKEBOX.changeSong(JUKEBOX.songs[JUKEBOX.currentSongID]);
+}
+
+function loadPhotos(directory)
+{
+    console.log("loading photos:");
+    var collection = $('#folder_contents > .subfile');
+    console.log(collection.length);
+    collection.each(function(){
+        ALBUM.photos.push(currentDirectory + '/' + this.id);
+    });
+    console.log(ALBUM.photos);
+    ALBUM.initPhotos();
+
 }

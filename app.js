@@ -30,6 +30,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+app.post('/uploadifyhandler', routes.uploadifyhandler);
 
 var io = require('socket.io').listen(app.listen(app.get('port')));
 io.set('log level', 1);

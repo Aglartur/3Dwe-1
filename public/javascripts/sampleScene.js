@@ -29,7 +29,6 @@ function SAMPLE() {
     this.unload = function ()
     {
         CORE.disposeSceneElements(modelElements);
-
         this.isLoaded = false;
     }
 
