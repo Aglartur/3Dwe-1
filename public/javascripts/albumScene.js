@@ -23,17 +23,6 @@ function ALBUM() {
 
     this.currentPhotoID = 0;
 
-    //array of pics
-        picArray = new Array();
-        picArray.push('penguins.jpg');
-        picArray.push('koala.jpg');
-        picArray.push('desert.jpg');
-        picArray.push('Jellyfish.jpg');
-        picArray.push('chrysanthemum.jpg');
-        picArray.push('lighthouse.jpg');
-        picArray.push('tulips.jpg');
-        picArray.push('hydrangeas.jpg');
-
     var albumLoaded = false;
     var current1 = 0;
     var current2 = 1;
@@ -91,6 +80,10 @@ function ALBUM() {
 
             if (intersects[0].object === frame || intersects[0].object === frame2 ) {
                 flip_image(frame, frame2, current1++, current2++, 25);
+            }
+
+            if (intersects[0].object === frame3 || intersects[0].object === frame4) {
+                flip_back(frame3, frame4, current1++, current2++, 25);
             }
 
        	}
@@ -358,6 +351,50 @@ function ALBUM() {
         object2.material = new THREE.MeshLambertMaterial({map: frameTexture2});
     }
 
+    function flip_back(object3, object4, num1, num2, radius) {
+        console.log("click frame 3");
+        frameTexture1 = new THREE.ImageUtils.loadTexture(that.photos[num1 % that.photos.length], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        }); 
+
+        object3.material = new THREE.MeshLambertMaterial({map: frameTexture1});
+
+        frameTexture2 = new THREE.ImageUtils.loadTexture(that.photos[num2 % that.photos.length], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        }); 
+    
+        object4.material = new THREE.MeshLambertMaterial({map: frameTexture2});
+
+        var angle = 0;
+        animateBack();
+
+        function animateBack() 
+        {
+            if (angle >= -Math.PI)
+            {
+                object3.position.x = radius + Math.cos(angle) * radius; 
+                object4.position.x = radius + Math.cos(angle) * radius;
+                object3.position.y = -Math.sin(angle) * radius + 3;
+                object4.position.y = -Math.sin(angle) * radius + 3;
+                object3.rotation.z = -angle;
+                object4.rotation.z = -angle;
+                angle -= Math.PI/18;
+                render();
+                frame.material = new THREE.MeshLambertMaterial({map: frameTexture1});
+                frame2.material = new THREE.MeshLambertMaterial({map: frameTexture2});
+                setTimeout(animateBack, 10);
+            }
+        }
+
+        frameTexture3 = new THREE.ImageUtils.loadTexture(that.photos[num1 * 2 % that.photos.length], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        });
+        frameTexture4 = new THREE.ImageUtils.loadTexture(that.photos[num2 * 2 % that.photos.length], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        });
+        object3.material = new THREE.MeshLambertMaterial({map: frameTexture3});
+        object4.material = new THREE.MeshLambertMaterial({map: frameTexture4});
+    }
   	function initLights() {
         light = new THREE.SpotLight();
         light.position.set(0, 500, 0);
