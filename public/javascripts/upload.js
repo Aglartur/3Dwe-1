@@ -1,3 +1,8 @@
+/*
+  created by Peng 11/28/13
+*/
+
+
 $(function() {
       $('#file_upload').uploadify({
         'swf' : '/uploadify.swf',

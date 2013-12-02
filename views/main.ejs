@@ -1,69 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/stylesheets/style.css">
-  <link rel="stylesheet" type="text/css" href="/stylesheets/uploadify.css">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <script type="text/javascript" src="/javascripts/jquery-1.10.2.min.js"></script>
-  <script type="text/javascript" src="/javascripts/three.min.js"></script>
-  <script type="text/javascript" src="/javascripts/threex.windowresize.js"></script>
-  <script type="text/javascript" src="/javascripts/webgl_core.js"></script>
-  <script type="text/javascript" src="/javascripts/jquery.uploadify.min.js"></script>
-  <script type="text/javascript" src="/javascripts/upload.js"></script>
-</head>
+<%include header%>
 
-<body>
-<div id="header">
-    <div>
-        <img id="logo" src="/images/Logo.png"/>
-    </div>
-    <div id="account">
-        <h2>Hi, User!</h2>
-    </div>
+<!-- Side Menu -->
+<%include sidemenu %>
+<!-- /Side Menu -->
+
+    <div id="viewer"></div>
+    <audio controls id="audio">
+        <source src="" type="audio/mpeg">
+        <embed height="50" width="100" src="">
+    </audio>
+
+<div id="breadcrumb">
+    <ul class="crumbs" id = "hierarchy">
+        <li class="h_node" id = "/home"><a href="#" style="z-index:9;"><i class="glyphicon glyphicon-home"></i></a></li>
+    </ul>
+    <div class = 'custom-menu' hidden = 'true'>Delete</div>
 </div>
 
-<div id="viewer">
-</div>
-
-<div id="footer">
-    <table>
-        <tr>
-            <td>
-                <div class="nav_button">
-                    <h2>Room</h2>
-                </div>
-            </td>
-            <td>
-                <div class="nav_button">
-                    <h2>Bookshelf</h2>
-                </div>
-            </td>
-            <td>
-                <div class="nav_button">
-                    <h2>Jukebox</h2>
-                </div>
-            </td>
-            <td>
-                <div class="nav_button">
-                    <h2>Photo Album</h2>
-                </div>
-            </td>
-            <td>
-                <div class="nav_button">
-                    <h2>TV</h2>
-                </div>
-            </td>
-            <td>
-              <div>
-                <input type="file" name="file_upload" id="file_upload" />
-              </div>
-            </td>
-
-        </tr>
-    </table>
-</div>
-
-</body>
-</html>
+<%include tv_options%>
+<%include footer%>
