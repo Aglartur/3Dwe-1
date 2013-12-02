@@ -23,6 +23,7 @@ function JUKEBOX() {
 
     var dragging, prevDrag;
     var windowHalfX, windowHalfY;
+    var currentVolume;
 
     this.currentSongID = 3;
 
@@ -42,7 +43,6 @@ function JUKEBOX() {
     {
         initGeometry();
         initLights();
-        initMouseControls();
 
         windowHalfX = $('viewer').width() / 2;
         windowHalfY = $('viewer').height() / 2;
@@ -52,6 +52,8 @@ function JUKEBOX() {
         openDir('Jukebox');
         console.log(this.songs);
         // after this this.songs contains filenames of songs in /home/Jukebox
+
+        // -- my initialization -- delete this when the file system is working
         this.songs.push("02-Peace_Of_Mind.mp3");
         this.songs.push("06. Thunderstruck.mp3");
         this.songs.push("15. Highway to Hell.mp3");
@@ -65,12 +67,13 @@ function JUKEBOX() {
         this.songs.push("13 - Candyman.mp3");
         this.songs.push("01 - Holes.mp3");
         console.log(this.songs);
+        // --
 
-        //for testing:
-        // <audio id="id1" src="audio/dare.mp3" style="display: none;"></audio>
+        //initial audio tag initialization and generation:
         var audio_html = '<audio controls id="audio" onended="JUKEBOX.autoNext()"><source id="change_audio" src="/home/Jukebox/' + this.songs[this.currentSongID] + '" type="audio/mpeg"><embed height="50" width="100" src=""></audio>' ;
         document.getElementById("test_audio").innerHTML = audio_html;
         document.getElementById('audio').volume = 0.5;
+        currentVolume = document.getElementById('audio').volume;
 
         //document.querySelector("#audio").addEventListener("ended", this.autoNext() ,false);
 //        $("#audio").bind('ended', function(){
@@ -133,12 +136,12 @@ function JUKEBOX() {
                     that.currentSongID = (that.songs.length + that.currentSongID + 1) % that.songs.length;
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
-                else if (isReplaying){
+                else if (isShuffling && !isReplaying){
 //                    that.shuffleNext();
+                    that.currentSongID = Math.floor(Math.random()*that.songs.length);
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
                 else {
-                    that.currentSongID = Math.floor(Math.random()*that.songs.length);
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
 
@@ -152,12 +155,12 @@ function JUKEBOX() {
                     that.currentSongID = (that.songs.length + that.currentSongID - 1) % that.songs.length;
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
-                else if (isReplaying) {
+                else if (isShuffling && !isReplaying) {
 //                    that.shufflePrev();
+                    that.currentSongID = Math.floor(Math.random()*that.songs.length);
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
                 else {
-                    that.currentSongID = Math.floor(Math.random()*that.songs.length);
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
                 setTimeout(function(){pushTheButton(radioPrev, false);}, 300);
@@ -236,25 +239,23 @@ function JUKEBOX() {
             temp.add(vector);
 
             vector.sub(prevDrag);
-            vector.multiplyScalar(5);
+            vector.multiplyScalar(5);  // seems to work ok as long as it is positive
 
             if (vector.x > 0) {
                 console.log("^.^ volume++");
                 setvolume(-0.0125);
                 //rotateTheButton(radioVolume, false);
+                // moved to setvolume
             }
             if (vector.x < 0) {
                 console.log("^.^ volume--");
                 setvolume(0.0125);
                 //rotateTheButton(radioVolume, true);
+                // moved to setvolume
             }
-            //CORE.camera.position.add(vector);
-            //CORE.cameraTarget.add(vector);
 
             prevDrag = temp;
 
-            //checkDistance();
-            //updateText();
         }
 
     }
@@ -262,11 +263,11 @@ function JUKEBOX() {
     this.changeSong = function(filepath) {
         console.log('changing song: ' + filepath);
 
-        if (!isReplaying){
+        //if (!isReplaying){
             var audio_html = '<audio controls id="audio" onended="JUKEBOX.autoNext()"><source id="change_audio" src="/home/Jukebox/' + filepath + '" type="audio/mpeg"><embed height="50" width="100" src=""></audio>' ;
             document.getElementById("test_audio").innerHTML = audio_html;
-            document.getElementById('audio').volume = 0.5;
-        }
+            document.getElementById('audio').volume = currentVolume;
+        //}
 
 //        $('#audio > source').attr('src', filepath);
 //        $('#audio > embed').attr('src', filepath);
@@ -277,12 +278,15 @@ function JUKEBOX() {
     }
 
     this.autoNext = function() {
-        if (!isShuffling){
+        if (!isShuffling && !isReplaying){
             that.currentSongID = (that.songs.length + that.currentSongID + 1) % that.songs.length;
             that.changeSong(that.songs[ that.currentSongID ]);
         }
-        else {
+        else if (isShuffling && !isReplaying) {
             that.currentSongID = Math.floor(Math.random()*that.songs.length);
+            that.changeSong(that.songs[ that.currentSongID ]);
+        }
+        else {
             that.changeSong(that.songs[ that.currentSongID ]);
         }
     }
@@ -419,102 +423,25 @@ function JUKEBOX() {
         CORE.scene.add(light);
         modelElements.push(light);
 
-        pointLight = new THREE.PointLight(0xffffff, 4, 150);
+        pointLight = new THREE.PointLight(0x661452, 4, 150);
         pointLight.position.set(-30,20,-40);
         CORE.scene.add(pointLight);
         modelElements.push(pointLight);
     }
 
-//    function initMouseControls() {
-//        $('#viewer').mousedown(function (event){
-//            event.preventDefault();
-//
-//            var object;
-//            var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
-//            CORE.projector.unprojectVector(vector, CORE.camera);
-//            var raycaster = new THREE.Raycaster(CORE.camera.position, vector.sub(CORE.camera.position).normalize());
-//            var intersects = raycaster.intersectObjects(CORE.intersectObjects);
-//
-//            // if you clicked on something
-//            if (intersects.length > 0) {
-//                object = intersects[ 0 ].object;
-//                if (object.material.opacity < 0.95 && intersects[ 1 ] !== undefined)
-//                    objectClicked(intersects[ 1 ].object);
-//                else
-//                    objectClicked(object);
-//            }
-//
-//            dragging = true;
-//            prevDrag = vector;
-//            prevDrag.y = 0;
-//        });
-//
-//        $('#viewer').mouseup(function (event){
-//            dragging = false;
-//            prevDrag = null;
-//        });
-//
-//        $('#viewer').mouseout(function (event){
-//            dragging = false;
-//            prevDrag = null;
-//        });
-//
-//        // when we move mouse, this gets called (remember mouse events in class?) - we added listener before
-//        $('#viewer').mousemove(function (event) {
-//            var mouseX = ( event.clientX - windowHalfX ) / 2;
-//            var mouseY = ( event.clientY - windowHalfY ) / 2;
-//
-//            if (dragging)
-//            {
-//                var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
-//                CORE.projector.unprojectVector(vector, CORE.camera);
-//                vector.sub(CORE.camera.position).normalize();
-//                vector.y = 0;
-//
-//                var temp = new THREE.Vector3(0,0,0);
-//                temp.add(vector);
-//
-//                vector.sub(prevDrag);
-//                vector.multiplyScalar(100);
-//
-//                if (vector.x > 0) {
-//                    setvolume(0.1):
-//                }
-//                if (vector.x < 0) {
-//                    setvolume(-0.1);
-//                }
-//                //CORE.camera.position.add(vector);
-//                //CORE.cameraTarget.add(vector);
-//
-//                prevDrag = temp;
-//
-//                //checkDistance();
-//                //updateText();
-//            }
-//        });
-//    }
-
-    function initMouseControls() {
-
-    }
-
     function pushTheButton ( button, mode) {
         if (mode === true)
         {
-//            button.position.set(Math.cos(button.rotation.y) * 1.5, 0, Math.sin(button.rotation.y) * 1.5);
             button.position.x -= Math.sin(button.rotation.y) * 1.5;
             button.position.z -= Math.cos(button.rotation.y) * 1.5;
         }
         else
         {
-//            button.position.set(0,0,0);
             button.position.x += Math.sin(button.rotation.y) * 1.5;
             button.position.z += Math.cos(button.rotation.y) * 1.5;
         }
     }
     function rotateTheButton ( button, mode ) {
-        //mode: true:vol-up, false:vol-down
-//            button.position.set(Math.cos(button.rotation.y) * 1.5, 0, Math.sin(button.rotation.y) * 1.5);
         if (mode) {
             button.rotation.z -= (2*Math.PI)/80;
         }
@@ -524,13 +451,14 @@ function JUKEBOX() {
     }
     function setvolume (vol) {
         if ( (vol+document.getElementById('audio').volume) > 0 && (vol+document.getElementById('audio').volume) < 1 ) {
-            document.getElementById('audio').volume += vol;
+            currentVolume = document.getElementById('audio').volume += vol;
             if (vol < 0) {
                 rotateTheButton(radioVolume, false);
             }
             if (vol > 0) {
                 rotateTheButton(radioVolume, true);
             }
+
         }
 
 
