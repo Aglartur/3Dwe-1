@@ -225,7 +225,7 @@ function CORE() {
 
         modelElements = [];
         updateFcts = [];
-        $('#TV_options').hide();
+        //$('#TV_options').hide();
     }
 
     this.freezeCamera = function(bFreeze){

@@ -240,6 +240,6 @@ function TVObject() {
         updateFcts.push(function(delta, now){
             //mixerPlane.object3d.rotation.y += Math.PI * 2 * delta * 0.1;
         });
-        domElement.show();
+        //domElement.show();
     }
 }
