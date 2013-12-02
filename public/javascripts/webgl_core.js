@@ -72,12 +72,12 @@ function CORE() {
         rendererStats.domElement.style.position = 'absolute';
         rendererStats.domElement.style.left = '0px';
         rendererStats.domElement.style.top   = '80px';
-        document.getElementById('viewer').appendChild( rendererStats.domElement );
+        // document.getElementById('viewer').appendChild( rendererStats.domElement );
 
         stats = new Stats();
         stats.domElement.style.position = 'absolute';
         stats.domElement.style.top = '30px';
-        document.getElementById('viewer').appendChild( stats.domElement );
+        // document.getElementById('viewer').appendChild( stats.domElement );
 
         // to freeze camera press Q, to move camera up R, to move camera down F
         camera_controls = new THREE.FirstPersonControls(this.camera, cameraTarget);

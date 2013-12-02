@@ -9,6 +9,8 @@ function ALBUM() {
         return arguments.callee._singletonInstance;
     arguments.callee._singletonInstance = this;
 
+    var that = this;
+
     // private variables
     var albumFront;
     var albumBack;
@@ -19,6 +21,7 @@ function ALBUM() {
     var floor;
     var light;
 
+    this.currentPhotoID = 0;
 
     //array of pics
         picArray = new Array();
@@ -32,37 +35,45 @@ function ALBUM() {
         picArray.push('hydrangeas.jpg');
 
     var albumLoaded = false;
-    var current = 0;
+    var current1 = 0;
+    var current2 = 1;
 
     var modelElements = [];
 
     this.isLoaded = false;
+
+    this.photos = [];
+
+    this.request = {LOADPHOTOS: 'loadphotos'};
 
     this.load = function ()
     {
         initGeometry();
         initLights();
 
-        // CORE.freezeCamera(true);
-        // CORE.camera.position.set(45, 80, -65);
-        // CORE.camera.rotation.set(-2.09, 0, -Math.PI);
+        CORE.freezeCamera(true);
+        CORE.camera.position.set(45, 80, -65);
+        CORE.camera.rotation.set(-2.09, 0, -Math.PI);
 
-        // currentDirectory = '/home';
-        // openDir('Photos');
+        specialRequest = this.request.LOADPHOTOS;
+        currentDirectory = '/home';
+        openDir('Photos');
 
         this.isLoaded = true;
+
     }
 
     this.unload = function ()
     {
         CORE.disposeSceneElements(modelElements);
 
-        // navigate('/home');
+        navigate('/home');
         this.isLoaded = false;
     }
 
     this.onDocumentMouseDown = function(event){
         event.preventDefault();
+        console.log("CLICKING");
 
         var object;
         var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
@@ -78,19 +89,16 @@ function ALBUM() {
             }
                 
 
-            if (intersects[0].object === frame ) {
-                show_image(intersects[0].object, current++, 25);
+            if (intersects[0].object === frame || intersects[0].object === frame2 ) {
+                flip_image(frame, frame2, current1++, current2++, 25);
             }
-            
-             if (intersects[0].object === frame2 ) {
-                show_image2(intersects[0].object, current++, 25);
-             }   
 
        	}
     }
 
     function initGeometry() {
 
+        console.log("initGeometry");
     	//floor texture
         floorTexture = new THREE.ImageUtils.loadTexture('/images/cover.png', {}, function(){
             CORE.renderer.render(CORE.scene, CORE.camera);
@@ -128,39 +136,6 @@ function ALBUM() {
         frontwallTexture.needsUpdate = true;
 
 
-        //frame texture
-        frameTexture1 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-
-        frameTexture1.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
-        frameTexture1.repeat.set(1, 1);
-        frameTexture1.needsUpdate = true;
-
-        frameTexture2 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-
-        frameTexture2.wrapS = frameTexture2.wrapT = THREE.RepeatWrapping;
-        frameTexture2.repeat.set(1, 1);
-        frameTexture2.needsUpdate = true;
-
-        frameTexture3 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-
-        frameTexture3.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
-        frameTexture3.repeat.set(1, 1);
-        frameTexture3.needsUpdate = true;
-
-        frameTexture4 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[Math.floor((Math.random() * picArray.length))], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-
-        frameTexture4.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
-        frameTexture4.repeat.set(1, 1);
-        frameTexture4.needsUpdate = true;
-
 
 
         //album cover 1
@@ -185,47 +160,6 @@ function ALBUM() {
         CORE.scene.add(albumR);
         CORE.intersectObjects.push(albumR);
         modelElements.push(albumR);
-
-
-        frame =  new THREE.Mesh(
-            new THREE.CubeGeometry(46, 1, 35),
-            new THREE.MeshLambertMaterial({map: frameTexture1, side:THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frame.position.set(0,2,19);
-        frame.castShadow = false;
-        frame.receiveShadow = false;
-        CORE.scene.add(frame);
-        CORE.intersectObjects.push(frame);
-        modelElements.push(frame);
-
-        frame2 = new THREE.Mesh(
-            new THREE.CubeGeometry(46, 1, 35),
-            new THREE.MeshLambertMaterial({map: frameTexture2, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frame2.position.set(0,2,-17);
-        frame2.castShadow = false;
-        frame2.receiveShadow = false;
-        CORE.scene.add(frame2);
-        CORE.intersectObjects.push(frame2);
-        modelElements.push(frame2);
-
-        frame3 = new THREE.Mesh(
-            new THREE.CubeGeometry(46, 1, 35),
-            new THREE.MeshLambertMaterial({map: frameTexture3, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frame3.position.set(0,2,19);
-        frame3.castShadow = false;
-        frame3.receiveShadow = false;
-        CORE.scene.add(frame3);
-        CORE.intersectObjects.push(frame3);
-        modelElements.push(frame3);
-
-        frame4 = new THREE.Mesh(
-            new THREE.CubeGeometry(46, 1, 35),
-            new THREE.MeshLambertMaterial({map: frameTexture4, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frame4.position.set(0,2, -17);
-        frame4.castShadow = false;
-        frame4.receiveShadow = false;
-        CORE.scene.add(frame4);
-        CORE.intersectObjects.push(frame4);
-        modelElements.push(frame4);
 
 
 
@@ -278,8 +212,89 @@ function ALBUM() {
         modelElements.push(wall4);
     }
 
+    this.initPhotos = function() 
+    {
+
+        console.log("initPhotos");
+        //frame texture
+        frameTexture1 = new THREE.ImageUtils.loadTexture(this.photos[0], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        }); 
+
+        frameTexture1.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
+        frameTexture1.repeat.set(1, 1);
+        frameTexture1.needsUpdate = true;
+
+        frameTexture2 = new THREE.ImageUtils.loadTexture(this.photos[1], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        }); 
+
+        frameTexture2.wrapS = frameTexture2.wrapT = THREE.RepeatWrapping;
+        frameTexture2.repeat.set(1, 1);
+        frameTexture2.needsUpdate = true;
+
+        frameTexture3 = new THREE.ImageUtils.loadTexture(this.photos[2], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        }); 
+
+        frameTexture3.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
+        frameTexture3.repeat.set(1, 1);
+        frameTexture3.needsUpdate = true;
+
+        frameTexture4 = new THREE.ImageUtils.loadTexture(this.photos[3], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        }); 
+
+        frameTexture4.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
+        frameTexture4.repeat.set(1, 1);
+        frameTexture4.needsUpdate = true;
+
+
+        frame =  new THREE.Mesh(
+            new THREE.CubeGeometry(46, 1, 35),
+            new THREE.MeshLambertMaterial({map: frameTexture1, side:THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        frame.position.set(0,2,19);
+        frame.castShadow = false;
+        frame.receiveShadow = false;
+        CORE.scene.add(frame);
+        CORE.intersectObjects.push(frame);
+        modelElements.push(frame);
+
+        frame2 = new THREE.Mesh(
+            new THREE.CubeGeometry(46, 1, 35),
+            new THREE.MeshLambertMaterial({map: frameTexture2, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        frame2.position.set(0,2,-17);
+        frame2.castShadow = false;
+        frame2.receiveShadow = false;
+        CORE.scene.add(frame2);
+        CORE.intersectObjects.push(frame2);
+        modelElements.push(frame2);
+
+        frame3 = new THREE.Mesh(
+            new THREE.CubeGeometry(46, 1, 35),
+            new THREE.MeshLambertMaterial({map: frameTexture3, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        frame3.position.set(0,2,19);
+        frame3.castShadow = false;
+        frame3.receiveShadow = false;
+        CORE.scene.add(frame3);
+        CORE.intersectObjects.push(frame3);
+        modelElements.push(frame3);
+
+        frame4 = new THREE.Mesh(
+            new THREE.CubeGeometry(46, 1, 35),
+            new THREE.MeshLambertMaterial({map: frameTexture4, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        frame4.position.set(0,2, -17);
+        frame4.castShadow = false;
+        frame4.receiveShadow = false;
+        CORE.scene.add(frame4);
+        CORE.intersectObjects.push(frame4);
+        modelElements.push(frame4);
+
+
+    }
     function clickAlbum (object, radius)
     {
+        console.log("clickAlbum");
         var angle = 0;
         animateAlbum();
         var startX = object.position.x;
@@ -298,49 +313,35 @@ function ALBUM() {
         }
     }
 
-    function show_image(object, num, radius) {
-        frameTexture3 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[num % picArray.length], {}, function(){
+    function flip_image(object1, object2, num1, num2, radius) {
+        console.log("click frame 1");
+        frameTexture3 = new THREE.ImageUtils.loadTexture(that.photos[num1 % that.photos.length], {}, function(){
             CORE.renderer.render(CORE.scene, CORE.camera);
         }); 
-        object.material = new THREE.MeshLambertMaterial({map: frameTexture3});
+        object1.material = new THREE.MeshLambertMaterial({map: frameTexture3});
+
+        frameTexture4 = new THREE.ImageUtils.loadTexture(that.photos[num2 % that.photos.length], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        }); 
     
+        object2.material = new THREE.MeshLambertMaterial({map: frameTexture4});
+
         var angle = 0;
         animateFrame();
+
         function animateFrame()
         {
             if (angle <= Math.PI)
             {
-                object.position.x = radius - Math.cos(angle) * radius; 
-                object.position.y = Math.sin(angle) * radius + 3;
-                object.rotation.z = -angle;
+                object1.position.x = radius - Math.cos(angle) * radius; 
+                object2.position.x = radius - Math.cos(angle) * radius;
+                object1.position.y = Math.sin(angle) * radius + 3;
+                object2.position.y = Math.sin(angle) * radius + 3;
+                object1.rotation.z = -angle;
+                object2.rotation.z = -angle;
                 angle += Math.PI/18;
                 render();
                 frame3.material = new THREE.MeshLambertMaterial({map: frameTexture3});
-                setTimeout(animateFrame, 10);
-                
-            }
-
-        }
-
-    }
-
-    function show_image2(object, num, radius) {
-        frameTexture4 = new THREE.ImageUtils.loadTexture('/home/Photos/' + picArray[num % picArray.length], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-        object.material = new THREE.MeshLambertMaterial({map: frameTexture4});
-        
-        var angle = 0;
-        animateFrame();
-        function animateFrame()
-        {
-            if (angle <= Math.PI)
-            {
-                object.position.x = radius - Math.cos(angle) * radius; 
-                object.position.y = Math.sin(angle) * radius + 3;
-                object.rotation.z = -angle;
-                angle += Math.PI/18;
-                render();
                 frame4.material = new THREE.MeshLambertMaterial({map: frameTexture4});
                 setTimeout(animateFrame, 10);
                 
