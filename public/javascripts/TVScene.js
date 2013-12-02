@@ -15,7 +15,7 @@ function TVObject() {
     var TV_set, screen;
 
     var video, videoTexture;
-    var play_buttons = [], button_functions = [];
+    var play_panel, play_buttons = [], button_functions = [];
 
     var isPlaying = false;
     var seekValue = 0;
@@ -30,6 +30,9 @@ function TVObject() {
 
     this.load = function()
     {
+        currentDirectory = '/home';
+        openDir('videos');
+
         initOptions();
         initGeometry();
         initLights();
@@ -38,9 +41,6 @@ function TVObject() {
         //CORE.camera.position.set(0, 1.5, -4);
         CORE.camera.position.set(-25, 25, -100);
         CORE.camera.rotation.set(-Math.PI, 0, Math.PI);
-
-        currentDirectory = '/home';
-        openDir('videos');
 
         this.isLoaded = true;
     }
@@ -96,7 +96,7 @@ function TVObject() {
         // if you clicked on something
         if (intersects.length > 0) {
             object = intersects[ 0 ].object;
-            if (object === screen || isButton(object))
+            if (object === play_panel || isButton(object))
                 that.showPlayer();
             else
                 that.hidePlayer();
@@ -175,14 +175,13 @@ function TVObject() {
         CORE.scene.add(light);
         modelElements.push(light);
 
-        pointLight = new THREE.PointLight(0x55557f, 4, 150);
+        pointLight = new THREE.PointLight(0x333333, 4, 150);
         pointLight.position.set(-30,20,-40);
         CORE.scene.add(pointLight);
         modelElements.push(pointLight);
     }
 
     this.renderVideo = function() {
-
         if (video.readyState === video.HAVE_ENOUGH_DATA){
             videoTexture.needsUpdate = true;
         }
@@ -338,6 +337,17 @@ function TVObject() {
                 }
             }
         ];
+
+        play_panel = new THREE.Mesh(
+            new THREE.PlaneGeometry(15.5*BUTTON_WIDTH, 1.7*BUTTON_HEIGHT, 10, 10),
+            new THREE.MeshPhongMaterial({color: 0x555555}));
+        play_panel.receiveShadow = true;
+        play_panel.rotation.y = Math.PI;
+        play_panel.position.set(BASE_X+14, BUTTON_Y, BUTTON_Z+0.1);
+        play_panel.visible = false;
+        CORE.scene.add(play_panel);
+        CORE.intersectObjects.push(play_panel);
+        modelElements.push(play_panel);
 
         for (var i = 0; i < texture_paths.length; i++){
             button_texture = new THREE.ImageUtils.loadTexture('/images/buttons/' + texture_paths[i], {}, function () {
