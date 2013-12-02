@@ -348,6 +348,14 @@ function ALBUM() {
             }
 
         }
+        frameTexture1 = new THREE.ImageUtils.loadTexture(that.photos[num1 *2 % that.photos.length], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        });
+        frameTexture2 = new THREE.ImageUtils.loadTexture(that.photos[num2 *2 % that.photos.length], {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        });
+        object1.material = new THREE.MeshLambertMaterial({map: frameTexture1});
+        object2.material = new THREE.MeshLambertMaterial({map: frameTexture2});
     }
 
   	function initLights() {
