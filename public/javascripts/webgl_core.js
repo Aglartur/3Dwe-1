@@ -130,6 +130,9 @@ function CORE() {
             unloadCurrent();
             JUKEBOX.load();
             document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
+            document.addEventListener('mouseup', JUKEBOX.onDocumentMouseUp, false);
+            document.addEventListener('mouseout', JUKEBOX.onDocumentMouseOut, false);
+            document.addEventListener('mousemove', JUKEBOX.onDocumentMouseMove, false);
             current_window = JUKEBOX;
         }
         if (key === 118 && !ROOM.isLoaded)                         // press V to go to ROOM
