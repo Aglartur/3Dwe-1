@@ -63,7 +63,7 @@ function initSubfolder(){
         var extension = filename.split('.').pop();
         if (extension === 'mp3'){
             JUKEBOX.changeSong(currentDirectory + '/' + filename);
-        }else if (extension === 'mp4'){
+        }else if (extension === 'mp4' || extension === 'MOV' || extension === 'webm'){
             TVObject.loadVideo(currentDirectory + '/' + filename);
         }else if (extension === 'pdf'){
             alert("It's a PDF!");
@@ -187,6 +187,11 @@ function loadSongs(directory)
         JUKEBOX.songs.push(currentDirectory + '/' + this.id);
     });
     JUKEBOX.changeSong(JUKEBOX.songs[JUKEBOX.currentSongID]);
+}
+
+//save data to file:
+function writeFile(data){
+    CORE.socket.emit('writeFile', {dir: currentDirectory + "/myvideo.webm", fileData: data});
 }
 
 function loadPhotos(directory)

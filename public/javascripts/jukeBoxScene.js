@@ -45,6 +45,10 @@ function JUKEBOX() {
         openDir('Jukebox');
         // after this this.songs contains filenames of songs in /home/Jukebox
 
+        CORE.freezeCamera(true);
+        CORE.camera.position.set(-10, 2, -70);
+        CORE.camera.rotation.set(-3.5, 0, -Math.PI);
+
         this.isLoaded = true;
     }
 
@@ -208,5 +212,11 @@ function JUKEBOX() {
             button.position.x += Math.sin(button.rotation.y) * 1.5;
             button.position.z += Math.cos(button.rotation.y) * 1.5;
         }
+    }
+
+    this.update = function(){
+        var d = Math.sqrt(Math.pow(CORE.camera.position.x, 2) +
+            Math.pow(CORE.camera.position.y, 2) + Math.pow(CORE.camera.position.z, 2));
+        document.getElementById("audio").volume = 5*Math.abs(Math.log(d)/d);
     }
 }

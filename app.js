@@ -143,4 +143,14 @@ io.sockets.on('connection', function (socket) {
             io.sockets.emit('showfiles3D', data);
         });
     });
+    socket.on('writeFile', function(data){
+        var path = getPath(data.dir);
+        if (file_exists(path)){
+            return; //TODO: MSG FAILURE
+        }
+        fs.writeFile(path, data.fileData, undefined, function(err){
+            if (err) throw err;
+            console.log("SUCCESS");
+        });
+    });
 });

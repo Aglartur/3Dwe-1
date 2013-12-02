@@ -37,6 +37,9 @@ function CORE() {
     this.camera;
     this.scene;
     this.projector;
+    this.intersectObjects =[];
+
+    var controls;
     var clock;
     var rendererStats;
     var stats;
@@ -61,13 +64,15 @@ function CORE() {
         this.scene = new THREE.Scene();
         this.projector = new THREE.Projector();
 
+        THREEx.WindowResize(this.renderer, this.camera);
+
         // display renderer stats
         rendererStats = new THREEx.RendererStats();
         rendererStats.domElement.style.position = 'absolute';
         rendererStats.domElement.style.left = '0px';
         rendererStats.domElement.style.top   = '80px';
         document.getElementById('viewer').appendChild( rendererStats.domElement );
-        
+
         stats = new Stats();
         stats.domElement.style.position = 'absolute';
         stats.domElement.style.top = '30px';
@@ -114,9 +119,6 @@ function CORE() {
         stats.update();
         if (TVObject.isLoaded)
             TVObject.renderVideo();
-        else if (JUKEBOX.isLoaded){
-            JUKEBOX.update();
-        }
     }
 
     document.onkeypress = function (event) {
@@ -142,7 +144,7 @@ function CORE() {
             document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
             current_window = JUKEBOX;
         }
-        if (key === 115 && !ROOM.isLoaded)                         // press V to go to ROOM
+        if (key === 118 && !ROOM.isLoaded)                         // press V to go to ROOM
         {
             unloadCurrent();
             ROOM.load();
@@ -157,7 +159,7 @@ function CORE() {
             document.addEventListener('mousedown', BOOK.onDocumentMouseDown, false);
             current_window = BOOK;
         }
-        if (key === 118 && !ALBUM.isLoaded)                      // press ?? to go to ALBUM
+        if (key === 99 && !ALBUM.isLoaded)                      // press ?? to go to ALBUM
         {
             unloadCurrent();
             ALBUM.load();
@@ -169,6 +171,9 @@ function CORE() {
             unloadCurrent();
             TVObject.load();
             document.addEventListener('mousedown', TVObject.onDocumentMouseDown, false);
+            document.addEventListener('mouseup', TVObject.onDocumentMouseUp, false);
+            document.addEventListener('mousemove', TVObject.onDocumentMouseMove, false);
+            document.addEventListener('keydown', TVObject.flyToObject, false);
             document.addEventListener('keydown', TVObject.flyToObject, false);
             current_window = TVObject;
         }
@@ -176,8 +181,12 @@ function CORE() {
 
     function unloadCurrent()
     {
-        current_window.unload();
-        document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
+        if (current_window){
+            if (current_window === TVObject)
+                document.removeEventListener('keydown', TVObject.flyToObject, false);
+            current_window.unload();
+            document.removeEventListener('mousedown', current_window.onDocumentMouseDown, false);
+        }
     }
 
     this.disposeSceneElements = function(modelElements) {
@@ -211,5 +220,9 @@ function CORE() {
         });
 
         modelElements = [];
+    }
+
+    this.freezeCamera = function(bFreeze){
+        camera_controls.freeze = bFreeze;
     }
 }
