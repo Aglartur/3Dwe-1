@@ -161,7 +161,7 @@ function CORE() {
             document.addEventListener('mousemove', JUKEBOX.onDocumentMouseMove, false);
             current_window = JUKEBOX;
         }
-        if (key === 115 && !ROOM.isLoaded)                         // press V to go to ROOM
+        if (key === 118 && !ROOM.isLoaded)                         // press V to go to ROOM
         {
             unloadCurrent();
             ROOM.load();
@@ -176,7 +176,7 @@ function CORE() {
             document.addEventListener('mousedown', BOOK.onDocumentMouseDown, false);
             current_window = BOOK;
         }
-        if (key === 118 && !ALBUM.isLoaded)                      // press ?? to go to ALBUM
+        if (key === 112 && !ALBUM.isLoaded)                      // press P to go to ALBUM
         {
             unloadCurrent();
             ALBUM.load();

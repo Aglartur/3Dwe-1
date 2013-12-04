@@ -102,8 +102,11 @@ function JUKEBOX() {
     this.onDocumentMouseDown = function(event){
         event.preventDefault();
 
+        //console.log("HOLYSHIT A MOUSEDOWN EVENT");
+
         var object;
         var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
+        //var vector = new THREE.Vector3(( windowHalfX ) * 2 - 1, -( windowHalfY ) * 2 + 1, 0.5);
         CORE.projector.unprojectVector(vector, CORE.camera);
         var raycaster = new THREE.Raycaster(CORE.camera.position, vector.sub(CORE.camera.position).normalize());
         var intersects = raycaster.intersectObjects(CORE.intersectObjects);

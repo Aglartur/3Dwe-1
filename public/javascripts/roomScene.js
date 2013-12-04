@@ -18,7 +18,22 @@ function ROOM() {
     // variable for table
     var table;
     // variable for black wood texture for the table
-    var balckWoodTexture;
+    var blackWoodTexture;
+
+    // variable for TV stand
+    var tvstandgroup;
+    var tvstandgroup_active = [];
+    var tvstand;
+    var glasscover;
+    var cabinetcover1, cabinetcover2, cabinetcover3;
+    // variable for brown wood texture for the tv stand
+    var brownWoodTexture;
+
+    // variable for coffee table
+    var tablegroup;
+    var tablegroup_active = [];
+    var coffeetable;
+    var leg1, leg2, leg3, leg4;
 
     // make the "room"
     var floor, wall1, wall2, wall3, wall4;
@@ -71,7 +86,7 @@ function ROOM() {
         var lightWoodMaterial = new THREE.MeshLambertMaterial({map: lightWoodTexture});
 
         shelf1 = new THREE.Mesh(
-            new THREE.CubeGeometry(100,5,400),                           // supply size of the cube
+            new THREE.CubeGeometry(50,5,400),                           // supply size of the cube
             new THREE.MeshLambertMaterial({map: lightWoodTexture}));          // supply color of the cube
         shelf1.position.set(500-50, 150, 0);
         shelf1.castShadow = true;
@@ -81,7 +96,7 @@ function ROOM() {
         modelElements.push(shelf1);
 
         shelf2 = new THREE.Mesh(
-            new THREE.CubeGeometry(100,5,400),                           // supply size of the cube
+            new THREE.CubeGeometry(50,5,400),                           // supply size of the cube
             new THREE.MeshLambertMaterial({map: lightWoodTexture}));          // supply color of the cube
         shelf2.position.set(500-50, 200, 0);
         shelf2.castShadow = true;
@@ -91,7 +106,7 @@ function ROOM() {
         modelElements.push(shelf2);
 
         shelf3 = new THREE.Mesh(
-            new THREE.CubeGeometry(100,5,400),                           // supply size of the cube
+            new THREE.CubeGeometry(50,5,400),                           // supply size of the cube
             new THREE.MeshLambertMaterial({map: lightWoodTexture}));          // supply color of the cube
         shelf3.position.set(500-50, 250, 0);
         shelf3.castShadow = true;
@@ -101,7 +116,7 @@ function ROOM() {
         modelElements.push(shelf3);
 
         shelf4 = new THREE.Mesh(
-            new THREE.CubeGeometry(100,5,400),                           // supply size of the cube
+            new THREE.CubeGeometry(50,5,400),                           // supply size of the cube
             new THREE.MeshLambertMaterial({map: lightWoodTexture}));          // supply color of the cube
         shelf4.position.set(500-50, 300, 0);
         shelf4.castShadow = true;
@@ -109,6 +124,72 @@ function ROOM() {
         CORE.scene.add(shelf4);
         CORE.intersectObjects.push(shelf4);
         modelElements.push(shelf4);
+
+        coffeetable = new THREE.Mesh(
+            new THREE.CubeGeometry(200,5,200),                           // supply size of the cube
+            new THREE.MeshLambertMaterial({map: lightWoodTexture}));          // supply color of the cube
+        coffeetable.position.set(0, 80, 0);
+        coffeetable.castShadow = true;
+        coffeetable.receiveShadow = true;
+        //CORE.scene.add(coffeetable);
+        //CORE.intersectObjects.push(coffeetable);
+        //modelElements.push(coffeetable);
+
+        leg1 = new THREE.Mesh(
+            new THREE.CubeGeometry(10,80,10),                           // supply size of the cube
+            new THREE.MeshLambertMaterial({map: lightWoodTexture}));          // supply color of the cube
+        leg1.position.set(80, 40, -80);
+        leg1.castShadow = true;
+        leg1.receiveShadow = true;
+        //CORE.scene.add(leg1);
+        //CORE.intersectObjects.push(leg1);
+        //modelElements.push(leg1);
+
+        leg2 = new THREE.Mesh(
+            new THREE.CubeGeometry(10,80,10),                           // supply size of the cube
+            new THREE.MeshLambertMaterial({map: lightWoodTexture}));          // supply color of the cube
+        leg2.position.set(-80, 40, 80);
+        leg2.castShadow = true;
+        leg2.receiveShadow = true;
+        //CORE.scene.add(leg2);
+        //CORE.intersectObjects.push(leg2);
+        //modelElements.push(leg2);
+
+        leg3 = new THREE.Mesh(
+            new THREE.CubeGeometry(10,80,10),                           // supply size of the cube
+            new THREE.MeshLambertMaterial({map: lightWoodTexture}));          // supply color of the cube
+        leg3.position.set(80, 40, 80);
+        leg3.castShadow = true;
+        leg3.receiveShadow = true;
+        //CORE.scene.add(leg3);
+        //CORE.intersectObjects.push(leg3);
+        //modelElements.push(leg3);
+
+        leg4 = new THREE.Mesh(
+            new THREE.CubeGeometry(10,80,10),                           // supply size of the cube
+            new THREE.MeshLambertMaterial({map: lightWoodTexture}));          // supply color of the cube
+        leg4.position.set(-80, 40, -80);
+        leg4.castShadow = true;
+        leg4.receiveShadow = true;
+        //CORE.scene.add(leg4);
+        //CORE.intersectObjects.push(leg4);
+        //modelElements.push(leg4);
+
+        tablegroup = new THREE.Object3D();
+        tablegroup.rotation.set(0,0,0);
+
+        tablegroup_active.push(coffeetable, leg1, leg2, leg3, leg4);
+        tablegroup.add(coffeetable);
+        tablegroup.add(leg1);
+        tablegroup.add(leg2);
+        tablegroup.add(leg3);
+        tablegroup.add(leg4);
+
+        tablegroup.rotation.set(0, Math.PI/4, 0);
+        tablegroup.position.set(-300, 0 , 300);
+        CORE.scene.add(tablegroup);
+        CORE.intersectObjects.push(tablegroup);
+        modelElements.push(tablegroup);
 
         blackWoodTexture = new THREE.ImageUtils.loadTexture('/images/black-wood.png', {}, function () {
             CORE.renderer.render(CORE.scene, CORE.camera);
@@ -126,6 +207,81 @@ function ROOM() {
         CORE.scene.add(table);
         CORE.intersectObjects.push(table);
         modelElements.push(table);
+
+        brownWoodTexture = new THREE.ImageUtils.loadTexture('/images/Dark-brown-wood.jpg', {}, function () {
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        });
+        brownWoodTexture.wrapS = brownWoodTexture.wrapT = THREE.RepeatWrapping;
+        blackWoodTexture.repeat.set(1, 1);
+        var brownWoodMaterial = new THREE.MeshLambertMaterial({map: brownWoodTexture});
+
+        tvstand = new THREE.Mesh(
+            new THREE.CubeGeometry(50,60,300),                           // supply size of the cube
+            new THREE.MeshLambertMaterial({map: brownWoodTexture}));          // supply color of the cube
+        tvstand.position.set(0, 30, 0);
+        tvstand.castShadow = true;
+        tvstand.receiveShadow = true;
+        //CORE.scene.add(tvstand);
+        //CORE.intersectObjects.push(tvstand);
+        //modelElements.push(tvstand);
+
+        cabinetcover1 = new THREE.Mesh(
+            new THREE.CubeGeometry(5,95,55),                           // supply size of the cube
+            new THREE.MeshLambertMaterial({map: brownWoodTexture}));          // supply color of the cube
+        cabinetcover1.position.set(26, 30, 100);
+        cabinetcover1.rotation.x = Math.PI/2;
+        cabinetcover1.castShadow = true;
+        cabinetcover1.receiveShadow = true;
+        //CORE.scene.add(cabinetcover1);
+        //CORE.intersectObjects.push(cabinetcover1);
+        //modelElements.push(cabinetcover1);
+
+        cabinetcover2 = new THREE.Mesh(
+            new THREE.CubeGeometry(5,95,55),                           // supply size of the cube
+            new THREE.MeshLambertMaterial({map: brownWoodTexture}));          // supply color of the cube
+        cabinetcover2.position.set(26, 30, 0);
+        cabinetcover2.rotation.x = Math.PI/2;
+        cabinetcover2.castShadow = true;
+        cabinetcover2.receiveShadow = true;
+        //CORE.scene.add(cabinetcover2);
+        //CORE.intersectObjects.push(cabinetcover2);
+        //modelElements.push(cabinetcover2);
+
+        cabinetcover3 = new THREE.Mesh(
+            new THREE.CubeGeometry(5,95,55),                           // supply size of the cube
+            new THREE.MeshLambertMaterial({map: brownWoodTexture}));          // supply color of the cube
+        cabinetcover3.position.set(26, 30, -100);
+        cabinetcover3.rotation.x = Math.PI/2;
+        cabinetcover3.castShadow = true;
+        cabinetcover3.receiveShadow = true;
+        //CORE.scene.add(cabinetcover3);
+        //CORE.intersectObjects.push(cabinetcover3);
+        //modelElements.push(cabinetcover3);
+
+        glasscover = new THREE.Mesh(
+            new THREE.CubeGeometry(55,2,305),                           // supply size of the cube
+            new THREE.MeshPhongMaterial({color: 0x000000, opacity: 0.2}));          // supply color of the cube
+        glasscover.position.set(0, 62, 2.5);
+        glasscover.castShadow = true;
+        glasscover.receiveShadow = true;
+        //CORE.scene.add(glasscover);
+        //CORE.intersectObjects.push(glasscover);
+        //modelElements.push(glasscover);
+
+        tvstandgroup = new THREE.Object3D();
+        tvstandgroup.rotation.set(0,0,0);
+
+        tvstandgroup_active.push(tvstand, cabinetcover1, cabinetcover2, cabinetcover3);
+        tvstandgroup.add(tvstand);
+        tvstandgroup.add(cabinetcover1);
+        tvstandgroup.add(cabinetcover2);
+        tvstandgroup.add(cabinetcover3);
+
+        tvstandgroup.rotation.set(0, -Math.PI/2, 0);
+        tvstandgroup.position.set(0, 0 , -500+25);
+        CORE.scene.add(tvstandgroup);
+        CORE.intersectObjects.push(tvstandgroup);
+        modelElements.push(tvstandgroup);
 
         floorTexture = new THREE.ImageUtils.loadTexture('/images/floor-texture.jpg', {}, function () {
             CORE.renderer.render(CORE.scene, CORE.camera);
@@ -186,7 +342,7 @@ function ROOM() {
     function initLights() {
         light = new THREE.SpotLight();
         light.position.set( 0, 800, 0 );
-        light.intensity = 2.0;
+        light.intensity = 4.0;
         light.castShadow = true;
         CORE.scene.add(light);
         modelElements.push(light);
