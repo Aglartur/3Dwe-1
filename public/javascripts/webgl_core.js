@@ -122,20 +122,20 @@ function CORE() {
 
     document.onkeypress = function (event) {
         var key = event.keyCode ? event.keyCode : event.which;
-        if (key === 109 && !EMPTY.isLoaded)                     // press M to go to EMPTY
-        {
-            unloadCurrent();
-            EMPTY.load();
-            document.addEventListener('mousedown', EMPTY.onDocumentMouseDown, false);
-            current_window = EMPTY;
-        }
-        if (key === 98 && !SAMPLE.isLoaded)                     // press B to go to SAMPLE
-        {
-            unloadCurrent();
-            SAMPLE.load();
-            document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
-            current_window = SAMPLE;
-        }
+//        if (key === 109 && !EMPTY.isLoaded)                     // press M to go to EMPTY
+//        {
+//            unloadCurrent();
+//            EMPTY.load();
+//            document.addEventListener('mousedown', EMPTY.onDocumentMouseDown, false);
+//            current_window = EMPTY;
+//        }
+//        if (key === 98 && !SAMPLE.isLoaded)                     // press B to go to SAMPLE
+//        {
+//            unloadCurrent();
+//            SAMPLE.load();
+//            document.addEventListener('mousedown', SAMPLE.onDocumentMouseDown, false);
+//            current_window = SAMPLE;
+//        }
 //        if (key === 32 && !JUKEBOX.isLoaded)                      // press Space to go to JUKEBOX
 //        {
 //            unloadCurrent();
@@ -178,13 +178,13 @@ function CORE() {
 //            document.addEventListener('mousedown', BOOK.onDocumentMouseDown, false);
 //            current_window = BOOK;
 //        }
-        if (key === 99 && !ALBUM.isLoaded)                      // press ?? to go to ALBUM
-        {
-            unloadCurrent();
-            ALBUM.load();
-            document.addEventListener('mousedown', ALBUM.onDocumentMouseDown, false);
-            current_window = ALBUM;
-        }
+//        if (key === 99 && !ALBUM.isLoaded)                      // press ?? to go to ALBUM
+//        {
+//            unloadCurrent();
+//            ALBUM.load();
+//            document.addEventListener('mousedown', ALBUM.onDocumentMouseDown, false);
+//            current_window = ALBUM;
+//        }
 //        if (key === 116 && !TVObject.isLoaded)                     // press T to go to TV
 //        {
 //            unloadCurrent();
@@ -196,13 +196,13 @@ function CORE() {
 //            document.addEventListener('keydown', TVObject.flyToObject, false);
 //            current_window = TVObject;
 //        }
-        if (key === 101 && !EXPLORER.isLoaded)
-        {
-            unloadCurrent();
-            EXPLORER.load();
-            document.addEventListener('mousedown', EXPLORER.onDocumentMouseDown, false);
-            current_window = EXPLORER;
-        }
+//        if (key === 101 && !EXPLORER.isLoaded)
+//        {
+//            unloadCurrent();
+//            EXPLORER.load();
+//            document.addEventListener('mousedown', EXPLORER.onDocumentMouseDown, false);
+//            current_window = EXPLORER;
+//        }
     }
 
     function unloadCurrent()
