@@ -54,7 +54,6 @@ function JUKEBOX() {
         var audio_html = '<audio controls id="audio" onended="JUKEBOX.autoNext()"><source id="change_audio" src="' + this.songs[this.currentSongID] + '" type="audio/mpeg"><embed height="50" width="100" src="' + this.songs[this.currentSongID] + '"></audio>' ;
         document.getElementById("test_audio").innerHTML = audio_html;
         document.getElementById('audio').volume = 0.5;
-        console.log("Initializing volume to: " + document.getElementById('audio').volume);
         currentVolume = document.getElementById('audio').volume;
 
         CORE.scene.add(that.group);
@@ -69,7 +68,7 @@ function JUKEBOX() {
     {
         if (socketBusy)
         {
-            console.log("I'm busy, photo album!!!");
+            console.log("I'm busy, jukebox!!!");
             setTimeout(tryLoadSongs, 300);
         }
         else
@@ -191,7 +190,6 @@ function JUKEBOX() {
 
     this.onDocumentMouseUp = function(event){
         event.preventDefault();
-        console.log("DRAG END");
         dragging = false;
         prevDrag = null;
 
@@ -222,8 +220,6 @@ function JUKEBOX() {
 
             vector.sub(prevDrag);
             vector.multiplyScalar(5);  // seems to work ok as long as it is positive
-
-//            console.log(vector.z);
 
             // WORKAROUND: changed to vector.z, because the Jukebox is rotated 90 degrees, need to fix that so it would be generic.
 

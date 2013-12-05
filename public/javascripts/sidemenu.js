@@ -9,7 +9,7 @@ var specialRequest = "";
 var socketBusy = false;
 
 window.onload = function() {
-    CORE.socket = io.connect('http://localhost:3000'); //initialize socket io on local server
+//    CORE.socket = io.connect('http://localhost:3000'); //initialize socket io on local server
 
     currentDirectory = $('.h_node').last().attr('id');
 

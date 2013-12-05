@@ -49,6 +49,8 @@ function CORE() {
 
 
     this.init = function() {
+        CORE.socket = io.connect('http://localhost:3000'); //initialize socket io on local server
+
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize($('#viewer').width(), $('#viewer').height());    // take up entire space
         this.renderer.shadowMapEnabled = true;                           // enable shadows
@@ -88,9 +90,10 @@ function CORE() {
         this.renderer._microCache = new MicroCache();
 
         // setting and loading the current window
-        current_window = SAMPLE;
-        current_window.load();
-        document.addEventListener('mousedown', current_window.onDocumentMouseDown, false);
+        loadRoom();
+//        current_window = SAMPLE;
+//        current_window.load();
+//        document.addEventListener('mousedown', current_window.onDocumentMouseDown, false);
     }
 
     this.loadModel = function ( geometry, materials, x, y, z, clickable) {
@@ -118,6 +121,31 @@ function CORE() {
 //        stats.update();
         if (TVObject.isLoaded)
             TVObject.renderVideo();
+    }
+
+    function loadRoom()
+    {
+        ROOM.load();
+        TVObject.load();
+        JUKEBOX.load();
+        ALBUM.load();
+        document.addEventListener('mousedown', ROOM.onDocumentMouseDown, false);
+
+        document.addEventListener('mousedown', TVObject.onDocumentMouseDown, false);
+        document.addEventListener('mouseup', TVObject.onDocumentMouseUp, false);
+        document.addEventListener('mousemove', TVObject.onDocumentMouseMove, false);
+        document.addEventListener('keydown', TVObject.flyToObject, false);
+        document.addEventListener('keydown', TVObject.flyToObject, false);
+
+        document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
+        document.addEventListener('mouseout', JUKEBOX.onDocumentMouseOut, false);
+        document.addEventListener('mouseup', JUKEBOX.onDocumentMouseUp, false);
+        document.addEventListener('mousemove', JUKEBOX.onDocumentMouseMove, false);
+
+        document.addEventListener('mousedown', ALBUM.onDocumentMouseDown, false);
+
+        controls.movementSpeed = 50;
+        current_window = ROOM;
     }
 
     document.onkeypress = function (event) {

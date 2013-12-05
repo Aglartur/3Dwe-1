@@ -82,7 +82,6 @@ function ALBUM() {
 
     this.onDocumentMouseDown = function(event){
         event.preventDefault();
-        console.log("CLICKING");
 
         var object;
         var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
