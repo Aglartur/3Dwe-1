@@ -6,6 +6,7 @@
 
 var currentDirectory;
 var specialRequest = "";
+var socketBusy = false;
 
 window.onload = function() {
     CORE.socket = io.connect('http://localhost:3000'); //initialize socket io on local server
@@ -181,12 +182,17 @@ $("li .create_directory").click(function(e){
 function loadSongs(directory)
 {
     console.log("loading songs:");
+    console.log(specialRequest);
     var collection = $('#folder_contents > .subfile');
     console.log(collection.length);
     collection.each(function(){
         JUKEBOX.songs.push(currentDirectory + '/' + this.id);
     });
     JUKEBOX.changeSong(JUKEBOX.songs[JUKEBOX.currentSongID]);
+    specialRequest = '';
+    navigate('/home');
+    socketBusy = false;
+    console.log(specialRequest);
 }
 
 //save data to file:
@@ -197,6 +203,7 @@ function writeFile(data){
 function loadPhotos(directory)
 {
     console.log("loading photos:");
+    console.log(specialRequest);
     var collection = $('#folder_contents > .subfile');
     console.log(collection.length);
     collection.each(function(){
@@ -204,5 +211,8 @@ function loadPhotos(directory)
     });
     console.log(ALBUM.photos);
     ALBUM.initPhotos();
-
+    specialRequest = '';
+    navigate('/home');
+    socketBusy = false;
+    console.log(specialRequest);
 }

@@ -42,6 +42,9 @@ function BOOK() {
     {
         CORE.disposeSceneElements(modelElements);
 
+        currentPage = 10;
+
+
         this.isLoaded = false;
     }
 
@@ -59,15 +62,15 @@ function BOOK() {
             object = intersects[ 0 ].object;
             if (object === pageRight1)
             {
-                initPDF(pageLeft1, currentPage++);
-                initPDF(pageRight2, currentPage++);
+//                initPDF(pageLeft1, currentPage++);
+//                initPDF(pageRight2, currentPage++);
                 flipPage(pageRight1);
+//                flipPage(pageLeft1);
+            }
+            if (object === pageLeft1)
+            {
                 flipPage(pageLeft1);
             }
-//            if (object === pageLeft1)
-//            {
-//                initPDF(pageRight2, 3);
-//            }
             if (object === pageRight2)
             {
                 initPDF(pageLeft2, currentPage++);
@@ -88,6 +91,7 @@ function BOOK() {
         floor.position.y = -25;                                   // move it a little, to match bottom of the cube
         CORE.scene.add(floor);
         modelElements.push(floor);
+
     }
 
     function initLights() {
@@ -106,13 +110,23 @@ function BOOK() {
         var canvasMaterial = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide});
 
         object.material = canvasMaterial;
+
+        if (object === pageRight1)
+        {
+            initPDF(pageLeft1, currentPage++);
+        }
+        else if (object === pageLeft1)
+        {
+            initPDF(pageRight2, currentPage++);
+        }
+
     }
 
     function initPDF(object, pageNumber) {
         PDFJS.getDocument('home/pdfs/crackcode.pdf').then(function(pdf) {
             // Using promise to fetch the page
             pdf.getPage(pageNumber).then(function(page) {
-                var scale = 1;
+                var scale = 3;
                 var viewport = page.getViewport(scale);
 
                 var canvas = document.createElement('canvas');
@@ -142,7 +156,7 @@ function BOOK() {
 
     function initPages(canvas)
     {
-        var coverTexture = new THREE.ImageUtils.loadTexture('/images/bookCover.jpg', {}, function () {
+        var coverTexture = new THREE.ImageUtils.loadTexture('/images/bookCover_small.jpg', {}, function () {
             CORE.renderer.render(CORE.scene, CORE.camera);
         });
         coverTexture.wrapS = coverTexture.wrapT = THREE.RepeatWrapping;
@@ -155,7 +169,6 @@ function BOOK() {
         pageRight1.rotation.x = -Math.PI / 2;                    // make it horizontal, by default planes are vertical
         pageRight1.rotation.z = Math.PI;
         pageRight1.castShadow = true;
-        pageRight1.receiveShadow = true;
         pageRight1.scale.set(0.1, 0.1, 0.1);
         CORE.scene.add(pageRight1);
         CORE.intersectObjects.push(pageRight1);
@@ -168,7 +181,6 @@ function BOOK() {
         pageLeft1.rotation.y = Math.PI;                         // since it is left page, it need to display inverted
         pageLeft1.rotation.z = Math.PI;
         pageLeft1.castShadow = true;
-        pageLeft1.receiveShadow = true;
         pageLeft1.scale.set(0.1, 0.1, 0.1);
         CORE.scene.add(pageLeft1);
         CORE.intersectObjects.push(pageLeft1);
@@ -192,7 +204,6 @@ function BOOK() {
         pageLeft2.rotation.y = Math.PI;                         // since it is left page, it need to display inverted
         pageLeft2.rotation.z = Math.PI;
         pageLeft2.castShadow = true;
-        pageLeft2.receiveShadow = true;
         pageLeft2.scale.set(0.1, 0.1, 0.1);
         CORE.scene.add(pageLeft2);
         CORE.intersectObjects.push(pageLeft2);
@@ -204,6 +215,9 @@ function BOOK() {
 
     function flipPage(object) {
         var animation = true;
+
+        var angle = 0;
+        var initPosX = object.position.x;
         var initPosY = object.position.y;
         var initRotY = object.rotation.y;
 
@@ -212,11 +226,31 @@ function BOOK() {
 
         function animateFlip()
         {
-            if (animation === true)
+            if (animation === true && object === pageRight1)
             {
-                object.rotation.y += Math.PI / 40;
-                object.position.x += 1.5 * object.geometry.width * object.scale.x / 40;
-                object.position.y = initPosY + Math.sin(object.rotation.y);
+                object.position.x = initPosX + Math.sin(object.rotation.y / 2) * object.geometry.width * object.scale.x;
+                object.position.y = initPosY + Math.cos(object.rotation.y - Math.PI / 2) * object.geometry.width / 2 * object.scale.x;
+                angle += Math.PI / 37;
+                object.rotation.y = initRotY + angle;
+
+                pageLeft1.position.x = initPosX + Math.sin(object.rotation.y / 2) * object.geometry.width * object.scale.x;
+                pageLeft1.position.y = initPosY + Math.cos(object.rotation.y - Math.PI / 2) * object.geometry.width / 2 * object.scale.x;
+                pageLeft1.rotation.y = Math.PI + initRotY + angle;
+
+                setTimeout(animateFlip, 25);
+            }
+
+            if (animation === true && object === pageLeft1)
+            {
+                angle -= Math.PI / 37;
+                object.rotation.y = initRotY + angle;
+                object.position.x = initPosX + Math.sin(object.rotation.y / 2) * object.geometry.width * object.scale.x;
+                object.position.y = initPosY - Math.cos(object.rotation.y - Math.PI / 2) * object.geometry.width / 2 * object.scale.x;
+
+                pageRight1.position.x = initPosX + Math.sin(object.rotation.y / 2) * object.geometry.width * object.scale.x;
+                pageRight1.position.y = initPosY - Math.cos(object.rotation.y - Math.PI / 2) * object.geometry.width / 2 * object.scale.x;
+                pageRight1.rotation.y = Math.PI + initRotY + angle;
+
                 setTimeout(animateFlip, 25);
             }
         }
@@ -224,8 +258,20 @@ function BOOK() {
         function stopAnimation()
         {
             animation = false;
-            object.rotation.y = initRotY + Math.PI;
-            object.position.y = 20 - initPosY;
+            if (object === pageRight1)
+            {
+                object.rotation.y = Math.PI;
+                object.position.y = 20 - initPosY;
+                pageLeft1.rotation.y = 0;
+                pageLeft1.position.y = object.position.y + 1;
+            }
+            if (object === pageLeft1)
+            {
+                object.rotation.y = Math.PI;
+                object.position.y = 20 - initPosY;
+                pageRight1.rotation.y = 0;
+                pageRight1.position.y = object.position.y + 1;
+            }
         }
     }
 }

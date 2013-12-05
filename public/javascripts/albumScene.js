@@ -14,22 +14,29 @@ function ALBUM() {
     // private variables
     var albumFront;
     var albumBack;
-    var frameRight1;
-    var frameLeft1;
-    var frameRight2;
-    var frameLeft2;
+    var frameLeftTop;
+    var frameLeftBottom;
+    var frameRightTop;
+    var frameRightBottom;
     var floor;
     var light;
+
+    var textureLeftTop;
+    var textureLeftBottom;
+    var textureRightTop;
+    var textureRightBottom;
+
+    var prevAction = 'forward';
 
     this.currentPhotoID = 0;
 
     var albumLoaded = false;
-    var current1 = 0;
-    var current2 = 1;
+    var currentLeftTop = 0;
 
     var modelElements = [];
 
     this.isLoaded = false;
+    this.group = new THREE.Object3D();
 
     this.photos = [];
 
@@ -40,16 +47,29 @@ function ALBUM() {
         initGeometry();
         initLights();
 
-        CORE.freezeCamera(true);
-        CORE.camera.position.set(45, 80, -65);
-        CORE.camera.rotation.set(-2.09, 0, -Math.PI);
+        CORE.scene.add(that.group);
+        that.group.position.set(-310, 83, 265);
+        that.group.rotation.y = - Math.PI / 4;
 
-        specialRequest = this.request.LOADPHOTOS;
-        currentDirectory = '/home';
-        openDir('Photos');
+        tryLoadPhotos();
 
         this.isLoaded = true;
+    }
 
+    function tryLoadPhotos ()
+    {
+        if (socketBusy)
+        {
+            console.log("I'm busy, photo album!!!");
+            setTimeout(tryLoadPhotos, 500);
+        }
+        else
+        {
+            socketBusy = true;
+            specialRequest = that.request.LOADPHOTOS;
+            currentDirectory = '/home';
+            openDir('Photos/numtiles');
+        }
     }
 
     this.unload = function ()
@@ -74,338 +94,224 @@ function ALBUM() {
         if (intersects.length > 0) {
 
         	if (intersects[0].object === albumL) {
-                clickAlbum(intersects[0].object, 25);
+                clickAlbum(intersects[0].object, 35);
             }
                 
 
-            if (intersects[0].object === frame || intersects[0].object === frame2 ) {
-                flip_image(frame, frame2, current1++, current2++, 25);
+            if (intersects[0].object === frameLeftTop || intersects[0].object === frameLeftBottom ) {
+                currentLeftTop = (that.photos.length + currentLeftTop - 4) % that.photos.length;
+                console.log(currentLeftTop);
+                flip_image(false, 25);
             }
 
-            if (intersects[0].object === frame3 || intersects[0].object === frame4) {
-                flip_back(frame3, frame4, current1++, current2++, 25);
+            if (intersects[0].object === frameRightTop || intersects[0].object === frameRightBottom) {
+                currentLeftTop = (currentLeftTop + 4) % that.photos.length;
+                console.log(currentLeftTop);
+                flip_image(true, 25);
             }
 
        	}
     }
 
     function initGeometry() {
+        var loader = new THREE.JSONLoader();
+        var callbackModel   = function( geometry, materials ) {
+            albumL = CORE.loadModel( geometry, materials, 0, 4, 0, true);
+            albumL.scale.set(2,2,2);
+            albumL.rotation.z = Math.PI;
 
-        console.log("initGeometry");
-    	//floor texture
-        floorTexture = new THREE.ImageUtils.loadTexture('/images/cover.png', {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
+            modelElements.push(albumL);
+            that.group.add(albumL);
+        };
+        loader.load( "obj/album-cover-left.js", callbackModel );
 
-        floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-        floorTexture.repeat.set(1, 1);
-        floorTexture.needsUpdate = true;
-
-        //album texture
-        albumTexture = new THREE.ImageUtils.loadTexture('/images/leather.png', {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-
-        albumTexture.wrapS = albumTexture.wrapT = THREE.RepeatWrapping;
-        albumTexture.repeat.set(1, 1);
-        albumTexture.needsUpdate = true;
-
-        //sidewall texture
-        sidewallTexture = new THREE.ImageUtils.loadTexture('/images/bluewall.png', {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-
-        sidewallTexture.wrapS = sidewallTexture.wrapT = THREE.RepeatWrapping;
-        sidewallTexture.repeat.set(1, 1);
-        sidewallTexture.needsUpdate = true;    
-
-        //frontwall texture
-        frontwallTexture = new THREE.ImageUtils.loadTexture('/images/frontwall.png', {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-
-        frontwallTexture.wrapS = frontwallTexture.wrapT = THREE.RepeatWrapping;
-        frontwallTexture.repeat.set(1, 1);
-        frontwallTexture.needsUpdate = true;
-
-
-
-
-        //album cover 1
-        albumL = new THREE.Mesh(
-            new THREE.CubeGeometry(50, 3, 75),
-            new THREE.MeshLambertMaterial({map: albumTexture, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        albumL.position.set(0,5,0);
-        albumL.castShadow = false;
-        albumL.receiveShadow = false;
-        CORE.scene.add(albumL);
-        CORE.intersectObjects.push(albumL);
-        modelElements.push(albumL);
-
-
-       //album cover 2
-        albumR = new THREE.Mesh(
-            new THREE.CubeGeometry(50, 3, 75),
-            new THREE.MeshLambertMaterial({map: albumTexture, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        albumR.position.set(0,0,0);
-        albumR.castShadow = false;
-        albumR.receiveShadow = false;
-        CORE.scene.add(albumR);
-        CORE.intersectObjects.push(albumR);
-        modelElements.push(albumR);
-
-
-
-        // making a floor - just a plane 500x500, with 10 width/height segments - they affect lightning/reflection I believe
-        floor = new THREE.Mesh(
-            new THREE.PlaneGeometry(1024, 1024, 10, 10),
-            new THREE.MeshLambertMaterial({map: floorTexture, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));    // color
-        floor.receiveShadow = true;
-        floor.rotation.x = -Math.PI / 2;                    // make it horizontal, by default planes are vertical
-        floor.position.y = -25;                                   // move it a little, to match bottom of the cube
-        CORE.scene.add(floor);
-        modelElements.push(floor);
-
-        // since we will be adding similar walls, we can reuse the geometry and material
-        var wallGeometry = new THREE.PlaneGeometry(1024, 1024, 10, 10);
-        var sidewallMaterial = new THREE.MeshPhongMaterial({map: sidewallTexture, side: THREE.DoubleSide, transparent: true, opacity: 1.0});
-        var frontwallMaterial = new THREE.MeshPhongMaterial({map: frontwallTexture, side: THREE.DoubleSide, transparent: true, opacity: 1.0});
-
-
-        // here is a wall, by default planes are vertical
-        wall1 = new THREE.Mesh(wallGeometry, sidewallMaterial);
-        wall1.receiveShadow = true;
-        wall1.position.z = -250;                // move it back
-        CORE.scene.add(wall1);
-        modelElements.push(wall1);
-
-        // here is a wall, by default planes are vertical
-        wall2 = new THREE.Mesh(wallGeometry, sidewallMaterial);
-        wall2.receiveShadow = true;
-        wall2.rotation.y = Math.PI / 2;         // rotate to get perpendicular wall
-        wall2.position.x = -250;                // move it left
-        CORE.scene.add(wall2);
-        modelElements.push(wall2);
-
-        // here is a wall, by default planes are vertical
-        wall3 = new THREE.Mesh(wallGeometry, sidewallMaterial);
-        wall3.position.x = 250;                 // move it right
-        wall3.rotation.y = -Math.PI / 2;       // rotate to get perpendicular wall
-        wall3.receiveShadow = false;
-        CORE.scene.add(wall3);
-        modelElements.push(wall3);
-
-        // here is a wall, by default planes are vertical
-        wall4 = new THREE.Mesh(wallGeometry, frontwallMaterial);
-        wall4.position.z = 250;                 // move it front
-        wall4.rotation.y = Math.PI;             // rotate it 180 degrees, so the "front" will face towards us,
-        // otherwise we will "look through" the plane
-        wall4.receiveShadow = false;
-        CORE.scene.add(wall4);
-        modelElements.push(wall4);
+        var callbackModel   = function( geometry, materials ) {
+            albumR = CORE.loadModel( geometry, materials, 0, -2, 0, true);
+            albumR.scale.set(2,2,2);
+            modelElements.push(albumR);
+            that.group.add(albumR);
+        };
+        loader.load( "obj/album-cover-right.js", callbackModel );
     }
 
     this.initPhotos = function() 
     {
-
+        currentLeftTop = -2;
         console.log("initPhotos");
         //frame texture
-        frameTexture1 = new THREE.ImageUtils.loadTexture(this.photos[0], {}, function(){
+        textureLeftTop = new THREE.ImageUtils.loadTexture(getPhoto(0), {}, function(){
             CORE.renderer.render(CORE.scene, CORE.camera);
         }); 
 
-        frameTexture1.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
-        frameTexture1.repeat.set(1, 1);
-        frameTexture1.needsUpdate = true;
+        textureLeftTop.wrapS = textureLeftTop.wrapT = THREE.RepeatWrapping;
+        textureLeftTop.repeat.set(1, 1);
+        textureLeftTop.needsUpdate = true;
 
-        frameTexture2 = new THREE.ImageUtils.loadTexture(this.photos[1], {}, function(){
+        textureLeftBottom = new THREE.ImageUtils.loadTexture(getPhoto(1), {}, function(){
             CORE.renderer.render(CORE.scene, CORE.camera);
         }); 
 
-        frameTexture2.wrapS = frameTexture2.wrapT = THREE.RepeatWrapping;
-        frameTexture2.repeat.set(1, 1);
-        frameTexture2.needsUpdate = true;
+        textureLeftBottom.wrapS = textureLeftBottom.wrapT = THREE.RepeatWrapping;
+        textureLeftBottom.repeat.set(1, 1);
+        textureLeftBottom.needsUpdate = true;
 
-        frameTexture3 = new THREE.ImageUtils.loadTexture(this.photos[2], {}, function(){
+        textureRightTop = new THREE.ImageUtils.loadTexture(getPhoto(2), {}, function(){
             CORE.renderer.render(CORE.scene, CORE.camera);
         }); 
 
-        frameTexture3.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
-        frameTexture3.repeat.set(1, 1);
-        frameTexture3.needsUpdate = true;
+        textureRightTop.wrapS = textureLeftTop.wrapT = THREE.RepeatWrapping;
+        textureRightTop.repeat.set(1, 1);
+        textureRightTop.needsUpdate = true;
 
-        frameTexture4 = new THREE.ImageUtils.loadTexture(this.photos[3], {}, function(){
+        textureRightBottom = new THREE.ImageUtils.loadTexture(getPhoto(3), {}, function(){
             CORE.renderer.render(CORE.scene, CORE.camera);
         }); 
 
-        frameTexture4.wrapS = frameTexture1.wrapT = THREE.RepeatWrapping;
-        frameTexture4.repeat.set(1, 1);
-        frameTexture4.needsUpdate = true;
+        textureRightBottom.wrapS = textureLeftTop.wrapT = THREE.RepeatWrapping;
+        textureRightBottom.repeat.set(1, 1);
+        textureRightBottom.needsUpdate = true;
 
 
-        frame =  new THREE.Mesh(
+        frameLeftTop =  new THREE.Mesh(
             new THREE.CubeGeometry(46, 1, 35),
-            new THREE.MeshLambertMaterial({map: frameTexture1, side:THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frame.position.set(0,2,19);
-        frame.castShadow = false;
-        frame.receiveShadow = false;
-        CORE.scene.add(frame);
-        CORE.intersectObjects.push(frame);
-        modelElements.push(frame);
+            new THREE.MeshLambertMaterial({map: textureLeftTop, side:THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        frameLeftTop.position.set(0,1,19);
+        frameLeftTop.rotation.z = Math.PI;
+        frameLeftTop.castShadow = false;
+        frameLeftTop.receiveShadow = false;
+//        CORE.scene.add(frameLeftTop);
+        CORE.intersectObjects.push(frameLeftTop);
+        modelElements.push(frameLeftTop);
+        that.group.add(frameLeftTop);
 
-        frame2 = new THREE.Mesh(
+        frameLeftBottom = new THREE.Mesh(
             new THREE.CubeGeometry(46, 1, 35),
-            new THREE.MeshLambertMaterial({map: frameTexture2, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frame2.position.set(0,2,-17);
-        frame2.castShadow = false;
-        frame2.receiveShadow = false;
-        CORE.scene.add(frame2);
-        CORE.intersectObjects.push(frame2);
-        modelElements.push(frame2);
+            new THREE.MeshLambertMaterial({map: textureLeftBottom, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        frameLeftBottom.position.set(0,1,-17);
+        frameLeftBottom.rotation.z = Math.PI;
+        frameLeftBottom.castShadow = false;
+        frameLeftBottom.receiveShadow = false;
+//        CORE.scene.add(frameLeftBottom);
+        CORE.intersectObjects.push(frameLeftBottom);
+        modelElements.push(frameLeftBottom);
+        that.group.add(frameLeftBottom);
 
-        frame3 = new THREE.Mesh(
+        frameRightTop = new THREE.Mesh(
             new THREE.CubeGeometry(46, 1, 35),
-            new THREE.MeshLambertMaterial({map: frameTexture3, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frame3.position.set(0,2,19);
-        frame3.castShadow = false;
-        frame3.receiveShadow = false;
-        CORE.scene.add(frame3);
-        CORE.intersectObjects.push(frame3);
-        modelElements.push(frame3);
+            new THREE.MeshLambertMaterial({map: textureRightTop, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        frameRightTop.position.set(0,2,19);
+        frameRightTop.rotation.z = Math.PI;
+        frameRightTop.castShadow = false;
+        frameRightTop.receiveShadow = false;
+//        CORE.scene.add(frameRightTop);
+        CORE.intersectObjects.push(frameRightTop);
+        modelElements.push(frameRightTop);
+        that.group.add(frameRightTop);
 
-        frame4 = new THREE.Mesh(
+        frameRightBottom = new THREE.Mesh(
             new THREE.CubeGeometry(46, 1, 35),
-            new THREE.MeshLambertMaterial({map: frameTexture4, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frame4.position.set(0,2, -17);
-        frame4.castShadow = false;
-        frame4.receiveShadow = false;
-        CORE.scene.add(frame4);
-        CORE.intersectObjects.push(frame4);
-        modelElements.push(frame4);
-
-
+            new THREE.MeshLambertMaterial({map: textureRightBottom, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        frameRightBottom.position.set(0,2, -17);
+        frameRightBottom.rotation.z = Math.PI;
+        frameRightBottom.castShadow = false;
+        frameRightBottom.receiveShadow = false;
+//        CORE.scene.add(frameRightBottom);
+        CORE.intersectObjects.push(frameRightBottom);
+        modelElements.push(frameRightBottom);
+        that.group.add(frameRightBottom);
     }
     function clickAlbum (object, radius)
     {
         console.log("clickAlbum");
-        var angle = 0;
+        var angle = Math.PI;
         animateAlbum();
         var startX = object.position.x;
         var startY = object.position.y;
         function animateAlbum()
         {
-            if (angle <= Math.PI)
+            if (angle >= 0)
             {
-                object.position.x = radius - Math.cos(angle) * radius; 
+                object.position.x = radius + Math.cos(angle) * radius;
                 object.position.y = Math.sin(angle) * radius;
                 object.rotation.z = -angle;
-                angle += Math.PI/18;
-                render();
+                angle -= Math.PI/18;
                 setTimeout(animateAlbum, 10);
+            }
+            else
+            {
+                object.position.y = -2;
             }
         }
     }
 
-    function flip_image(object1, object2, num1, num2, radius) {
-        console.log("click frame 1");
-        frameTexture3 = new THREE.ImageUtils.loadTexture(that.photos[num1 % that.photos.length], {}, function(){
+    function flip_image(forward, radius) {
+        textureRightTop = new THREE.ImageUtils.loadTexture(getPhoto(2), {}, function(){
             CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-        object1.material = new THREE.MeshLambertMaterial({map: frameTexture3});
+        });
+        textureRightBottom = new THREE.ImageUtils.loadTexture(getPhoto(3), {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        });
+        textureLeftTop = new THREE.ImageUtils.loadTexture(getPhoto(0), {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        });
+        textureLeftBottom = new THREE.ImageUtils.loadTexture(getPhoto(1), {}, function(){
+            CORE.renderer.render(CORE.scene, CORE.camera);
+        });
 
-        frameTexture4 = new THREE.ImageUtils.loadTexture(that.photos[num2 % that.photos.length], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-    
-        object2.material = new THREE.MeshLambertMaterial({map: frameTexture4});
+        frameLeftTop.material = new THREE.MeshLambertMaterial({map: textureLeftTop});
+        frameLeftBottom.material = new THREE.MeshLambertMaterial({map: textureLeftBottom});
+        frameRightTop.material = new THREE.MeshLambertMaterial({map: textureRightTop});
+        frameRightBottom.material = new THREE.MeshLambertMaterial({map: textureRightBottom});
 
         var angle = 0;
-        animateFrame();
+        if (forward)
+            animateFrame();
+        else
+            animateBack();
 
         function animateFrame()
         {
             if (angle <= Math.PI)
             {
-                object1.position.x = radius - Math.cos(angle) * radius; 
-                object2.position.x = radius - Math.cos(angle) * radius;
-                object1.position.y = Math.sin(angle) * radius + 3;
-                object2.position.y = Math.sin(angle) * radius + 3;
-                object1.rotation.z = -angle;
-                object2.rotation.z = -angle;
+                frameLeftTop.position.x = radius - Math.cos(angle) * radius;
+                frameLeftTop.position.y = Math.sin(angle) * radius + 3;
+                frameLeftTop.rotation.z = -angle;
+                frameLeftBottom.position.x = radius - Math.cos(angle) * radius;
+                frameLeftBottom.position.y = Math.sin(angle) * radius + 3;
+                frameLeftBottom.rotation.z = -angle;
                 angle += Math.PI/18;
-                render();
-                frame3.material = new THREE.MeshLambertMaterial({map: frameTexture3});
-                frame4.material = new THREE.MeshLambertMaterial({map: frameTexture4});
                 setTimeout(animateFrame, 10);
-                
             }
-
         }
-        frameTexture1 = new THREE.ImageUtils.loadTexture(that.photos[num1 *2 % that.photos.length], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        });
-        frameTexture2 = new THREE.ImageUtils.loadTexture(that.photos[num2 *2 % that.photos.length], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        });
-        object1.material = new THREE.MeshLambertMaterial({map: frameTexture1});
-        object2.material = new THREE.MeshLambertMaterial({map: frameTexture2});
-    }
 
-    function flip_back(object3, object4, num1, num2, radius) {
-        console.log("click frame 3");
-        frameTexture1 = new THREE.ImageUtils.loadTexture(that.photos[num1 % that.photos.length], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-
-        object3.material = new THREE.MeshLambertMaterial({map: frameTexture1});
-
-        frameTexture2 = new THREE.ImageUtils.loadTexture(that.photos[num2 % that.photos.length], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        }); 
-    
-        object4.material = new THREE.MeshLambertMaterial({map: frameTexture2});
-
-        var angle = 0;
-        animateBack();
-
-        function animateBack() 
+        function animateBack()
         {
             if (angle >= -Math.PI)
             {
-                object3.position.x = radius + Math.cos(angle) * radius; 
-                object4.position.x = radius + Math.cos(angle) * radius;
-                object3.position.y = -Math.sin(angle) * radius + 3;
-                object4.position.y = -Math.sin(angle) * radius + 3;
-                object3.rotation.z = -angle;
-                object4.rotation.z = -angle;
+                frameRightTop.position.x = radius + Math.cos(angle) * radius;
+                frameRightTop.position.y = -Math.sin(angle) * radius + 3;
+                frameRightTop.rotation.z = -angle;
+                frameRightBottom.position.x = radius + Math.cos(angle) * radius;
+                frameRightBottom.position.y = -Math.sin(angle) * radius + 3;
+                frameRightBottom.rotation.z = -angle;
+
                 angle -= Math.PI/18;
-                render();
-                frame.material = new THREE.MeshLambertMaterial({map: frameTexture1});
-                frame2.material = new THREE.MeshLambertMaterial({map: frameTexture2});
                 setTimeout(animateBack, 10);
             }
         }
-
-        frameTexture3 = new THREE.ImageUtils.loadTexture(that.photos[num1 * 2 % that.photos.length], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        });
-        frameTexture4 = new THREE.ImageUtils.loadTexture(that.photos[num2 * 2 % that.photos.length], {}, function(){
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        });
-        object3.material = new THREE.MeshLambertMaterial({map: frameTexture3});
-        object4.material = new THREE.MeshLambertMaterial({map: frameTexture4});
     }
+
   	function initLights() {
         light = new THREE.SpotLight();
         light.position.set(0, 500, 0);
         light.intensity = 2.0;
         light.castShadow = true;
-        CORE.scene.add(light);
+//        CORE.scene.add(light);
         modelElements.push(light);
     }
-    
-    function render() {
 
-        CORE.renderer.render(CORE.scene, CORE.camera);
+    function getPhoto(offset)
+    {
+        return that.photos[(that.photos.length + currentLeftTop + offset) % that.photos.length];
     }
 }
