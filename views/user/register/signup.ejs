@@ -3,31 +3,39 @@
 <!-- Side Menu -->
 <%include sidemenu %>
 <!-- /Side Menu -->
-<h1><%= title%></h1>
+<blockquote><h2>Welcome to <%= title %></h2></blockquote>
 
-<form action="/user/add" method="get">
-    <table>
-        <tr>
-            <td>Email:</td>
-            <td><input name="email" type="text"/></td>
-        </tr>
-        <tr>
-            <td>First Name:</td>
-            <td><input name="fname" type="text"/></td>
-        </tr>
-        <tr>
-            <td>Last Name:</td>
-            <td><input name="lname" type="text"/></td>
-        </tr>
-        <tr>
-            <td>Password:</td>
-            <td><input name="password" type="text"/></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><input type="submit" value="Add User"/></td>
-        </tr>
-    </table>
+<form class="form-horizontal" role="form" action="/user/add" method="get">
+
+    <div class="form-group">
+        <label for="inputEmail3" class="col-sm-1 control-label">Email</label>
+        <div class="col-sm-3">
+            <input class="form-control" type="text" name="email"> <br>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-1 control-label">First Name</label>
+        <div class="col-sm-3">
+            <input class="form-control" name="fname" type="text"> <br>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-1 control-label">Last Name</label>
+        <div class="col-sm-3">
+            <input class="form-control"  name="lname" type="text"> <br>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-1 control-label">Password</label>
+        <div class="col-sm-3">
+            <input class="form-control" type="password" name="password"> <br>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <input type="submit" value="Add User"/>
+        </div>
+    </div>
 </form>
 
 <%include ../../footer_index.ejs %>

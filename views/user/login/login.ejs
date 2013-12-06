@@ -3,15 +3,29 @@
 <!-- Side Menu -->
 <%include sidemenu %>
 <!-- /Side Menu -->
-<h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
+<blockquote><h2>Welcome to <%= title %></h2></blockquote>
 
 <div><%= message %></div><br>
 
-<form method="post" action="/user/auth">
-    Email: <input type="text" name="email"> <br>
-    Password:  <input type="password" name="password"> <br>
-    <button>Login</button>
+<form class="form-horizontal" role="form" method="post" action="/user/auth">
+
+    <div class="form-group">
+        <label for="inputEmail3" class="col-sm-1 control-label">Email</label>
+        <div class="col-sm-3">
+             <input class="form-control" type="text" name="email"> <br>
+         </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-1 control-label">Password</label>
+        <div class="col-sm-3">
+             <input class="form-control" type="password" name="password"> <br>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Login</button>
+        </div>
+    </div>
 </form>
 
 <%include ../../footer_index.ejs %>
