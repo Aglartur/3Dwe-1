@@ -16,12 +16,11 @@ drop table if exists tv cascade;
 
 create table account
 	(	acc_id		SERIAL,
-	    email		varchar(50)	not null,
+	    email		varchar(50)	not null UNIQUE,
 		fname		varchar(50)	not null,	
 		lname		varchar(50)	not null,
 		password	varchar(25) not null,
-		primary key(acc_id),
-		unique(acc_id,email)
+		primary key(acc_id)
 	);
 
 create table books

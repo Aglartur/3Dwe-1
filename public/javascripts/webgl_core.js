@@ -37,16 +37,18 @@ function CORE() {
     this.camera;
     this.scene;
     this.projector;
+    this.composer;
     this.intersectObjects =[];
 
     var controls;
     var clock;
     var rendererStats;
     var stats;
+    var fadeInEffect;
     this.cameraTarget = new THREE.Vector3(0, 0, 0);
-
     var tempMesh;
 
+    var WALK_SPEED = 60, RUN_SPEED = 360;
 
     this.init = function() {
         CORE.socket = io.connect('http://localhost:3000'); //initialize socket io on local server
@@ -81,13 +83,21 @@ function CORE() {
 
         // to freeze camera press Q, to move camera up R, to move camera down F
         controls = new THREE.FirstPersonControls(this.camera, this.cameraTarget);
-        controls.movementSpeed = 60;
+        controls.movementSpeed = WALK_SPEED;
         controls.activeLook = false;
         controls.lookSpeed = 0.2;
         clock = new THREE.Clock();
 
         // attaching microcache to the renderer
         this.renderer._microCache = new MicroCache();
+
+        this.composer = new THREE.EffectComposer( this.renderer );
+        this.composer.addPass( new THREE.RenderPass( this.scene, this.camera ) );
+
+        fadeInEffect = new THREE.ShaderPass( THREE.BrightnessShader );
+        fadeInEffect.uniforms[ 'amount' ].value = 0.0;
+        fadeInEffect.renderToScreen = true;
+        this.composer.addPass( fadeInEffect );
 
         // setting and loading the current window
         loadRoom();
@@ -117,6 +127,7 @@ function CORE() {
         requestAnimationFrame(that.animate, that.renderer.domElement);
         controls.update(clock.getDelta());
         that.renderer.render(that.scene, that.camera);
+        that.composer.render();
 //        rendererStats.update(that.renderer);
 //        stats.update();
         if (TVObject.isLoaded)
@@ -146,6 +157,20 @@ function CORE() {
 
         controls.movementSpeed = 50;
         current_window = ROOM;
+
+        var fade_in = setInterval(function(){
+            fadeInEffect.uniforms[ 'amount' ].value+=0.04;
+            if (fadeInEffect.uniforms[ 'amount' ].value >= 1)
+                clearInterval(fade_in);
+        }, 100);
+    }
+
+    document.onmousemove = function(e){
+        if (e.shiftKey){
+            controls.movementSpeed = RUN_SPEED;
+        }else{
+            controls.movementSpeed = WALK_SPEED;
+        }
     }
 
     document.onkeypress = function (event) {
@@ -226,10 +251,22 @@ function CORE() {
 //        }
 //        if (key === 101 && !EXPLORER.isLoaded)
 //        {
+//            var fade_out = setInterval(function(){
+//                fadeInEffect.uniforms[ 'amount' ].value-=0.04;
+//                if (fadeInEffect.uniforms[ 'amount' ].value <= 0)
+//                    clearInterval(fade_out);
+//            }, 100);
+//
 //            unloadCurrent();
 //            EXPLORER.load();
 //            document.addEventListener('mousedown', EXPLORER.onDocumentMouseDown, false);
 //            current_window = EXPLORER;
+//
+//            var fade_in = setInterval(function(){
+//                fadeInEffect.uniforms[ 'amount' ].value+=0.04;
+//                if (fadeInEffect.uniforms[ 'amount' ].value >= 1)
+//                    clearInterval(fade_in);
+//            }, 100);
 //        }
     }
 

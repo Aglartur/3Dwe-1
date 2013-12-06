@@ -8,8 +8,10 @@ exports.list = function(req, res){
 };
 
 exports.new = function(req, res){
-    res.render('user/register/signup',{ title: 'Sign Up'
+    var authmessage = req.flash('add_auth') || '';
 
+    res.render('user/register/signup',{ title: 'Sign Up',
+        message : authmessage
     } );
 };
 
@@ -60,27 +62,26 @@ exports.auth = function(req, res) {
         var password = req.body.password;
         // Perform the user lookup.
         console.log("Prepare to lookup");
+
+        if(email === undefined || email === " " || email==="" || validate_email(email) === false){
+            errorMessage = "Email is invalid | ";
+        }
+        if(password === undefined || password === "" || password === " " || validate_pass(password) == false){
+            errorMessage += "Pass word at least one number, one lowercase and one uppercase letter and 6 in length";
+        }
         model.lookup(email, password, function(error,user) {
 
             if(user === undefined){
-                error = true;
-                errorMessage = "User not found!";
+                errorMessage += "Email or Password is incorrect!";
             }else{
-            if (user.email === undefined){
-                error = true;
-                errorMessage += "Email is incorrect or not exist!";
+            if (user.email !== email){
+                errorMessage += "Email is incorrect or not exist! |";
             }
-            if(user.fname === undefined ||
-                user.lname === undefined ){
-                error = true;
-                errorMessage += "Name not Exist!";
-            }
-            if(user.password === undefined){
-                    error = true;
+            if(user.password !== password){
                     errorMessage += "Password is incorrect!";
              }
             }
-            if (error) {
+            if (error || errorMessage !== "") {
                 console.log("Error in lookup");
                 // If there is an error we "flash" a message to the
                 // redirected route `/user/login`.
@@ -138,21 +139,49 @@ exports.main = function(req, res) {
     }
 };
 
+exports.add_auth = function (req,res){
+
+}
+
 exports.user_add = function (req, res) {
     var email = req.query.email;
     var fname = req.query.fname;
     var lname = req.query.lname;
-    var pass  = req.query.password;
+    var password  = req.query.password;
+    var confirm = req.query.confirm_password;
+    var errorMessage = "";
 
-    if (
-        email === undefined ||
-        fname === undefined ||
-        lname === undefined ||
-        pass === undefined) {
+    if (email === undefined || email === " " || email==="" || validate_email(email) === false){
+            errorMessage = "Email is invalid | ";
+    }
+    if(fname === undefined || fname === " " || fname === ""){
+        errorMessage += "First Name is invalid | ";
+    }
+    if(lname === undefined || lname === " " || lname === ""){
+        errorMessage += "Last Name is invalid | ";
+    }
+    if(fname.length >= 20){
+        errorMessage += "First Name length cannot be longer than 20 | ";
+    }
+    if(password !== confirm){
+        errorMessage += "Password doesn't match | ";
+    }
+    if(password === undefined){
+        errorMessage += "Password field is empty | ";
+    }
+    if(confirm === undefined){
+        errorMessage += "Confirm Password field is empty | ";
+    }
+    if(validate_pass(password) == false){
+        errorMessage += "Pass word at least one number, one lowercase and one uppercase letter and 6 in length";
+    }
+    if(errorMessage!== ''){
+        req.flash('add_auth', errorMessage);
         res.redirect('/signup');
+        errorMessage = '';
     }
     else {
-        model.addUser(email,fname, lname, pass, function (err, rows) {
+        model.addUser(email,fname, lname, password, function (err, rows) {
             if (err) {
                 console.error('db failed: ' + err);
             }
@@ -160,3 +189,13 @@ exports.user_add = function (req, res) {
         });
     }
 };
+
+function validate_email(email){
+    var VALID_EMAIL_REGEX = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return VALID_EMAIL_REGEX.test(email);
+}
+
+function validate_pass(password){
+    var VALID_PASS_REGEX = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+    return VALID_PASS_REGEX.test(password);
+}
