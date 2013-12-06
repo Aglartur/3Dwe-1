@@ -15,7 +15,8 @@ function TVObject() {
     var TV_set, screen;
 
     var video, videoTexture;
-    var play_panel, play_buttons = [], button_functions = [];
+    var play_panel, play_buttons = [], buttons = [];
+    var dir = '/images/newbuttons/';
 
     var isPlaying = false;
     var seekValue = 0;
@@ -69,14 +70,16 @@ function TVObject() {
         // if you clicked on something
         if (intersects.length > 0) {
             object = intersects[ 0 ].object;
-            if (object === play_buttons[0]){
+            if (object === play_buttons[0]){ //FAST FORWARD
                 seekValue = 1;
-            }else if (object === play_buttons[4]){
+            }else if (object === play_buttons[3]){ //REWIND
                 seekValue = -1;
             }else{
                 var index = isButton(object);
                 if (index && video){
-                    button_functions[index-1]();
+                    buttons[index-1].action();
+                    buttons[index-1].on = !buttons[index-1].on;
+                    redrawButton(object, buttons[index-1]);
                 }
             }
         }
@@ -126,7 +129,7 @@ function TVObject() {
     this.showPlayer = function(){
         for (var i = 0; i < play_buttons.length; i++){
 //                CORE.scene.add(play_buttons[i]);
-                that.group.add(play_buttons[i]);
+            that.group.add(play_buttons[i]);
         }
     }
 
@@ -196,6 +199,7 @@ function TVObject() {
             map : videoTexture, side: THREE.DoubleSide
         });
         screen.material = videoMaterial;
+        resetButtons();
     }
 
     this.loadWebcam = function(){
@@ -305,41 +309,48 @@ function TVObject() {
             video.pause();
     }
 
+    function redrawButton(button_obj, button){
+        if (button.next_img && button.on){
+            var button_texture = new THREE.ImageUtils.loadTexture(dir + button.next_img, {}, function () {
+                CORE.renderer.render(CORE.scene, CORE.camera);
+            });
+            button_obj.material.map = button_texture;
+        }else if (button.next_img){
+            var button_texture = new THREE.ImageUtils.loadTexture(dir + button.img, {}, function () {
+                CORE.renderer.render(CORE.scene, CORE.camera);
+            });
+            button_obj.material.map = button_texture;
+        }
+    }
+
     function initOptions(){
         var button_texture, temp_button;
         var BUTTON_WIDTH = 5, BUTTON_HEIGHT = 5, BASE_X = -25, BUTTON_Y = 18, BUTTON_Z = -1.1;
 
-        var texture_paths = ['fastforward.jpg', 'pause.jpg', 'play.jpg', 'stop.jpg', 'rewind.jpg', 'record.jpg'];
-        button_functions = [
-            function(){ //FF:
-                //video.currentTime++;
-            },
-            function(){ //PAUSE:
-                video.pause();
-                isPlaying = false;
-            },
-            function(){ //PLAY:
-                video.play();
-                isPlaying = true;
-            },
-            function(){ //STOP & reset:
-                video.pause();
-                video.currentTime=0;
-                isPlaying = false;
-            },
-            function(){ //REWIND:
-                //video.currentTime--;
-            },
-            function(){ //RECORD:
-                if (recording){
+        buttons = [
+            {img: 'forward.png', action: function(){}},
+            {img: 'volon.png', next_img: 'mute.png', on:false, action: function(){
+                video.muted = !this.on;
+            }},
+            {img: 'play.png', next_img: 'pause.png', on: false, action: function(){
+                if (!this.on){
+                    video.play();
+                    isPlaying = true;
+                }else{
+                    video.pause();
+                    isPlaying = false;
+                }
+            }},
+            {img: 'back.png', action: function(){}},
+            {img: 'record.png', next_img: 'recordon.png', on: false, action: function(){
+                if (this.on){
                     that.endRecording();
                     recording = false;
                 }else{
                     that.loadWebcam();
                     recording = true;
                 }
-            }
-        ];
+            }}];
         play_buttons = [];
 
         play_panel = new THREE.Mesh(
@@ -354,13 +365,13 @@ function TVObject() {
         modelElements.push(play_panel);
         that.group.add(play_panel);
 
-        for (var i = 0; i < texture_paths.length; i++){
-            button_texture = new THREE.ImageUtils.loadTexture('/images/buttons/' + texture_paths[i], {}, function () {
+        for (var i = 0; i < buttons.length; i++){
+            button_texture = new THREE.ImageUtils.loadTexture(dir + buttons[i].img, {}, function () {
                 CORE.renderer.render(CORE.scene, CORE.camera);
             });
             temp_button = new THREE.Mesh(
                 new THREE.PlaneGeometry(BUTTON_WIDTH, BUTTON_HEIGHT, 10, 10),
-                new THREE.MeshPhongMaterial({map: button_texture}));
+                new THREE.MeshPhongMaterial({map: button_texture, transparent: true, opacity: 0.8}));
             temp_button.receiveShadow = true;
             temp_button.rotation.y = Math.PI;
             temp_button.position.set(BASE_X + i*BUTTON_WIDTH + i, BUTTON_Y, BUTTON_Z);
@@ -369,6 +380,12 @@ function TVObject() {
             modelElements.push(temp_button);
             play_buttons.push(temp_button);
             that.group.add(temp_button);
+        }
+    }
+    function resetButtons(){
+        for (var i = 0; i < buttons.length; i++){
+            buttons[index].on = false;
+            redrawButton(play_buttons[index], buttons[index]);
         }
     }
 }

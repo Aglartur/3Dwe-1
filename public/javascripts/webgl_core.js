@@ -201,28 +201,30 @@ function CORE() {
 //        }
         if (key === 118 && !ROOM.isLoaded)                         // press V to go to ROOM
         {
-            unloadCurrent();
-            ROOM.load();
-            TVObject.load();
-            JUKEBOX.load();
-            ALBUM.load();
-            document.addEventListener('mousedown', ROOM.onDocumentMouseDown, false);
+            fadeToScene(function(){
+                unloadCurrent();
+                ROOM.load();
+                TVObject.load();
+                JUKEBOX.load();
+                ALBUM.load();
+                document.addEventListener('mousedown', ROOM.onDocumentMouseDown, false);
 
-            document.addEventListener('mousedown', TVObject.onDocumentMouseDown, false);
-            document.addEventListener('mouseup', TVObject.onDocumentMouseUp, false);
-            document.addEventListener('mousemove', TVObject.onDocumentMouseMove, false);
-            document.addEventListener('keydown', TVObject.flyToObject, false);
-            document.addEventListener('keydown', TVObject.flyToObject, false);
+                document.addEventListener('mousedown', TVObject.onDocumentMouseDown, false);
+                document.addEventListener('mouseup', TVObject.onDocumentMouseUp, false);
+                document.addEventListener('mousemove', TVObject.onDocumentMouseMove, false);
+                document.addEventListener('keydown', TVObject.flyToObject, false);
+                document.addEventListener('keydown', TVObject.flyToObject, false);
 
-            document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
-            document.addEventListener('mouseout', JUKEBOX.onDocumentMouseOut, false);
-            document.addEventListener('mouseup', JUKEBOX.onDocumentMouseUp, false);
-            document.addEventListener('mousemove', JUKEBOX.onDocumentMouseMove, false);
+                document.addEventListener('mousedown', JUKEBOX.onDocumentMouseDown, false);
+                document.addEventListener('mouseout', JUKEBOX.onDocumentMouseOut, false);
+                document.addEventListener('mouseup', JUKEBOX.onDocumentMouseUp, false);
+                document.addEventListener('mousemove', JUKEBOX.onDocumentMouseMove, false);
 
-            document.addEventListener('mousedown', ALBUM.onDocumentMouseDown, false);
+                document.addEventListener('mousedown', ALBUM.onDocumentMouseDown, false);
 
-            controls.movementSpeed = 50;
-            current_window = ROOM;
+                controls.movementSpeed = WALK_SPEED;
+                current_window = ROOM;
+            });
         }
 //        if (key === 110 && !BOOK.isLoaded)                      // press N to go to BOOK
 //        {
@@ -249,25 +251,37 @@ function CORE() {
 //            document.addEventListener('keydown', TVObject.flyToObject, false);
 //            current_window = TVObject;
 //        }
-//        if (key === 101 && !EXPLORER.isLoaded)
-//        {
-//            var fade_out = setInterval(function(){
-//                fadeInEffect.uniforms[ 'amount' ].value-=0.04;
-//                if (fadeInEffect.uniforms[ 'amount' ].value <= 0)
-//                    clearInterval(fade_out);
-//            }, 100);
-//
-//            unloadCurrent();
-//            EXPLORER.load();
-//            document.addEventListener('mousedown', EXPLORER.onDocumentMouseDown, false);
-//            current_window = EXPLORER;
-//
-//            var fade_in = setInterval(function(){
-//                fadeInEffect.uniforms[ 'amount' ].value+=0.04;
-//                if (fadeInEffect.uniforms[ 'amount' ].value >= 1)
-//                    clearInterval(fade_in);
-//            }, 100);
-//        }
+        if (key === 101 && !EXPLORER.isLoaded) //load explorer view
+        {
+            fadeToScene(function(){
+                //switch context before fading back in:
+                unloadCurrent();
+                EXPLORER.load();
+                document.addEventListener('mousedown', EXPLORER.onDocumentMouseDown, false);
+                current_window = EXPLORER;
+            });
+        }
+    }
+
+    function fadeToScene(loadScene){
+        var fade_out = setInterval(function(){
+            fadeInEffect.uniforms[ 'amount' ].value-=0.04;
+            if (fadeInEffect.uniforms[ 'amount' ].value <= 0){
+                loadScene();
+
+
+                clearInterval(fade_out);
+
+                setTimeout(function(){
+                    //fade in:
+                    var fade_in = setInterval(function(){
+                        fadeInEffect.uniforms[ 'amount' ].value+=0.04;
+                        if (fadeInEffect.uniforms[ 'amount' ].value >= 1)
+                            clearInterval(fade_in);
+                    }, 100);
+                }, 750);
+            }
+        }, 100);
     }
 
     function unloadCurrent()
