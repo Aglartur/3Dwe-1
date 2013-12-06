@@ -5,9 +5,11 @@
 
 var express = require('express');
 var routes = require('./routes');
+var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
+var flash = require('connect-flash');
 
 var app = express();
 
@@ -21,6 +23,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
+app.use(flash());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,6 +33,13 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+app.get('/users', user.list);
+app.get('/signup',user.new);
+app.get('/login',user.login);
+app.post('/user/auth'  , user.auth);
+app.get ('/user/main'  , user.main);
+app.get ('/user/logout', user.logout);
+app.get('/user/add', user.user_add);
 app.post('/uploadifyhandler', routes.uploadifyhandler);
 
 var io = require('socket.io').listen(app.listen(app.get('port')));

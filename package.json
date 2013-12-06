@@ -7,6 +7,9 @@
   },
   "dependencies": {
     "express": "3.4.3",
-    "ejs": "*"
+    "ejs": "*",
+    "pg": "2.8.2",
+    "connect-flash": "*"
+
   }
 }

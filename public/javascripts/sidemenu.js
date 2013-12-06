@@ -2,6 +2,7 @@
  * Created by Wei on 11/2/13.
  */
 
+<<<<<<< HEAD
 /******************************************LISTEN FOR SERVER RESPONSE*******************************************/
 
 var currentDirectory;
@@ -164,10 +165,18 @@ $("#menu-close").click(function(e) {
 });
 
 //toggle menu
+=======
+$("#menu-close").click(function(e) {
+    e.preventDefault();
+    $("#sidebar-wrapper").toggleClass("active");
+    });
+
+>>>>>>> wei_account_database
 $("#menu-toggle").click(function(e) {
     e.preventDefault();
     $("#sidebar-wrapper").toggleClass("active");
 });
+<<<<<<< HEAD
 
 //open options for creating directory
 $("li .create_directory").click(function(e){
@@ -218,3 +227,21 @@ function loadPhotos(directory)
     socketBusy = false;
     console.log(specialRequest);
 }
+=======
+$(function() {
+    $('a[href*=#]:not([href=#])').click(function() {
+        if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
+            || location.hostname == this.hostname) {
+
+            var target = $(this.hash);
+            target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+            if (target.length) {
+                $('html,body').animate({
+                    scrollTop: target.offset().top
+                }, 1000);
+                return false;
+            }
+        }
+    });
+});
+>>>>>>> wei_account_database
