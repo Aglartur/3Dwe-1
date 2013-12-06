@@ -51,10 +51,11 @@
     height: 55px;
     line-height: 55px;
     font-size: 18px;
+    color: #dddddd;
 }
 
 .sidebar-nav > .sidebar-brand a {
-    color: #999999;
+    color: #ffffff;
 }
 
 .sidebar-nav > .sidebar-brand a:hover {

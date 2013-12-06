@@ -44,7 +44,7 @@ function CORE() {
     var clock;
     var rendererStats;
     var stats;
-    var fadeInEffect;
+    var fadeInEffect, filmEffect;
     this.cameraTarget = new THREE.Vector3(0, 0, 0);
     var tempMesh;
 
@@ -99,11 +99,12 @@ function CORE() {
         fadeInEffect.renderToScreen = true;
         this.composer.addPass( fadeInEffect );
 
+        filmEffect = new THREE.FilmPass( 0.35, 0.025, 648, true );
+        filmEffect.renderToScreen = false; //do not render by default
+        this.composer.addPass(filmEffect);
+
         // setting and loading the current window
         loadRoom();
-//        current_window = SAMPLE;
-//        current_window.load();
-//        document.addEventListener('mousedown', current_window.onDocumentMouseDown, false);
     }
 
     this.loadModel = function ( geometry, materials, x, y, z, clickable) {
@@ -251,6 +252,10 @@ function CORE() {
 //            document.addEventListener('keydown', TVObject.flyToObject, false);
 //            current_window = TVObject;
 //        }
+        if (key === 32){ //TOGGLE B&W Filter
+            fadeInEffect.renderToScreen = !fadeInEffect.renderToScreen;
+            filmEffect.renderToScreen = !filmEffect.renderToScreen;
+        }
         if (key === 101 && !EXPLORER.isLoaded) //load explorer view
         {
             fadeToScene(function(){
