@@ -41,8 +41,8 @@ function TVObject() {
         CORE.scene.add(that.group);
         that.group.rotation.y = Math.PI;
         that.group.position.z = -500 + 30;
-        that.group.position.y = 40;
-        that.group.position.x = -35;
+        that.group.position.y = 45;
+        that.group.position.x = -60;
         that.group.scale.set(3,3,3);
 
         this.isLoaded = true;

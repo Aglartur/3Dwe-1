@@ -58,8 +58,8 @@ function CORE() {
         $('#viewer').html(this.renderer.domElement);
 
         this.camera = new THREE.PerspectiveCamera(60, $('#viewer').width() / $('#viewer').height(), 1, 10000);       // don't worry about parameters
-//        this.camera.position.set(0, 100, 0);
-        this.camera.position.set(-250, 110, 230);
+        this.camera.position.set(0, 100, 0);
+//        this.camera.position.set(-250, 110, 230);
         this.camera.lookAt(this.cameraTarget);
 
         this.scene = new THREE.Scene();

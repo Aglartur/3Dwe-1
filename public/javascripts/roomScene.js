@@ -51,7 +51,8 @@ function ROOM() {
         initPhotoFrame();
         initShelves();
         initTableGroup();
-        initTvStand();
+//        initTvStand();
+        initTVstandModel();
         initWalls();
         initLights();
 
@@ -162,75 +163,30 @@ function ROOM() {
         modelElements.push(pic);
     }
 
-    function initTvStand()
+    function initTVstandModel()
     {
-        tvstand = new THREE.Mesh(
-            new THREE.CubeGeometry(50,60,300),                           // supply size of the cube
-            new THREE.MeshLambertMaterial({map: brownWoodTexture}));          // supply color of the cube
-        tvstand.position.set(0, 30, 0);
-        tvstand.castShadow = true;
-        tvstand.receiveShadow = true;
-//        CORE.scene.add(tvstand);
-        //CORE.intersectObjects.push(tvstand);
-        //modelElements.push(tvstand);
+        var loader = new THREE.JSONLoader();
+        var callbackModel   = function( geometry, materials ) {
+            TV_set = CORE.loadModel( geometry, materials, 0, 0, 0, false );
+            TV_set.scale.set(2,1,2);
+            TV_set.rotation.y = Math.PI / 2;
+            TV_set.position.set(0, 35, -465);
 
-        cabinetcover1 = new THREE.Mesh(
-            new THREE.CubeGeometry(5,95,55),                           // supply size of the cube
-            new THREE.MeshLambertMaterial({map: brownWoodTexture}));          // supply color of the cube
-        cabinetcover1.position.set(26, 30, 100);
-        cabinetcover1.rotation.x = Math.PI/2;
-        cabinetcover1.castShadow = true;
-        cabinetcover1.receiveShadow = true;
-        //CORE.scene.add(cabinetcover1);
-        //CORE.intersectObjects.push(cabinetcover1);
-        //modelElements.push(cabinetcover1);
+            modelElements.push(TV_set);
+            CORE.scene.add(TV_set);
+        };
+        loader.load( "/obj/tvstand.js", callbackModel );
 
-        cabinetcover2 = new THREE.Mesh(
-            new THREE.CubeGeometry(5,95,55),                           // supply size of the cube
-            new THREE.MeshLambertMaterial({map: brownWoodTexture}));          // supply color of the cube
-        cabinetcover2.position.set(26, 30, 0);
-        cabinetcover2.rotation.x = Math.PI/2;
-        cabinetcover2.castShadow = true;
-        cabinetcover2.receiveShadow = true;
-        //CORE.scene.add(cabinetcover2);
-        //CORE.intersectObjects.push(cabinetcover2);
-        //modelElements.push(cabinetcover2);
+        var callbackModel   = function( geometry, materials ) {
+            pot = CORE.loadModel( geometry, materials, 0, 0, 0, false );
+            pot.scale.set(0.05, 0.05, 0.05);
+            pot.rotation.y = Math.PI / 2;
+            pot.position.set(130, 70, -465);
 
-        cabinetcover3 = new THREE.Mesh(
-            new THREE.CubeGeometry(5,95,55),                           // supply size of the cube
-            new THREE.MeshLambertMaterial({map: brownWoodTexture}));          // supply color of the cube
-        cabinetcover3.position.set(26, 30, -100);
-        cabinetcover3.rotation.x = Math.PI/2;
-        cabinetcover3.castShadow = true;
-        cabinetcover3.receiveShadow = true;
-        //CORE.scene.add(cabinetcover3);
-        //CORE.intersectObjects.push(cabinetcover3);
-        //modelElements.push(cabinetcover3);
-
-        glasscover = new THREE.Mesh(
-            new THREE.CubeGeometry(55,2,305),                           // supply size of the cube
-            new THREE.MeshPhongMaterial({color: 0x000000, opacity: 0.2}));          // supply color of the cube
-        glasscover.position.set(0, 62, 2.5);
-        glasscover.castShadow = true;
-        glasscover.receiveShadow = true;
-        //CORE.scene.add(glasscover);
-        //CORE.intersectObjects.push(glasscover);
-        //modelElements.push(glasscover);
-
-        tvstandgroup = new THREE.Object3D();
-        tvstandgroup.rotation.set(0,0,0);
-
-        tvstandgroup_active.push(tvstand, cabinetcover1, cabinetcover2, cabinetcover3);
-        tvstandgroup.add(tvstand);
-        tvstandgroup.add(cabinetcover1);
-        tvstandgroup.add(cabinetcover2);
-        tvstandgroup.add(cabinetcover3);
-
-        tvstandgroup.rotation.set(0, -Math.PI/2, 0);
-        tvstandgroup.position.set(0, 0 , -500+25);
-        CORE.scene.add(tvstandgroup);
-        CORE.intersectObjects.push(tvstandgroup);
-        modelElements.push(tvstandgroup);
+            modelElements.push(pot);
+            CORE.scene.add(pot);
+        };
+        loader.load( "/obj/flower_pot/house_plant.js", callbackModel );
     }
 
     function initShelves()
