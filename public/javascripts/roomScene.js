@@ -345,10 +345,7 @@ function ROOM() {
 
     function initLights()
     {
-        light = new THREE.SpotLight();
-        light.position.set( 0, 800, 0 );
-        light.intensity = 4.0;
-        light.castShadow = true;
+        light = new THREE.AmbientLight(0x000012);
         CORE.scene.add(light);
         modelElements.push(light);
     }

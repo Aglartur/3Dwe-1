@@ -99,7 +99,7 @@ function CORE() {
         fadeInEffect.renderToScreen = true;
         this.composer.addPass( fadeInEffect );
 
-        filmEffect = new THREE.FilmPass( 0.35, 0.025, 648, true );
+        filmEffect = new THREE.FilmPass( 0.95, 0.215, 900, true );
         filmEffect.renderToScreen = false; //do not render by default
         this.composer.addPass(filmEffect);
 

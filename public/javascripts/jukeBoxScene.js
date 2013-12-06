@@ -420,12 +420,12 @@ function JUKEBOX() {
         light.position.set(0, 200, -50);
         light.intensity = 2.0;
         light.castShadow = true;
-//        CORE.scene.add(light);
-//        modelElements.push(light);
+        //CORE.scene.add(light);
+        modelElements.push(light);
 
         pointLight = new THREE.PointLight(0x661452, 4, 150);
         pointLight.position.set(-30,20,-40);
-//        CORE.scene.add(pointLight);
+        //CORE.scene.add(pointLight);
         modelElements.push(pointLight);
         that.group.add(pointLight);
     }
