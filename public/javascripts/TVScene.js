@@ -173,12 +173,12 @@ function TVObject() {
         this.light.position.set(0, 200, -50);
         this.light.intensity = 2.0;
         this.light.castShadow = true;
-        //CORE.scene.add(this.light);
+        CORE.scene.add(this.light);
         modelElements.push(this.light);
 
         this.pointLight = new THREE.PointLight(0x333333, 4, 150);
         this.pointLight.position.set(-30,20,-40);
-        //CORE.scene.add(this.pointLight);
+        CORE.scene.add(this.pointLight);
         modelElements.push(this.pointLight);
         that.group.add(this.pointLight);
     }

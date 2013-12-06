@@ -167,6 +167,7 @@ function CORE() {
     }
 
     document.onmousemove = function(e){
+        if (!controls) return;
         if (e.shiftKey){
             controls.movementSpeed = RUN_SPEED;
         }else{

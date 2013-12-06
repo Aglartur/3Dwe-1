@@ -76,7 +76,7 @@ function SAMPLE() {
         light.position.set(0, 100, 0);
         light.intensity = 2.0;
         light.castShadow = true;
-        //CORE.scene.add(light);
+        CORE.scene.add(light);
         modelElements.push(light);
     }
 }
