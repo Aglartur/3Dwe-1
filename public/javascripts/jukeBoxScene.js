@@ -329,63 +329,63 @@ function JUKEBOX() {
             modelElements.push(radioBody);
             that.group.add(radioBody);
         };
-        loader.load( "obj/radio-body.js", callbackModel );
+        loader.load( "/obj/radio-body.js", callbackModel );
 
         callbackModel   = function( geometry, materials ) {
             radioPlay = CORE.loadModel( geometry, materials, 0, 0, 0, true );
             modelElements.push(radioPlay);
             that.group.add(radioPlay);
         };
-        loader.load( "obj/radio-button-play.js", callbackModel );
+        loader.load( "/obj/radio-button-play.js", callbackModel );
 
         callbackModel   = function( geometry, materials ) {
             radioPrev = CORE.loadModel( geometry, materials, 0, 0, 0, true );
             modelElements.push(radioPrev);
             that.group.add(radioPrev);
         };
-        loader.load( "obj/radio-button-prev.js", callbackModel );
+        loader.load( "/obj/radio-button-prev.js", callbackModel );
 
         callbackModel   = function( geometry, materials ) {
             radioNext = CORE.loadModel( geometry, materials, 0, 0, 0, true );
             modelElements.push(radioNext);
             that.group.add(radioNext);
         };
-        loader.load( "obj/radio-button-next.js", callbackModel );
+        loader.load( "/obj/radio-button-next.js", callbackModel );
 
         callbackModel   = function( geometry, materials ) {
             radioReplay = CORE.loadModel( geometry, materials, 0, 0, 0, true );
             modelElements.push(radioReplay);
             that.group.add(radioReplay);
         };
-        loader.load( "obj/radio-button-replay.js", callbackModel );
+        loader.load( "/obj/radio-button-replay.js", callbackModel );
 
         callbackModel   = function( geometry, materials ) {
             radioShuffle = CORE.loadModel( geometry, materials, 0, 0, 0, true );
             modelElements.push(radioShuffle);
             that.group.add(radioShuffle);
         };
-        loader.load( "obj/radio-button-shuffle.js", callbackModel );
+        loader.load( "/obj/radio-button-shuffle.js", callbackModel );
 
         callbackModel   = function( geometry, materials ) {
             radioSeeker = CORE.loadModel( geometry, materials, 0, 0, 0, true );
             modelElements.push(radioSeeker);
             that.group.add(radioSeeker);
         };
-        loader.load( "obj/radio-seeker.js", callbackModel );
+        loader.load( "/obj/radio-seeker.js", callbackModel );
 
         callbackModel   = function( geometry, materials ) {
             radioVolume = CORE.loadModel( geometry, materials, -10.5, 7/*fix*/, -17/*fix*/, true );
             modelElements.push(radioVolume);
             that.group.add(radioVolume);
         };
-        loader.load( "obj/knob-origin-1.js", callbackModel );
+        loader.load( "/obj/knob-origin-1.js", callbackModel );
 
         callbackModel   = function( geometry, materials ) {
             radioPower = CORE.loadModel( geometry, materials, -49, 7/*fix*/, -17/*fix*/, true );
             modelElements.push(radioPower);
             that.group.add(radioPower);
         };
-        loader.load( "obj/knob-origin-1.js", callbackModel );
+        loader.load( "/obj/knob-origin-1.js", callbackModel );
     }
 
     function initLights() {

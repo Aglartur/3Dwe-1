@@ -137,7 +137,7 @@ function TVObject() {
             modelElements.push(TV_set);
             that.group.add(TV_set);
         };
-        loader.load( "obj/tv.js", callbackModel );
+        loader.load( "/obj/tv.js", callbackModel );
 
         var WIDTH = 78, HEIGHT = 43;
         screen = new THREE.Mesh(

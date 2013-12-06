@@ -4,7 +4,7 @@
  */
 
 exports.index = function(req, res){
-    res.render('main', { title: 'Main Room'});
+    res.render('index', { title: '3Dwe'});
 };
 
 exports.uploadifyhandler = function(req, res, next) {

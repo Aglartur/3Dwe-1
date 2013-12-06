@@ -122,7 +122,7 @@ function ALBUM() {
             modelElements.push(albumL);
             that.group.add(albumL);
         };
-        loader.load( "obj/album-cover-left.js", callbackModel );
+        loader.load( "/obj/album-cover-left.js", callbackModel );
 
         var callbackModel   = function( geometry, materials ) {
             albumR = CORE.loadModel( geometry, materials, 0, -2, 0, true);
@@ -130,7 +130,7 @@ function ALBUM() {
             modelElements.push(albumR);
             that.group.add(albumR);
         };
-        loader.load( "obj/album-cover-right.js", callbackModel );
+        loader.load( "/obj/album-cover-right.js", callbackModel );
     }
 
     this.initPhotos = function() 

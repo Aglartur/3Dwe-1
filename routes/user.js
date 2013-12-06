@@ -133,9 +133,6 @@ exports.main = function(req, res) {
     }
     else {
         res.render('main', { title   : 'User Main',
-            message : 'Login Successful',
-            email : user.email,
-            password : user.password,
             fname : user.fname,
             lname : user.lname});
     }
