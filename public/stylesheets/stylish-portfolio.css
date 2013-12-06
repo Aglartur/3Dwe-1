@@ -119,13 +119,6 @@ body {
   background-size: cover;
 }
 
-/* news */
-
-.news {
-  height: 70%;
-  width: 100%;
-  padding: 50px 0;
-}
 
 /* Services */
 
@@ -155,39 +148,6 @@ i.service-icon:hover {
   font-size: 68px;
 }
 
-/* Callout */
-
-.callout {
-  color: #ffffff;
-  display: table;
-  height: 30%;
-  width: 100%;
-  background: url(../images/section-two.JPG) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
-.callout2 {
-    color: #ffffff;
-    display: table;
-    height: 30%;
-    width: 100%;
-    background: url(../images/section-three.JPG) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
-
-/* Credits */
-
-.credit {
-  height: 70%;
-  width: 100%;
-  padding: 50px 0;
-}
 
 /* About */
 
