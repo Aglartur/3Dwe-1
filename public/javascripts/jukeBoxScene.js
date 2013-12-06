@@ -21,9 +21,13 @@ function JUKEBOX() {
     var isReplaying = false;
     var isShuffling = false;
 
+    var vol_clicked = false;
+    var seek_clicked = false;
+
     var dragging, prevDrag;
     var windowHalfX, windowHalfY;
     var currentVolume;
+    var currentSeek;
 
     this.currentSongID = 3;
 
@@ -135,6 +139,8 @@ function JUKEBOX() {
                 else {
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
+                currentSeek = 0;
+                radioPower.rotation.z = 0;
 
                 setTimeout(function(){pushTheButton(radioNext, false);}, 300);
             }
@@ -154,6 +160,9 @@ function JUKEBOX() {
                 else {
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
+                currentSeek = 0;
+                radioPower.rotation.z = 0;
+
                 setTimeout(function(){pushTheButton(radioPrev, false);}, 300);
             }
             if (object === radioReplay)
@@ -181,6 +190,13 @@ function JUKEBOX() {
                 isShuffling = !isShuffling;
             }
             if (object === radioVolume) {
+                vol_clicked = true;
+                dragging = true;
+                prevDrag = vector;
+                prevDrag.y = 0;
+            }
+            if (object === radioPower) {
+                seek_clicked = true;
                 dragging = true;
                 prevDrag = vector;
                 prevDrag.y = 0;
@@ -192,6 +208,9 @@ function JUKEBOX() {
         event.preventDefault();
         dragging = false;
         prevDrag = null;
+        vol_clicked = false;
+        seek_clicked = false;
+        document.getElementById('audio').volume = currentVolume;
 
     }
 
@@ -199,6 +218,9 @@ function JUKEBOX() {
         event.preventDefault();
         dragging = false;
         prevDrag = null;
+        vol_clicked = false;
+        seek_clicked = false;
+        document.getElementById('audio').volume = currentVolume;
 
     }
 
@@ -224,12 +246,14 @@ function JUKEBOX() {
             // WORKAROUND: changed to vector.z, because the Jukebox is rotated 90 degrees, need to fix that so it would be generic.
 
             if (vector.z > 0) {
-                setvolume(0.0125);
+                if (vol_clicked) setvolume(0.0125);
+                if (seek_clicked) setseek(3)
                 //rotateTheButton(radioVolume, false);
                 // moved to setvolume
             }
             if (vector.z < 0) {
-                setvolume(-0.0125);
+                if (vol_clicked) setvolume(-0.0125);
+                if (seek_clicked) setseek(-3);
                 //rotateTheButton(radioVolume, true);
                 // moved to setvolume
             }
@@ -243,9 +267,9 @@ function JUKEBOX() {
     this.changeSong = function(filepath) {
         console.log('changing song: ' + filepath);
 
-            var audio_html = '<audio controls id="audio" onended="JUKEBOX.autoNext()"><source id="change_audio" src="' + filepath + '" type="audio/mpeg"><embed height="50" width="100" src="' + filepath + '"></audio>' ;
-            document.getElementById("test_audio").innerHTML = audio_html;
-            document.getElementById('audio').volume = currentVolume;
+        var audio_html = '<audio controls id="audio" onended="JUKEBOX.autoNext()"><source id="change_audio" src="' + filepath + '" type="audio/mpeg"><embed height="50" width="100" src="' + filepath + '"></audio>' ;
+        document.getElementById("test_audio").innerHTML = audio_html;
+        document.getElementById('audio').volume = currentVolume;
 
         if (isPlaying)
             document.getElementById("audio").play();
@@ -263,6 +287,9 @@ function JUKEBOX() {
         else {
             that.changeSong(that.songs[ that.currentSongID ]);
         }
+        currentSeek = 0;
+        radioPower.rotation.z = 0;
+
     }
 
 //    this.buildShuffledIndexArray = function(size) {
@@ -421,10 +448,12 @@ function JUKEBOX() {
         //mode: true:vol-up, false:vol-down
 //            button.position.set(Math.cos(button.rotation.y) * 1.5, 0, Math.sin(button.rotation.y) * 1.5);
         if (mode) {
-            button.rotation.z -= (2*Math.PI)/80;
+            if (vol_clicked) button.rotation.z -= (2*Math.PI)/80;
+            if (seek_clicked) button.rotation.z -= (2*Math.PI)/(document.getElementById('audio').duration/3);
         }
         else {
-            button.rotation.z += (2*Math.PI)/80;
+            if (vol_clicked) button.rotation.z += (2*Math.PI)/80;
+            if (seek_clicked) button.rotation.z += (2*Math.PI)/(document.getElementById('audio').duration/3);
         }
     }
     function setvolume (vol) {
@@ -435,6 +464,18 @@ function JUKEBOX() {
             }
             if (vol > 0) {
                 rotateTheButton(radioVolume, true);
+            }
+        }
+    }
+    function setseek (seek) {
+        if ( (seek+document.getElementById('audio').currentTime) > 0 && (seek+document.getElementById('audio').currentTime) < document.getElementById('audio').duration ) {
+            currentSeek = document.getElementById('audio').currentTime += seek;
+            document.getElementById('audio').volume = 0.1;
+            if (seek < 0) {
+                rotateTheButton(radioPower, false);
+            }
+            if (seek > 0) {
+                rotateTheButton(radioPower, true);
             }
         }
     }
