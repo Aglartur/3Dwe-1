@@ -66,10 +66,13 @@ exports.auth = function(req, res) {
         if(email === undefined || email === " " || email==="" || validate_email(email) === false){
             errorMessage = "Email is invalid | ";
         }
+        if(password === undefined || password === "" || password === " " || validate_pass(password) == false){
+            errorMessage += "Pass word at least one number, one lowercase and one uppercase letter and 6 in length";
+        }
         model.lookup(email, password, function(error,user) {
 
             if(user === undefined){
-                errorMessage += "User not found! |";
+                errorMessage += "Email or Password is incorrect!";
             }else{
             if (user.email !== email){
                 errorMessage += "Email is incorrect or not exist! |";
