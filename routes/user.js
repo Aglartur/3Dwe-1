@@ -145,7 +145,9 @@ exports.user_add = function (req, res) {
     var fname = req.query.fname;
     var lname = req.query.lname;
     var password  = req.query.password;
+    var confirm = req.query.confirm_password;
     var errorMessage = "";
+
     if (email === undefined || email === " " || email==="" || validate_email(email) === false){
             errorMessage = "Email is invalid | ";
     }
@@ -158,7 +160,16 @@ exports.user_add = function (req, res) {
     if(fname.length >= 20){
         errorMessage += "First Name length cannot be longer than 20 | ";
     }
-    if(password === undefined || validate_pass(password) == false){
+    if(password !== confirm){
+        errorMessage += "Password doesn't match | ";
+    }
+    if(password === undefined){
+        errorMessage += "Password field is empty | ";
+    }
+    if(confirm === undefined){
+        errorMessage += "Confirm Password field is empty | ";
+    }
+    if(validate_pass(password) == false){
         errorMessage += "Pass word at least one number, one lowercase and one uppercase letter and 6 in length";
     }
     if(errorMessage!== ''){
