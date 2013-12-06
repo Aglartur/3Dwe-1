@@ -37,6 +37,7 @@ app.get('/users', user.list);
 app.get('/signup',user.new);
 app.get('/login',user.login);
 app.post('/user/auth'  , user.auth);
+app.get('/user/add_auth', user.add_auth)
 app.get ('/user/main'  , user.main);
 app.get ('/user/logout', user.logout);
 app.get('/user/add', user.user_add);
