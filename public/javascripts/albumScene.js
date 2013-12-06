@@ -93,20 +93,20 @@ function ALBUM() {
         if (intersects.length > 0) {
 
         	if (intersects[0].object === albumL) {
-                clickAlbum(intersects[0].object, 35);
+                clickAlbum(intersects[0].object, true, 35);
             }
                 
 
             if (intersects[0].object === frameLeftTop || intersects[0].object === frameLeftBottom ) {
                 currentLeftTop = (that.photos.length + currentLeftTop - 4) % that.photos.length;
                 console.log(currentLeftTop);
-                flip_image(false, 25);
+                flip_image(false, 35.5);
             }
 
             if (intersects[0].object === frameRightTop || intersects[0].object === frameRightBottom) {
                 currentLeftTop = (currentLeftTop + 4) % that.photos.length;
                 console.log(currentLeftTop);
-                flip_image(true, 25);
+                flip_image(true, 35.5);
             }
 
        	}
@@ -172,9 +172,9 @@ function ALBUM() {
 
 
         frameLeftTop =  new THREE.Mesh(
-            new THREE.CubeGeometry(46, 1, 35),
+            new THREE.CubeGeometry(65, 1, 43),
             new THREE.MeshLambertMaterial({map: textureLeftTop, side:THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frameLeftTop.position.set(0,1,19);
+        frameLeftTop.position.set(-1,1,22);
         frameLeftTop.rotation.z = Math.PI;
         frameLeftTop.castShadow = false;
         frameLeftTop.receiveShadow = false;
@@ -184,9 +184,9 @@ function ALBUM() {
         that.group.add(frameLeftTop);
 
         frameLeftBottom = new THREE.Mesh(
-            new THREE.CubeGeometry(46, 1, 35),
+            new THREE.CubeGeometry(65, 1, 43),
             new THREE.MeshLambertMaterial({map: textureLeftBottom, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frameLeftBottom.position.set(0,1,-17);
+        frameLeftBottom.position.set(-1,1,-24);
         frameLeftBottom.rotation.z = Math.PI;
         frameLeftBottom.castShadow = false;
         frameLeftBottom.receiveShadow = false;
@@ -196,9 +196,9 @@ function ALBUM() {
         that.group.add(frameLeftBottom);
 
         frameRightTop = new THREE.Mesh(
-            new THREE.CubeGeometry(46, 1, 35),
+            new THREE.CubeGeometry(65, 1, 43),
             new THREE.MeshLambertMaterial({map: textureRightTop, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frameRightTop.position.set(0,2,19);
+        frameRightTop.position.set(-1,2.11,22);
         frameRightTop.rotation.z = Math.PI;
         frameRightTop.castShadow = false;
         frameRightTop.receiveShadow = false;
@@ -208,9 +208,9 @@ function ALBUM() {
         that.group.add(frameRightTop);
 
         frameRightBottom = new THREE.Mesh(
-            new THREE.CubeGeometry(46, 1, 35),
+            new THREE.CubeGeometry(65, 1, 43),
             new THREE.MeshLambertMaterial({map: textureRightBottom, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
-        frameRightBottom.position.set(0,2, -17);
+        frameRightBottom.position.set(-1,2.11, -24);
         frameRightBottom.rotation.z = Math.PI;
         frameRightBottom.castShadow = false;
         frameRightBottom.receiveShadow = false;
@@ -219,11 +219,20 @@ function ALBUM() {
         modelElements.push(frameRightBottom);
         that.group.add(frameRightBottom);
     }
-    function clickAlbum (object, radius)
+    function clickAlbum (object, forward, radius)
     {
         console.log("clickAlbum");
         var angle = Math.PI;
-        animateAlbum();
+        
+        var check = forward;
+        if (check) {
+            animateAlbum();
+        }
+        else {
+            albumBack();
+        }
+
+
         var startX = object.position.x;
         var startY = object.position.y;
         function animateAlbum()
@@ -239,6 +248,20 @@ function ALBUM() {
             else
             {
                 object.position.y = -2;
+            }
+        }
+
+        function albumBack()
+        {
+           if (angle >= - Math.PI)
+            {
+                object.position.x = radius + Math.cos(angle) * radius;
+                object.position.y = -Math.sin(angle) * radius;
+                object.rotation.z = -angle;
+
+                angle = Math.PI/18;
+                setTimeout(albumBack, 10);
+                check = false;
             }
         }
     }

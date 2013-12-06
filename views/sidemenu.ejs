@@ -10,6 +10,14 @@
             </audio>
         </div>
         <li><a class="create_directory" href="#">Create Directory</a></li>
+        
+        <form id="uploadForm"
+          enctype="multipart/form-data"
+          action="/uploadHandler"
+          method="post">
+         <input type="file" id="userFileInput" name="userFile" />
+        </form>
+        
         <li id = "directory_name">
 
             <form id = "file_form" align = "center"> <!-- action = "/create" method = "post" align="center"> -->

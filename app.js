@@ -41,7 +41,11 @@ app.get('/user/add_auth', user.add_auth)
 app.get ('/user/main'  , user.main);
 app.get ('/user/logout', user.logout);
 app.get('/user/add', user.user_add);
-app.post('/uploadifyhandler', routes.uploadifyhandler);
+
+//app.post('/uploadifyhandler', routes.uploadifyhandler);
+//uploadify deprecated
+
+app.post('/uploadHandler', routes.uploadHandler); 
 
 var io = require('socket.io').listen(app.listen(app.get('port')));
 io.set('log level', 1);
