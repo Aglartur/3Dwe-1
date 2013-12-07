@@ -227,13 +227,13 @@ function CORE() {
                 current_window = ROOM;
             });
         }
-//        if (key === 110 && !BOOK.isLoaded)                      // press N to go to BOOK
-//        {
-//            unloadCurrent();
-//            BOOK.load();
-//            document.addEventListener('mousedown', BOOK.onDocumentMouseDown, false);
-//            current_window = BOOK;
-//        }
+       if (key === 110 && !BOOK.isLoaded)                      // press N to go to BOOK
+       {
+           // unloadCurrent();
+           BOOK.load();
+           document.addEventListener('mousedown', BOOK.onDocumentMouseDown, false);
+           // current_window = BOOK;
+       }
 //        if (key === 99 && !ALBUM.isLoaded)                      // press ?? to go to ALBUM
 //        {
 //            unloadCurrent();

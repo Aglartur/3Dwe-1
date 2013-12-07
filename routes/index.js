@@ -48,7 +48,7 @@ exports.uploadHandler = function(req, res) {
         allPath = '/videos/' + req.files.userFile.name;
     }else if (extension === 'pdf'){
         allPath = '/PDFs/' + req.files.userFile.name;
-    }else if (extension === 'jpg'){
+    }else if (extension === 'jpg' || extension === 'png' || extension === 'JPG' || extension === 'PNG'){
         allPath = '/Photos/' + req.files.userFile.name;
     }else if (extension === 'txt'){
         console.log("no txt folder");

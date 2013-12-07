@@ -123,7 +123,7 @@ function BOOK() {
     }
 
     function initPDF(object, pageNumber) {
-        PDFJS.getDocument('home/pdfs/crackcode.pdf').then(function(pdf) {
+        PDFJS.getDocument('/home/pdfs/crackcode.pdf').then(function(pdf) {
             // Using promise to fetch the page
             pdf.getPage(pageNumber).then(function(page) {
                 var scale = 3;
