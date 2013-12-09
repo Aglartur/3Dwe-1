@@ -163,7 +163,7 @@ function TVObject() {
         video.height = HEIGHT;
 
         videoTexture = new THREE.Texture(video);
-        loadScreen();
+        loadScreen(); //load screen material
 
         var cubeGeom = new THREE.CubeGeometry(100, 250, 10, 1, 1, 1);
         mirrorCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
