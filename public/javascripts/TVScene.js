@@ -24,9 +24,11 @@ function TVObject() {
 
     var floor;
     var light, pointLight;
+    var mirrorCamera;
 
     var modelElements = [];
 
+    this.mirrorObj = undefined;
     this.isLoaded = false;
     this.group = new THREE.Object3D();
 
@@ -151,7 +153,7 @@ function TVObject() {
         screen.position.x = -11;                    // align to screen
         screen.position.z = -1;                    // move in front
         screen.position.y = 35;                   // move it up
-//        CORE.scene.add(screen);
+        CORE.scene.add(screen);
         CORE.intersectObjects.push(screen);
         modelElements.push(screen);
         that.group.add(screen);
@@ -161,10 +163,19 @@ function TVObject() {
         video.height = HEIGHT;
 
         videoTexture = new THREE.Texture(video);
-        var videoMaterial = new THREE.MeshLambertMaterial({
-            map : videoTexture, side: THREE.DoubleSide
-        });
-        screen.material = videoMaterial;
+        loadScreen();
+
+        var cubeGeom = new THREE.CubeGeometry(100, 250, 10, 1, 1, 1);
+        mirrorCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+        // mirrorCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
+        CORE.scene.add( mirrorCamera );
+        var mirrorCubeMaterial = new THREE.MeshBasicMaterial( { envMap: mirrorCamera.renderTarget } );
+        that.mirrorObj = new THREE.Mesh( cubeGeom, mirrorCubeMaterial );
+        that.mirrorObj.position.set(-500,150,0); //place on wall
+        that.mirrorObj.rotation.set(0, Math.PI/2, 0);
+        mirrorCamera.position = that.mirrorObj.position;
+        CORE.scene.add(that.mirrorObj);
+        alert(that.mirrorObj);
     }
 
     function initLights() {
@@ -188,6 +199,23 @@ function TVObject() {
         }
         if (seekValue)
             video.currentTime+=seekValue;
+
+        that.mirrorObj.visible = false;
+        mirrorCamera.updateCubeMap( CORE.renderer, CORE.scene );
+        that.mirrorObj.visible = true;
+    }
+
+    function loadScreen(){
+        var videoMaterial = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            specular: 0xdddddd,
+            shininess: 30,
+            ambient: 0x0000a1,
+            emissive: 0x001533,
+            map : videoTexture,
+            side: THREE.DoubleSide
+        });
+        screen.material = videoMaterial;
     }
 
     this.loadVideo = function(filename){
@@ -195,10 +223,7 @@ function TVObject() {
         video.autoplay = false;
         video.src = filename;
         videoTexture = new THREE.Texture(video);
-        var videoMaterial = new THREE.MeshLambertMaterial({
-            map : videoTexture, side: THREE.DoubleSide
-        });
-        screen.material = videoMaterial;
+        loadScreen();
         resetButtons();
     }
 
@@ -211,10 +236,7 @@ function TVObject() {
                 video.play();
                 isPlaying = true;
                 videoTexture = new THREE.Texture(video);
-                var videoMaterial = new THREE.MeshLambertMaterial({
-                    map : videoTexture, side: THREE.DoubleSide
-                });
-                screen.material = videoMaterial;
+                loadScreen();
                 that.recordVideo(stream);
             },
             function(err) {
@@ -384,8 +406,8 @@ function TVObject() {
     }
     function resetButtons(){
         for (var i = 0; i < buttons.length; i++){
-            buttons[index].on = false;
-            redrawButton(play_buttons[index], buttons[index]);
+            buttons[i].on = false;
+            redrawButton(play_buttons[i], buttons[i]);
         }
     }
 }
