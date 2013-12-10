@@ -78,11 +78,9 @@ Ask away!
 
 Click to view.
 
-### Mutt
-
-[![mutt dark](https://github.com/3Dwe/master/blob/presentation_branch/assets/screenshots/room.png)
-[![mutt dark](https://github.com/3Dwe/master/blob/presentation_branch/assets/screenshots/shader_example.png)
-[![mutt dark](https://github.com/3Dwe/master/blob/presentation_branch/assets/screenshots/weird_lighting.png)
+[![B&W Room](/assets/screenshots/room.png)
+[![Dot Shader](/assets/screenshots/shader_example.png)
+[![Blooper](/assets/screenshots/weird_lighting.png)
 
 ## Changelog
 
