@@ -1,5 +1,6 @@
 /**
-* Created by Peng on 11/28/13.
+ * Created by Peng on 11/28/13.
+ *
 */
 
     
@@ -64,6 +65,7 @@ function ALBUM() {
         this.isLoaded = true;
     }
 
+    // send request to socket.io to load photos
     function tryLoadPhotos ()       //show that album scenw has been loaded correctly with photos
     {
         if (socketBusy)             //load photos failes

@@ -1,11 +1,12 @@
 /**
- * Created on 11/24/13.
- * Contributors: Aibek, Swetal
+ * Created by Swetal Bhatt 11/24/13.
+ * Contributors: Aibek Sarbayev (retrieving songs list)
  */
 
 var JUKEBOX = new JUKEBOX();
 
 function JUKEBOX() {
+    // Utilize singleton property
     if ( arguments.callee._singletonInstance )
         return arguments.callee._singletonInstance;
     arguments.callee._singletonInstance = this;
@@ -36,7 +37,7 @@ function JUKEBOX() {
     this.currentSongID = 3;             // variable for keeping track of the current song
 
     var floor;
-    var light, pointLight;              //
+    var light, pointLight;
 
     var modelElements = [];
     var buttonsPressed = [];
@@ -74,6 +75,7 @@ function JUKEBOX() {
         this.isLoaded = true;
     }
 
+    // send request to socket.io to load songs
     function tryLoadSongs()
     {
         if (socketBusy)
@@ -126,13 +128,11 @@ function JUKEBOX() {
             {
                 if (!isPlaying)
                 {
-//                    radioPlay.position.set(0,0,1.5);
                     pushTheButton(radioPlay, true);
                     document.getElementById("audio").play();
                 }
                 else
                 {
-//                    radioPlay.position.set(0,0,0);
                     pushTheButton(radioPlay, false);
                     document.getElementById("audio").pause();
                 }
@@ -140,14 +140,12 @@ function JUKEBOX() {
             }
             if (object === radioNext)
             {
-//                radioNext.position.set(0,0,1.5);
                 pushTheButton(radioNext, true);
                 if(!isShuffling && !isReplaying) {
                     that.currentSongID = (that.songs.length + that.currentSongID + 1) % that.songs.length;
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
                 else if (isShuffling && !isReplaying){
-//                    that.shuffleNext();
                     that.currentSongID = Math.floor(Math.random()*that.songs.length);
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
@@ -161,14 +159,12 @@ function JUKEBOX() {
             }
             if (object === radioPrev)
             {
-//                radioPrev.position.set(0,0,1.5);
                 pushTheButton(radioPrev, true);
                 if (!isShuffling && !isReplaying) {
                     that.currentSongID = (that.songs.length + that.currentSongID - 1) % that.songs.length;
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
                 else if (isShuffling && !isReplaying) {
-//                    that.shufflePrev();
                     that.currentSongID = Math.floor(Math.random()*that.songs.length);
                     that.changeSong(that.songs[ that.currentSongID ]);
                 }
@@ -250,7 +246,6 @@ function JUKEBOX() {
             var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
             CORE.projector.unprojectVector(vector, CORE.camera);
             vector.sub(CORE.camera.position).normalize();
-//            vector.y = 0;
 
             var temp = new THREE.Vector3(0,0,0);
             temp.add(vector);
@@ -258,7 +253,7 @@ function JUKEBOX() {
             vector.sub(prevDrag);
             vector.multiplyScalar(5);  // seems to work ok as long as it is positive
 
-            // WORKAROUND: changed to vector.z, because the Music is rotated 90 degrees, need to fix that so it would be generic.
+            // WORKAROUND: changed to vector.z, because the Jukebox is rotated 90 degrees, need to fix that so it would be generic.
 
             if (vector.z > 0) {
                 if (vol_clicked) setvolume(0.0125);
