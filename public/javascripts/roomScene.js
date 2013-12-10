@@ -1,12 +1,12 @@
 /**
- * Created by Aibek on 11/26/13.
+ * Created on 11/26/13.
+ * Contributors: Aibek Sarbayev, Swetal Bhatt, Sean Noran, Peng Gao
  */
 
 /**
  *  The ROOM module is a shell for room environment, it provides walls, floor and decorations.
  *
  */
-
 
 var ROOM = new ROOM();
 

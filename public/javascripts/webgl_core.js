@@ -1,5 +1,6 @@
 /**
  * Created by Aibek on 11/2/13.
+ * TV logic and camera effects made by Sean Noran
  */
 
 /**

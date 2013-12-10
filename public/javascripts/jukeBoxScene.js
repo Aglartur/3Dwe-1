@@ -1,5 +1,5 @@
 /**
- * Created by Aibek on 11/24/13.
+ * Created by Swetal on 11/24/13.
  */
 
 var JUKEBOX = new JUKEBOX();
@@ -62,7 +62,6 @@ function JUKEBOX() {
 
         CORE.scene.add(that.group);
         that.group.position.set(480,85,0);
-//        that.group.position.set(400,85,0);
         that.group.rotation.y = Math.PI / 2;
 
         this.isLoaded = true;
