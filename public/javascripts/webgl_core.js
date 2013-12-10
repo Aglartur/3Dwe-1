@@ -1,6 +1,16 @@
 /**
  * Created by Aibek on 11/2/13.
  */
+
+/**
+ *   In this file we set up core logic of WebGL and load/unload modules (room, tv, jukebox, album and book).
+ *   The CORE class contains initialization of WebGL main components: renderer, scene, camera and camera controls.
+ *   There is also implementation of camera effects, renderer stats and WebGL stats (stats are disabled by default).
+ *   The animate function is implemented here, to constantly update everything in the scene.
+ *   CORE also disposes unloaded geometry and textures to improve memory management.
+ *
+ */
+
 var CORE = new CORE();
 var current_window; //the currently loaded window (SAMPLE, JUKEBOX, TV, etc.)
 
@@ -10,13 +20,6 @@ $(document).ready(function () {
 
     CORE.init();
     CORE.animate(new Date().getTime());
-
-//    $('#breadcrumb').css('display', 'none');
-    /*$('#viewer').focusout(function(e){
-       CORE.freezeCamera(true);
-    });*/
-
-//    $('#breadcrumb').css('display', 'none');
 
     $('#TV_play').click(function(e){
         if (TVObject)
