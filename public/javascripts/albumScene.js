@@ -78,7 +78,7 @@ function ALBUM() {
             socketBusy = true;                             //load photos correctly from file directory
             specialRequest = that.request.LOADPHOTOS;
             currentDirectory = '/Home';
-            openDir('/Photos/');
+            openDir('/Photos');
         }
     }
 
