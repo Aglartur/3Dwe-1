@@ -78,9 +78,9 @@ Ask away!
 
 Click to view.
 
-[![B&W Room](/assets/screenshots/room.png)
-[![Dot Shader](/assets/screenshots/shader_example.png)
-[![Blooper](/assets/screenshots/weird_lighting.png)
+![B&W Room](/assets/screenshots/room.png)
+![Dot Shader](/assets/screenshots/shader_example.png)
+![Blooper](/assets/screenshots/blooper.png)
 
 ## Changelog
 
