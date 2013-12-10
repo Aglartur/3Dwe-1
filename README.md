@@ -74,10 +74,10 @@ Click to view.
 
 ![Room](/assets/screenshots/room.png)
 ![Room2](/assets/screenshots/room2.png)
-![Jukebox](/assets/screenshots/jukebox.png)
-![Mirror](/assets/screenshots/mirror.png)
+![Jukebox](/assets/screenshots/Jukebox.png)
+![Mirror](/assets/screenshots/Mirror.png)
 ![Photo Album](/assets/screenshots/photo_album.png)
-![TV](/assets/screenshots/tv.png)
+![TV](/assets/screenshots/TV.png)
 ![Blooper](/assets/screenshots/blooper.png)
 
 ## Changelog
