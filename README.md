@@ -72,8 +72,12 @@ Ask away!
 
 Click to view.
 
-![B&W Room](/assets/screenshots/room.png)
-![Dot Shader](/assets/screenshots/shader_example.png)
+![Room](/assets/screenshots/room.png)
+![Room2](/assets/screenshots/room2.png)
+![Jukebox](/assets/screenshots/jukebox.png)
+![Mirror](/assets/screenshots/mirror.png)
+![Photo Album](/assets/screenshots/photo_album.png)
+![TV](/assets/screenshots/tv.png)
 ![Blooper](/assets/screenshots/blooper.png)
 
 ## Changelog
