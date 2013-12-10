@@ -51,7 +51,6 @@ function getPath(filename){
         var path = String(filename);
         //path = path.replace(/\//g, '\\');
         path = __dirname + "/public/home" + path;
-        console.log(__dirname + "MUAHAHFUCKINGHA");
         return path;
     }
 
