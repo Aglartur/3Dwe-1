@@ -1,19 +1,21 @@
+---
+title: 3Dwe
+description: Integrative 3D File Storage Application
+author: Aibek Sarbayev, Peng Gao, Sean Noran, Wei Lin, Swetal Bhatt
+tags: 3D, webGL, threejs, webRTC, file storage
+
+---
+
 Master
 ======
 
-Contributors: Aibek Sarbayev, Peng Gao, Sean Noran, Wei Lin, Swetal Bhatt
-Donate link: UNAVAILABLE
-Tags: 3D, webGL, threejs, webRTC, file storage
-Current version: In development
-Compatability: Does not support IE
-
-== Description ==
+## Description
 
 3Dwe is an integrative file storage application running on webGL 3D. The user is immersed in a room containing various
 media interfaces such as a television set for viewing videos and recording web video, a photo album for viewing picture
 files, a book for reading pdfs and a jukebox for listening to music.
 
-== Setup ==
+## Setup
 
 If the program does not run initially, carefully follow these instructions:
     1. Make sure your web browser is compatible with our application. It is currently supported by Chrome and Firefox.
@@ -25,13 +27,13 @@ If the program does not run initially, carefully follow these instructions:
        queries in /db/db.sql and execute them in pgAdmin. This will create the empty database table required for login.
        In future versions, the database will be stored on a persistent server and the application will be running in http.
 
-== Login ==
+## Login
 
 If you are not currently registered for 3Dwe, click on the icon in the top-right, then click SignUp. You should be
 redirected to the registration page. Enter a valid email address, name and a password. Note that passwords are NOT
 currently encrypted. They are stored as plaintext on a local database.
 
-== Explorer Panel ==
+## Explorer Panel
 
 Remember that button you pressed to register? Click it now and you will see a preliminary file explorer view, which will
 display folders and files you uploaded. There are 4 main folders in your home directory:
@@ -44,46 +46,44 @@ However, feel free to create new directories to personalize your file system.
 To upload files, simply click on the upload button. Most unsupported media file types can be uploaded. For example, the
 user can upload a .gif file but it will not be displayed in the photo album or in the TV.
 
-== Jukebox ==
+## Jukebox
 
 Enjoy your favorite songs from a life-like 3D jukebox! Simply add them to the /Home/Music directory.
 
-== TV ==
+## TV
 
 To play videos, click on a supported video file in the explorer panel. To record a video, click the record button on the
 television set. Note that the buttons are only visible when you hover over the bottom of the screen.
 
-== Photo Album ==
+## Photo Album
 
 The photo album displays photos contained in the /Home/Photos directory.
 
-== Book ==
+## Book
 
 Press N to view the book. Because the pdf embedding library is inefficient, the book is currently not displayed by
 default. We are in the process of integrating .pdf and .txt files more effectively.
 
-== File Explorer Demo ==
+## File Explorer Demo
 
 Additionally, we embedded the file explorer project that we worked on at HackPrinceton Fall 2013. Press E to switch to
 explorer view. There are some known bugs which may occur when switching scenes, such as files not loading properly. For
 a more pleasant experience, visit http://ec2-54-234-58-212.compute-1.amazonaws.com/
 
-== Frequently Asked Questions ==
+## Frequently Asked Questions
 
-= A question that someone might have =
+Ask away!
 
-An answer to that question.
+## Screenshots
 
-= What about foo bar? =
+Click to view.
 
-Answer to foo bar dilemma.
+### Mutt
 
-== Screenshots ==
+[![mutt dark](https://github.com/3Dwe/master/blob/presentation_branch/assets/screenshots/room.png)
+[![mutt dark](https://github.com/3Dwe/master/blob/presentation_branch/assets/screenshots/shader_example.png)
+[![mutt dark](https://github.com/3Dwe/master/blob/presentation_branch/assets/screenshots/weird_lighting.png)
 
-/assets/screenshots/room.png
-/assets/screenshots/shader_example.png
-/assets/screenshots/weirt_lighting.png
-
-== Changelog ==
+## Changelog
 
 --
