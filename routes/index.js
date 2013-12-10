@@ -37,38 +37,40 @@ exports.index = function(req, res){
 // };
 
 
-exports.uploadHandler = function(req, res) {
 
-    var allPath = "";
+//Deprecated
+// exports.uploadHandler = function(req, res) {
+
+//     var allPath = "";
  
-    var extension = req.files.userFile.name.split('.').pop();
-    if (extension === 'mp3'){
-        allPath = 'Music/' + req.files.userFile.name;
-    }else if (extension === 'mp4' || extension === 'MOV' || extension === 'webm' || extension === 'wmv'){
-        allPath = '/Videos/' + req.files.userFile.name;
-    }else if (extension === 'pdf'){
-        allPath = '/PDFs/' + req.files.userFile.name;
-    }else if (extension === 'jpg' || extension === 'png' || extension === 'JPG' || extension === 'PNG'){
-        allPath = '/Photos/' + req.files.userFile.name;
-    }else if (extension === 'txt'){
-        console.log("no txt folder");
-    }
+//     var extension = req.files.userFile.name.split('.').pop();
+//     if (extension === 'mp3'){
+//         allPath = 'Music/' + req.files.userFile.name;
+//     }else if (extension === 'mp4' || extension === 'MOV' || extension === 'webm' || extension === 'wmv'){
+//         allPath = '/Videos/' + req.files.userFile.name;
+//     }else if (extension === 'pdf'){
+//         allPath = '/PDFs/' + req.files.userFile.name;
+//     }else if (extension === 'jpg' || extension === 'png' || extension === 'JPG' || extension === 'PNG'){
+//         allPath = '/Photos/' + req.files.userFile.name;
+//     }else if (extension === 'txt'){
+//         console.log("no txt folder");
+//     }
 
 
-        require('fs').rename(
-        req.files.userFile.path,
-        '/Users/ULTIMATE/CS326/UPDATE/master/public/Home' + allPath,
-        function(error) {
-            if(error) {
-                res.send({
-                    error: 'Ah crap! Something bad happened'
-                });
-                return;
-            }
+//         require('fs').rename(
+//         req.files.userFile.path,
+//         '/Users/ULTIMATE/CS326/UPDATE/master/public/Home' + allPath,
+//         function(error) {
+//             if(error) {
+//                 res.send({
+//                     error: 'Ah crap! Something bad happened'
+//                 });
+//                 return;
+//             }
      
-            res.send({
-                path: allPath
-            });
-        }
-    );
-}
+//             res.send({
+//                 path: allPath
+//             });
+//         }
+//     );
+// }

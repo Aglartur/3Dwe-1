@@ -45,7 +45,63 @@ app.get('/user/add', user.user_add);
 //app.post('/uploadifyhandler', routes.uploadifyhandler);
 //uploadify deprecated
 
-app.post('/uploadHandler', routes.uploadHandler); 
+//app.post('/uploadHandler', routes.uploadHandler); 
+
+function getPath(filename){
+        var path = String(filename);
+        path = path.replace(/\//g, '\\');
+        path = __dirname + "\\public\\home" + path;
+        return path;
+    }
+
+app.post('/uploadHandler', function(req, res) {
+
+    var allPath = "";
+ 
+    var extension = req.files.userFile.name.split('.').pop();
+    if (extension === 'mp3' || extension === 'MP3'){
+        allPath = '/Music/' + req.files.userFile.name;
+    }else if (extension === 'mp4' || extension === 'MOV' || extension === 'webm' || extension === 'wmv'){
+        allPath = '/Videos/' + req.files.userFile.name;
+    }else if (extension === 'pdf'){
+        allPath = '/PDFs/' + req.files.userFile.name;
+    }else if (extension === 'jpg' || extension === 'png' || extension === 'JPG' || extension === 'PNG'){
+        allPath = '/Photos/' + req.files.userFile.name;
+    }else if (extension === 'txt'){
+        console.log("no txt folder");
+    }
+
+        require('fs').rename(
+        req.files.userFile.path,
+        getPath(allPath),
+        function(error) {
+            if(error) {
+                res.send({
+                    error: 'Sorry, upload failed!'
+                });
+                return;
+            }
+
+            console.log("arrived here");
+            res.send({
+                path: getPath(allPath)
+            });
+        }
+    );
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var io = require('socket.io').listen(app.listen(app.get('port')));
 io.set('log level', 1);
