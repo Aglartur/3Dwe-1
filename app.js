@@ -50,18 +50,20 @@ app.get('/user/add', user.user_add);
  * @param filename the name of the file or folder
  * @returns {string} the absolute path
  */
-function getPath(filename){
+function getPath(filename){         //function to get filepath
     var path = String(filename);
     path = path.replace(/\//g, '\\');
-    path = __dirname + "\\public" + path;
+    path = __dirname + "\\public" + path;   //_dirname with newly directed path
     return path;
 }
 
-app.post('/uploadHandler', function(req, res) {
+app.post('/uploadHandler', function(req, res) {     //upload post method
 
-    var allPath = "/Home";
+    var allPath = "/Home";      //filepath variable to store the uploaded files
  
-    var extension = req.files.userFile.name.split('.').pop();
+    var extension = req.files.userFile.name.split('.').pop();       //get extension
+
+    //get correct folder depend on type of file from their extensions
     if (extension === 'mp3' || extension === 'MP3'){
         allPath += '/Music/' + req.files.userFile.name;
     }else if (extension === 'mp4' || extension === 'MOV' || extension === 'webm' || extension === 'wmv'){
@@ -74,10 +76,11 @@ app.post('/uploadHandler', function(req, res) {
         console.log("no txt folder");
     }
 
+    //fs method call for file namepath
     require('fs').rename(
         req.files.userFile.path,
         getPath(allPath),
-        function(error) {
+        function(error) {       //error call 
             if(error) {
                 res.send({
                     error: 'Sorry, upload failed!'
@@ -85,7 +88,7 @@ app.post('/uploadHandler', function(req, res) {
                 return;
             }
 
-            console.log("arrived here");
+            console.log("arrived here");        //print to console that upload success
             res.send({
                 path: getPath(allPath)
             });
