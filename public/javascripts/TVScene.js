@@ -4,7 +4,6 @@
 
 var TVObject = new TVObject();
 
-
 function TVObject() {
     if ( arguments.callee._singletonInstance )
         return arguments.callee._singletonInstance;
@@ -24,11 +23,9 @@ function TVObject() {
 
     var floor;
     var light, pointLight;
-    var mirrorCamera;
 
     var modelElements = [];
 
-    this.mirrorObj = undefined;
     this.isLoaded = false;
     this.group = new THREE.Object3D();
 
@@ -164,17 +161,6 @@ function TVObject() {
 
         videoTexture = new THREE.Texture(video);
         loadScreen(); //load screen material
-
-        var cubeGeom = new THREE.CubeGeometry(100, 250, 10, 1, 1, 1);
-        mirrorCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
-        // mirrorCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
-        CORE.scene.add( mirrorCamera );
-        var mirrorCubeMaterial = new THREE.MeshBasicMaterial( { envMap: mirrorCamera.renderTarget } );
-        that.mirrorObj = new THREE.Mesh( cubeGeom, mirrorCubeMaterial );
-        that.mirrorObj.position.set(-500,150,0); //place on wall
-        that.mirrorObj.rotation.set(0, Math.PI/2, 0);
-        mirrorCamera.position = that.mirrorObj.position;
-        CORE.scene.add(that.mirrorObj);
     }
 
     function initLights() {
@@ -198,10 +184,6 @@ function TVObject() {
         }
         if (seekValue)
             video.currentTime+=seekValue;
-
-        that.mirrorObj.visible = false;
-        mirrorCamera.updateCubeMap( CORE.renderer, CORE.scene );
-        that.mirrorObj.visible = true;
     }
 
     function loadScreen(){

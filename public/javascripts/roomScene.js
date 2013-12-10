@@ -41,8 +41,11 @@ function ROOM() {
     // main light
     var light;
 
-    var modelElements = [];
+    var mirrorCamera;
+    var that = this;
+    this.mirrorObj = undefined;
 
+    var modelElements = [];
     this.isLoaded = false;
 
     this.load = function ()
@@ -51,7 +54,7 @@ function ROOM() {
         initPhotoFrame();
         initShelves();
         initTableGroup();
-//        initTvStand();
+        initMirror();
         initTVstandModel();
         initWalls();
         initLights();
@@ -116,7 +119,7 @@ function ROOM() {
         CORE.intersectObjects.push(table);
         modelElements.push(table);
 
-        floorTexture = new THREE.ImageUtils.loadTexture('/images/floor-texture.jpg', {}, function () {
+        var floorTexture = new THREE.ImageUtils.loadTexture('/images/floor-texture.jpg', {}, function () {
             CORE.renderer.render(CORE.scene, CORE.camera);
         });
         floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
@@ -343,6 +346,25 @@ function ROOM() {
         wall4.receiveShadow = true;
         CORE.scene.add(wall4);
         modelElements.push(wall4);
+    }
+
+    function initMirror(){
+        var cubeGeom = new THREE.CubeGeometry(100, 250, 10, 1, 1, 1);
+        mirrorCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+        // mirrorCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
+        CORE.scene.add( mirrorCamera );
+        var mirrorCubeMaterial = new THREE.MeshBasicMaterial( { envMap: mirrorCamera.renderTarget } );
+        that.mirrorObj = new THREE.Mesh( cubeGeom, mirrorCubeMaterial );
+        that.mirrorObj.position.set(-500,150,0); //place on wall
+        that.mirrorObj.rotation.set(0, Math.PI/2, 0);
+        mirrorCamera.position = that.mirrorObj.position;
+        CORE.scene.add(that.mirrorObj);
+    }
+
+    this.update = function(){
+        that.mirrorObj.visible = false;
+        mirrorCamera.updateCubeMap( CORE.renderer, CORE.scene );
+        that.mirrorObj.visible = true;
     }
 
     function initLights()

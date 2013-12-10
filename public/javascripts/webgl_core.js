@@ -139,6 +139,8 @@ function CORE() {
 //        stats.update();
         if (TVObject.isLoaded)
             TVObject.renderVideo();
+        if (ROOM.isLoaded)
+            ROOM.update();
     }
 
     function loadRoom()
