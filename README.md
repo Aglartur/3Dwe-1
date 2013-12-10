@@ -78,6 +78,7 @@ Click to view.
 ![Mirror](/assets/screenshots/Mirror.png)
 ![Photo Album](/assets/screenshots/photo_album.png)
 ![TV](/assets/screenshots/TV.png)
+![Black White](/assets/screenshots/black_white.png)
 ![Blooper](/assets/screenshots/blooper.png)
 
 ## Changelog
