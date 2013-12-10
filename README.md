@@ -64,12 +64,6 @@ The photo album displays photos contained in the /Home/Photos directory.
 Press N to view the book. Because the pdf embedding library is inefficient, the book is currently not displayed by
 default. We are in the process of integrating .pdf and .txt files more effectively.
 
-## File Explorer Demo
-
-Additionally, we embedded the file explorer project that we worked on at HackPrinceton Fall 2013. Press E to switch to
-explorer view. There are some known bugs which may occur when switching scenes, such as files not loading properly. For
-a more pleasant experience, visit http://ec2-54-234-58-212.compute-1.amazonaws.com/
-
 ## Frequently Asked Questions
 
 Ask away!
@@ -85,3 +79,7 @@ Click to view.
 ## Changelog
 
 --
+
+## File Explorer Demo
+
+Visit http://ec2-54-234-58-212.compute-1.amazonaws.com/ for a demo of our other related project!
