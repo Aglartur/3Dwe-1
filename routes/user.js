@@ -1,3 +1,4 @@
+//Made by Wei Lin  Logout function courtesy of Tim Richard
 var model = require('../lib/model');
 /*
  * GET users listing.
@@ -172,6 +173,9 @@ exports.user_add = function (req, res) {
     }
     if(fname.length >= 20){
         errorMessage += "First Name length cannot be longer than 20 | ";
+    }
+    if(lname.length >= 20){
+        errorMessage += "Last Name length cannot be longer than 20 | ";
     }
     if(password !== confirm){
         errorMessage += "Password doesn't match | ";
