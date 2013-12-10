@@ -5,7 +5,8 @@
     
 var ALBUM = new ALBUM();             //new scene for album
 
-function ALBUM() {                      //album singleton object
+function ALBUM() {
+    // Utilize singleton property
     if ( arguments.callee._singletonInstance )
         return arguments.callee._singletonInstance;
     arguments.callee._singletonInstance = this;

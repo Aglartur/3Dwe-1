@@ -2,9 +2,16 @@
  * Created by Aibek on 11/26/13.
  */
 
+/**
+ *  The ROOM module is a shell for room environment, it provides walls, floor and decorations.
+ *
+ */
+
+
 var ROOM = new ROOM();
 
 function ROOM() {
+    // Utilize singleton property
     if ( arguments.callee._singletonInstance )
         return arguments.callee._singletonInstance;
     arguments.callee._singletonInstance = this;
@@ -20,12 +27,6 @@ function ROOM() {
     // variable for black wood texture for the table
     var blackWoodTexture;
 
-    // variable for TV stand
-    var tvstandgroup;
-    var tvstandgroup_active = [];
-    var tvstand;
-    var glasscover;
-    var cabinetcover1, cabinetcover2, cabinetcover3;
     // variable for brown wood texture for the tv stand
     var brownWoodTexture;
 
@@ -48,6 +49,7 @@ function ROOM() {
     var modelElements = [];
     this.isLoaded = false;
 
+    // load everything into scene and initalize lightning
     this.load = function ()
     {
         initGeometry();
@@ -62,6 +64,7 @@ function ROOM() {
         this.isLoaded = true;
     }
 
+    // unload everything
     this.unload = function ()
     {
         CORE.disposeSceneElements(modelElements);
@@ -69,30 +72,12 @@ function ROOM() {
         this.isLoaded = false;
     }
 
-    this.onDocumentMouseDown = function(event){
-        event.preventDefault();
-
-        var object;
-        var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
-        CORE.projector.unprojectVector(vector, CORE.camera);
-        var raycaster = new THREE.Raycaster(CORE.camera.position, vector.sub(CORE.camera.position).normalize());
-        var intersects = raycaster.intersectObjects(CORE.intersectObjects);
-
-        // if you clicked on something
-        if (intersects.length > 0) {
-            object = intersects[ 0 ].object;
-        }
-    }
-
+    // initialize floor and textures
     function initGeometry()
     {
         //TODO: Using the microcache is supposed to be faster:
         CORE.renderer._microCache.getSet('heavy', THREE.ImageUtils.loadTexture('/images/light-wood.jpg'));
-        /*lightWoodTexture = new THREE.ImageUtils.loadTexture('/images/light-wood.jpg', {}, function () {
-            CORE.renderer.render(CORE.scene, CORE.camera);
-        });
-        lightWoodTexture.wrapS = lightWoodTexture.wrapT = THREE.RepeatWrapping;
-        lightWoodTexture.repeat.set(1, 1);*/
+
         var lightWoodMaterial = new THREE.MeshLambertMaterial({map: lightWoodTexture});
 
         blackWoodTexture = new THREE.ImageUtils.loadTexture('/images/black-wood.png', {}, function () {
@@ -136,6 +121,7 @@ function ROOM() {
         modelElements.push(floor);
     }
 
+    // put nice photo frame on the wall
     function initPhotoFrame() {
         // variable for frame
         var pic;
@@ -143,8 +129,8 @@ function ROOM() {
         var picTexture;
 
         picframe = new THREE.Mesh(
-            new THREE.CubeGeometry(100,100,4),                           // supply size of the cube
-            new THREE.MeshLambertMaterial({map: brownWoodTexture}));          // supply color of the cube
+            new THREE.CubeGeometry(100,100,4),
+            new THREE.MeshLambertMaterial({map: brownWoodTexture}));
         picframe.position.set(0, 250, 500-2);
         picframe.castShadow = true;
         picframe.receiveShadow = true;
@@ -156,10 +142,9 @@ function ROOM() {
         });
         picTexture.wrapS = picTexture.wrapT = THREE.RepeatWrapping;
         picTexture.repeat.set(1, 1);
-        //var lightWoodMaterial = new THREE.MeshLambertMaterial({map: picTexture});
         pic = new THREE.Mesh(
-            new THREE.CubeGeometry(70,70,6),                           // supply size of the cube
-            new THREE.MeshLambertMaterial({map: picTexture}));          // supply color of the cube
+            new THREE.CubeGeometry(70,70,6),
+            new THREE.MeshLambertMaterial({map: picTexture}));
         pic.position.set(0, 250, 500-2);
         pic.castShadow = true;
         pic.receiveShadow = true;
@@ -168,6 +153,7 @@ function ROOM() {
         modelElements.push(pic);
     }
 
+    // load 3D models for TV stand and plant on top of it
     function initTVstandModel()
     {
         var loader = new THREE.JSONLoader();
@@ -194,6 +180,7 @@ function ROOM() {
         loader.load( "/obj/flower_pot/house_plant.js", callbackModel );
     }
 
+    // put shelves on the wall
     function initShelves()
     {
         shelf1 = new THREE.Mesh(
@@ -245,9 +232,6 @@ function ROOM() {
         coffeetable.position.set(0, 80, 0);
         coffeetable.castShadow = true;
         coffeetable.receiveShadow = true;
-        //CORE.scene.add(coffeetable);
-        //CORE.intersectObjects.push(coffeetable);
-        //modelElements.push(coffeetable);
 
         leg1 = new THREE.Mesh(
             new THREE.CubeGeometry(10,80,10),                           // supply size of the cube
@@ -255,9 +239,6 @@ function ROOM() {
         leg1.position.set(80, 40, -80);
         leg1.castShadow = true;
         leg1.receiveShadow = true;
-        //CORE.scene.add(leg1);
-        //CORE.intersectObjects.push(leg1);
-        //modelElements.push(leg1);
 
         leg2 = new THREE.Mesh(
             new THREE.CubeGeometry(10,80,10),                           // supply size of the cube
@@ -265,9 +246,6 @@ function ROOM() {
         leg2.position.set(-80, 40, 80);
         leg2.castShadow = true;
         leg2.receiveShadow = true;
-        //CORE.scene.add(leg2);
-        //CORE.intersectObjects.push(leg2);
-        //modelElements.push(leg2);
 
         leg3 = new THREE.Mesh(
             new THREE.CubeGeometry(10,80,10),                           // supply size of the cube
@@ -275,9 +253,6 @@ function ROOM() {
         leg3.position.set(80, 40, 80);
         leg3.castShadow = true;
         leg3.receiveShadow = true;
-        //CORE.scene.add(leg3);
-        //CORE.intersectObjects.push(leg3);
-        //modelElements.push(leg3);
 
         leg4 = new THREE.Mesh(
             new THREE.CubeGeometry(10,80,10),                           // supply size of the cube
@@ -285,9 +260,6 @@ function ROOM() {
         leg4.position.set(-80, 40, -80);
         leg4.castShadow = true;
         leg4.receiveShadow = true;
-        //CORE.scene.add(leg4);
-        //CORE.intersectObjects.push(leg4);
-        //modelElements.push(leg4);
 
         tablegroup = new THREE.Object3D();
         tablegroup.rotation.set(0,0,0);
@@ -306,6 +278,7 @@ function ROOM() {
         modelElements.push(tablegroup);
     }
 
+    // initialize walls
     function initWalls()
     {
         // since we will be adding similar walls, we can reuse the geometry and material
@@ -348,6 +321,7 @@ function ROOM() {
         modelElements.push(wall4);
     }
 
+    // put mirror on the wall
     function initMirror(){
         var cubeGeom = new THREE.CubeGeometry(100, 250, 10, 1, 1, 1);
         mirrorCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
@@ -361,12 +335,14 @@ function ROOM() {
         CORE.scene.add(that.mirrorObj);
     }
 
+    // update for mirror
     this.update = function(){
         that.mirrorObj.visible = false;
         mirrorCamera.updateCubeMap( CORE.renderer, CORE.scene );
         that.mirrorObj.visible = true;
     }
 
+    // initialize lights
     function initLights()
     {
         light = new THREE.SpotLight();

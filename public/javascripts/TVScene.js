@@ -5,6 +5,7 @@
 var TVObject = new TVObject();
 
 function TVObject() {
+    // Utilize singleton property
     if ( arguments.callee._singletonInstance )
         return arguments.callee._singletonInstance;
     arguments.callee._singletonInstance = this;
