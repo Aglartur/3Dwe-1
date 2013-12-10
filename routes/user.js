@@ -1,3 +1,4 @@
+//Made by Wei Lin  Logout function courtesy of Tim Richard
 var model = require('../lib/model');
 /*
  * GET users listing.
@@ -7,6 +8,9 @@ exports.list = function(req, res){
   res.send("respond with a resource");
 };
 
+/*
+ * flash error on signup if there is one
+ */
 exports.new = function(req, res){
     var authmessage = req.flash('add_auth') || '';
 
@@ -63,15 +67,17 @@ exports.auth = function(req, res) {
         // Perform the user lookup.
         console.log("Prepare to lookup");
 
+        //check email before go into database
         if(email === undefined || email === " " || email==="" || validate_email(email) === false){
             errorMessage = "Email is invalid | ";
         }
+        //check password before go into database
         if(password === undefined || password === "" || password === " " || validate_pass(password) == false){
             errorMessage += "Pass word at least one number, one lowercase and one uppercase letter and 6 in length";
         }
         model.lookup(email, password, function(error,user) {
 
-            if(user === undefined){
+            if(user === undefined){ //if user is not found in the database
                 errorMessage += "Email or Password is incorrect!";
             }else{
             if (user.email !== email){
@@ -132,8 +138,9 @@ exports.main = function(req, res) {
         req.flash('auth', 'Not logged in!');
         res.redirect('/login');
     }
+    //render first and last name to main
     else {
-        res.render('main', { title   : 'User Main',
+        res.render('main', { title   : 'Welcome to 3Dwe',
             fname : user.fname,
             lname : user.lname});
     }
@@ -143,25 +150,32 @@ exports.add_auth = function (req,res){
 
 }
 
+/*
+ * Check for strings that send from client and validate it then add to user (account table), in database
+ */
 exports.user_add = function (req, res) {
+    // grab strings from form
     var email = req.query.email;
     var fname = req.query.fname;
     var lname = req.query.lname;
     var password  = req.query.password;
     var confirm = req.query.confirm_password;
     var errorMessage = "";
-
+//check for error
     if (email === undefined || email === " " || email==="" || validate_email(email) === false){
             errorMessage = "Email is invalid | ";
     }
-    if(fname === undefined || fname === " " || fname === ""){
+    if(fname === undefined || fname === " " || fname === "" || validate_name(fname) === false){
         errorMessage += "First Name is invalid | ";
     }
-    if(lname === undefined || lname === " " || lname === ""){
+    if(lname === undefined || lname === " " || lname === "" || validate_name(lname) === false){
         errorMessage += "Last Name is invalid | ";
     }
     if(fname.length >= 20){
         errorMessage += "First Name length cannot be longer than 20 | ";
+    }
+    if(lname.length >= 20){
+        errorMessage += "Last Name length cannot be longer than 20 | ";
     }
     if(password !== confirm){
         errorMessage += "Password doesn't match | ";
@@ -180,7 +194,7 @@ exports.user_add = function (req, res) {
         res.redirect('/signup');
         errorMessage = '';
     }
-    else {
+    else { //add to user database
         model.addUser(email,fname, lname, password, function (err, rows) {
             if (err) {
                 console.error('db failed: ' + err);
@@ -190,12 +204,20 @@ exports.user_add = function (req, res) {
     }
 };
 
+// regular expression to validate email
 function validate_email(email){
     var VALID_EMAIL_REGEX = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return VALID_EMAIL_REGEX.test(email);
 }
 
+//regular expression to validate password
 function validate_pass(password){
     var VALID_PASS_REGEX = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
     return VALID_PASS_REGEX.test(password);
+}
+
+//regular expression to validate name
+function validate_name(name){
+    var VALID_NAME_REGEX = /^[a-zA-Z]+$/;
+    return VALID_NAME_REGEX.test(name);
 }

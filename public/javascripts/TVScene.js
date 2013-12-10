@@ -4,33 +4,29 @@
 
 var TVObject = new TVObject();
 
-
 function TVObject() {
+    // Utilize singleton property
     if ( arguments.callee._singletonInstance )
         return arguments.callee._singletonInstance;
     arguments.callee._singletonInstance = this;
 
-    // private variables
-    var that = this;        // to reference TVObject inside function that override 'this'
-    var TV_set, screen;
+    /********************************* PUBLIC INSTANCE VARIABLES *********************************/
 
+    this.isLoaded = false;
+    this.group = new THREE.Object3D();
+
+    /*************************************** PRIVATE VARIABLES **************************************/
+
+    var that = this;    // to reference TVObject in functions that override 'this'
+    var TV_set, screen; //TV & screen objects
     var video, videoTexture;
     var play_panel, play_buttons = [], buttons = [];
     var dir = '/images/newbuttons/';
-
     var isPlaying = false;
-    var seekValue = 0;
-    var recording = false, recordRTC = null;
-
-    var floor;
-    var light, pointLight;
-    var mirrorCamera;
-
+    var seekValue = 0; //determines how fast the user is rewinding or fast-forwarding the video
+    var recording = false, recordRTC = null; //webcam recording variables
+    var light, pointLight; //light variables
     var modelElements = [];
-
-    this.mirrorObj = undefined;
-    this.isLoaded = false;
-    this.group = new THREE.Object3D();
 
     this.load = function()
     {
@@ -40,13 +36,7 @@ function TVObject() {
         initOptions();
         initGeometry();
         initLights();
-
-        CORE.scene.add(that.group);
-        that.group.rotation.y = Math.PI;
-        that.group.position.z = -500 + 30;
-        that.group.position.y = 45;
-        that.group.position.x = -60;
-        that.group.scale.set(3,3,3);
+        initGroup();
 
         this.isLoaded = true;
     }
@@ -135,6 +125,21 @@ function TVObject() {
         }
     }
 
+    /**
+     * initializes and adds the group of objects to the scene
+     */
+    function initGroup(){
+        CORE.scene.add(that.group);
+        that.group.rotation.y = Math.PI;
+        that.group.position.z = -500 + 30;
+        that.group.position.y = 45;
+        that.group.position.x = -60;
+        that.group.scale.set(3,3,3);
+    }
+
+    /**
+     * initializes the TV set and screen objects and add to the scene
+     */
     function initGeometry() {
         var loader = new THREE.JSONLoader();
         var callbackModel   = function( geometry, materials ) {
@@ -150,8 +155,8 @@ function TVObject() {
             new THREE.MeshPhongMaterial({color: 0xFFFFFF}));
         screen.receiveShadow = true;
         screen.rotation.y = Math.PI;
-        screen.position.x = -11;                    // align to screen
-        screen.position.z = -1;                    // move in front
+        screen.position.x = -11;                  // align to screen
+        screen.position.z = -1;                   // move in front
         screen.position.y = 35;                   // move it up
         CORE.scene.add(screen);
         CORE.intersectObjects.push(screen);
@@ -164,19 +169,11 @@ function TVObject() {
 
         videoTexture = new THREE.Texture(video);
         loadScreen(); //load screen material
-
-        var cubeGeom = new THREE.CubeGeometry(100, 250, 10, 1, 1, 1);
-        mirrorCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
-        // mirrorCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
-        CORE.scene.add( mirrorCamera );
-        var mirrorCubeMaterial = new THREE.MeshBasicMaterial( { envMap: mirrorCamera.renderTarget } );
-        that.mirrorObj = new THREE.Mesh( cubeGeom, mirrorCubeMaterial );
-        that.mirrorObj.position.set(-500,150,0); //place on wall
-        that.mirrorObj.rotation.set(0, Math.PI/2, 0);
-        mirrorCamera.position = that.mirrorObj.position;
-        CORE.scene.add(that.mirrorObj);
     }
 
+    /**
+     * initialize the light objects
+     */
     function initLights() {
         light = new THREE.SpotLight();
         light.position.set(0, 200, -50);
@@ -187,27 +184,29 @@ function TVObject() {
 
         pointLight = new THREE.PointLight(0x333333, 4, 150);
         pointLight.position.set(-30,20,-40);
-//        CORE.scene.add(pointLight);
+//        CORE.scene.add(pointLight); //currently not used, too bright
         modelElements.push(pointLight);
         that.group.add(pointLight);
     }
 
+    /**
+     * renders the video and updates the position when seeking
+     */
     this.renderVideo = function() {
         if (video.readyState === video.HAVE_ENOUGH_DATA){
             videoTexture.needsUpdate = true;
         }
         if (seekValue)
             video.currentTime+=seekValue;
-
-        that.mirrorObj.visible = false;
-        mirrorCamera.updateCubeMap( CORE.renderer, CORE.scene );
-        that.mirrorObj.visible = true;
     }
 
+    /**
+     * loads the video material onto the screen
+     */
     function loadScreen(){
         var videoMaterial = new THREE.MeshPhongMaterial({
             color: 0xffffff,
-            specular: 0xdddddd,
+            specular: 0xdddddd, //give it some specular reflectance
             shininess: 30,
             ambient: 0x0000a1,
             emissive: 0x001533,
@@ -217,20 +216,27 @@ function TVObject() {
         screen.material = videoMaterial;
     }
 
+    /**
+     * loads the specified video file
+     * @param filename the absolute path of the video file
+     */
     this.loadVideo = function(filename){
         isPlaying = false;
         video.autoplay = false;
+        video.muted = false;
         video.src = filename;
         videoTexture = new THREE.Texture(video);
         loadScreen();
         resetButtons();
     }
 
+    /**
+     * loads webcam data and streams it to a video object which can be displayed on the screen
+     */
     this.loadWebcam = function(){
         navigator.getUserMedia=navigator.getUserMedia||navigator.webkitGetUserMedia||navigator.mozGetUserMedia;
         navigator.getUserMedia({"video":true, "audio": false},
             function(stream) {
-                //video.autoplay = false;
                 video.src = window.URL.createObjectURL(stream);
                 video.play();
                 isPlaying = true;
@@ -245,6 +251,10 @@ function TVObject() {
         );
     }
 
+    /**
+     * records video from the webcam. TODO: Issue in Firefox
+     * @param stream the webcam data stream
+     */
     this.recordVideo = function(stream){
         var options = {
             type: 'video',
@@ -261,64 +271,17 @@ function TVObject() {
         recordRTC.startRecording();
     }
 
+    /**
+     * end the recording and open it in a new tab
+     * TODO: save the recording to a /Home/Webcam directory
+     */
     this.endRecording = function(){
         recordRTC.stopRecording(function(videoURL) {
             window.open(videoURL);
         });
     }
 
-    var rotateView = 0, flyTo = 0;
 
-    this.flyToObject = function(event){
-        if (event.keyCode === 73){
-            if (rotateView !== 0 || flyTo !== 0) return;
-//            CORE.cameraTarget.set(that.group.position.x - 50, that.group.position.y + 100, that.group.position.z);
-            CORE.freezeCamera(true);
-//            var X_FINAL = -11.1, Y_FINAL = 35.12, Z_FINAL = -39.13;
-            var X_FINAL = that.group.position.x + 34, Y_FINAL = that.group.position.y + 106, Z_FINAL = that.group.position.z + 116;
-            console.log(X_FINAL + " : " + Y_FINAL + " : " + Z_FINAL);
-            var xGreater = CORE.camera.position.x > X_FINAL,
-                yGreater = CORE.camera.position.y > Y_FINAL,
-                zGreater = CORE.camera.position.z > Z_FINAL;
-            var speed = 10;
-
-//            CORE.camera.rotation.set(-Math.PI, 0, -Math.PI);
-            CORE.camera.rotation.set(-Math.PI, that.group.rotation.y, -Math.PI);
-//            CORE.cameraTarget.set(that.group.position.x - 50, that.group.position.y + 100, that.group.position.z);
-
-            flyTo = setInterval(function(){
-                var noXChange = false, noYChange = false, noZChange = false;
-                if (CORE.camera.position.x-speed > X_FINAL && xGreater)
-                    CORE.camera.position.x-=speed;
-                else if (CORE.camera.position.x+speed < X_FINAL && !xGreater)
-                    CORE.camera.position.x+=speed;
-                else
-                    noXChange = true;
-
-                if (CORE.camera.position.y-speed > Y_FINAL && yGreater)
-                    CORE.camera.position.y-=speed;
-                else if (CORE.camera.position.y+speed < Y_FINAL && !yGreater)
-                    CORE.camera.position.y+=speed;
-                else
-                    noYChange = true;
-
-                if (CORE.camera.position.z-speed > Z_FINAL && zGreater)
-                    CORE.camera.position.z-=speed;
-                else if (CORE.camera.position.z+speed < Z_FINAL && !zGreater)
-                    CORE.camera.position.z+=speed;
-                else
-                    noZChange = true;
-
-                if (noXChange && noYChange && noZChange){
-                    speed /= 2;
-                    if (speed < 0.1){
-                        clearInterval(flyTo);
-                        flyTo = 0;
-                    }
-                }
-            }, 50);
-        }
-    }
 
     this.playVideo = function(){
         if (video)
