@@ -75,7 +75,7 @@ function ALBUM() {                      //album singleton object
             socketBusy = true;                             //load photos correctly from file directory
             specialRequest = that.request.LOADPHOTOS;
             currentDirectory = '/Home';
-            openDir('Photos/numtiles');
+            openDir('/Photos/');
         }
     }
 
