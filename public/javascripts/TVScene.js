@@ -22,10 +22,11 @@ function TVObject() {
     var recording = false, recordRTC = null;
 
     var floor;
-    var light, pointLight;
 
     var modelElements = [];
 
+    this.light = undefined;
+    this.pointLight = undefined;
     this.isLoaded = false;
     this.group = new THREE.Object3D();
 
@@ -164,18 +165,18 @@ function TVObject() {
     }
 
     function initLights() {
-        light = new THREE.SpotLight();
-        light.position.set(0, 200, -50);
-        light.intensity = 2.0;
-        light.castShadow = true;
-        CORE.scene.add(light);
-        modelElements.push(light);
+        this.light = new THREE.SpotLight();
+        this.light.position.set(0, 200, -50);
+        this.light.intensity = 2.0;
+        this.light.castShadow = true;
+        CORE.scene.add(this.light);
+        modelElements.push(this.light);
 
-        pointLight = new THREE.PointLight(0x333333, 4, 150);
-        pointLight.position.set(-30,20,-40);
-//        CORE.scene.add(pointLight);
-        modelElements.push(pointLight);
-        that.group.add(pointLight);
+        this.pointLight = new THREE.PointLight(0x333333, 4, 150);
+        this.pointLight.position.set(-30,20,-40);
+        CORE.scene.add(this.pointLight);
+        modelElements.push(this.pointLight);
+        that.group.add(this.pointLight);
     }
 
     this.renderVideo = function() {
