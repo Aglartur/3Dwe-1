@@ -9,6 +9,8 @@ exports.index = function(req, res){
 
 
 
+//uploadify ended up conflicting with threejs webgl. Will save for later when resolved
+
 /*
  * created by Peng 12/06/13
  */
