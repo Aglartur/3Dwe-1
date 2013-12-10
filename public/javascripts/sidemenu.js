@@ -193,7 +193,7 @@ function loadSongs(directory)
     });
     JUKEBOX.changeSong(JUKEBOX.songs[JUKEBOX.currentSongID]);
     specialRequest = '';
-    navigate('/home');
+    navigate('/Home');
     socketBusy = false;
     console.log(specialRequest);
 }
@@ -215,7 +215,7 @@ function loadPhotos(directory)
     console.log(ALBUM.photos);
     ALBUM.initPhotos();
     specialRequest = '';
-    navigate('/home');
+    navigate('/Home');
     socketBusy = false;
     console.log(specialRequest);
 }

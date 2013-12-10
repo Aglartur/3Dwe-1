@@ -34,8 +34,8 @@ function TVObject() {
 
     this.load = function()
     {
-        currentDirectory = '/home';
-//        openDir('videos');
+        currentDirectory = '/Home';
+//        openDir('Videos');
 
         initOptions();
         initGeometry();
@@ -55,7 +55,7 @@ function TVObject() {
     {
         CORE.disposeSceneElements(modelElements);
 
-        navigate('/home');
+        navigate('/Home');
         isPlaying = false;
         this.isLoaded = false;
     }
@@ -175,7 +175,6 @@ function TVObject() {
         that.mirrorObj.rotation.set(0, Math.PI/2, 0);
         mirrorCamera.position = that.mirrorObj.position;
         CORE.scene.add(that.mirrorObj);
-        alert(that.mirrorObj);
     }
 
     function initLights() {

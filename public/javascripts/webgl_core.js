@@ -45,7 +45,7 @@ function CORE() {
     var rendererStats;
     var stats;
     var fadeInEffect, filmEffect;
-    this.cameraTarget = new THREE.Vector3(0, 0, 0);
+    this.cameraTarget;
     var tempMesh;
 
     var WALK_SPEED = 60, RUN_SPEED = 360;
@@ -60,8 +60,8 @@ function CORE() {
         $('#viewer').html(this.renderer.domElement);
 
         this.camera = new THREE.PerspectiveCamera(60, $('#viewer').width() / $('#viewer').height(), 1, 10000);       // don't worry about parameters
-        this.camera.position.set(0, 100, 0);
-//        this.camera.position.set(-250, 110, 230);
+        this.camera.position.set(-300, 100, 100);
+        this.cameraTarget = new THREE.Vector3(500, 100, -200);
         this.camera.lookAt(this.cameraTarget);
 
         this.scene = new THREE.Scene();
@@ -102,6 +102,12 @@ function CORE() {
         filmEffect = new THREE.FilmPass( 0.35, 0.025, 648, true );
         filmEffect.renderToScreen = false; //do not render by default
         this.composer.addPass(filmEffect);
+
+        //freeze the camera to start, then let the user move after a moment:
+        this.freezeCamera(true);
+        setTimeout(function(){
+            that.freezeCamera(false);
+        },2000);
 
         // setting and loading the current window
         loadRoom();

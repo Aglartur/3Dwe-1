@@ -83,11 +83,13 @@ function ROOM() {
 
     function initGeometry()
     {
-        lightWoodTexture = new THREE.ImageUtils.loadTexture('/images/light-wood.jpg', {}, function () {
+        //TODO: Using the microcache is supposed to be faster:
+        CORE.renderer._microCache.getSet('heavy', THREE.ImageUtils.loadTexture('/images/light-wood.jpg'));
+        /*lightWoodTexture = new THREE.ImageUtils.loadTexture('/images/light-wood.jpg', {}, function () {
             CORE.renderer.render(CORE.scene, CORE.camera);
         });
         lightWoodTexture.wrapS = lightWoodTexture.wrapT = THREE.RepeatWrapping;
-        lightWoodTexture.repeat.set(1, 1);
+        lightWoodTexture.repeat.set(1, 1);*/
         var lightWoodMaterial = new THREE.MeshLambertMaterial({map: lightWoodTexture});
 
         blackWoodTexture = new THREE.ImageUtils.loadTexture('/images/black-wood.png', {}, function () {

@@ -79,9 +79,9 @@ function JUKEBOX() {
         {
             socketBusy = true;
             specialRequest = that.request.LOADSONGS;
-            currentDirectory = '/home';
-            openDir('Jukebox');
-            // after this this.songs contains filenames of songs in /home/Jukebox
+            currentDirectory = '/Home';
+            openDir('Music');
+            // after this this.songs contains filenames of songs in /Home/Music
         }
     }
 
@@ -89,7 +89,7 @@ function JUKEBOX() {
     {
         CORE.disposeSceneElements(modelElements);
 
-        navigate('/home');
+        navigate('/Home');
         isPlaying = false;
         this.isLoaded = false;
     }
@@ -243,7 +243,7 @@ function JUKEBOX() {
             vector.sub(prevDrag);
             vector.multiplyScalar(5);  // seems to work ok as long as it is positive
 
-            // WORKAROUND: changed to vector.z, because the Jukebox is rotated 90 degrees, need to fix that so it would be generic.
+            // WORKAROUND: changed to vector.z, because the Music is rotated 90 degrees, need to fix that so it would be generic.
 
             if (vector.z > 0) {
                 if (vol_clicked) setvolume(0.0125);

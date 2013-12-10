@@ -67,7 +67,7 @@ function ALBUM() {
         {
             socketBusy = true;
             specialRequest = that.request.LOADPHOTOS;
-            currentDirectory = '/home';
+            currentDirectory = '/Home';
             openDir('Photos/numtiles');
         }
     }
@@ -76,7 +76,7 @@ function ALBUM() {
     {
         CORE.disposeSceneElements(modelElements);
 
-        navigate('/home');
+        navigate('/Home');
         this.isLoaded = false;
     }
 

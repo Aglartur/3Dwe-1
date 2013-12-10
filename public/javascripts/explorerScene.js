@@ -72,7 +72,7 @@ function EXPLORER() {
 
     var files = new Array();
     var FID = 0;
-    var home = "/home";
+    var home = "/Home";
     var currentDepth = 0;
     var currentFolder = {};
 

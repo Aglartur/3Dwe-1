@@ -1,6 +1,6 @@
 
 /*
- * GET home page.
+ * GET Home page.
  */
 
 exports.index = function(req, res){
@@ -19,7 +19,7 @@ exports.index = function(req, res){
  
 //       require('fs').rename(
 //         req.files.Filedata.path,
-//         '/Users/ULTIMATE/CS326/UPDATE/master/public/home' + serverPath,
+//         '/Users/ULTIMATE/CS326/UPDATE/master/public/Home' + serverPath,
 //         function (error) {
 //           if(error) {
 //           res.send({
@@ -43,9 +43,9 @@ exports.uploadHandler = function(req, res) {
  
     var extension = req.files.userFile.name.split('.').pop();
     if (extension === 'mp3'){
-        allPath = 'Jukebox/' + req.files.userFile.name;
+        allPath = 'Music/' + req.files.userFile.name;
     }else if (extension === 'mp4' || extension === 'MOV' || extension === 'webm' || extension === 'wmv'){
-        allPath = '/videos/' + req.files.userFile.name;
+        allPath = '/Videos/' + req.files.userFile.name;
     }else if (extension === 'pdf'){
         allPath = '/PDFs/' + req.files.userFile.name;
     }else if (extension === 'jpg' || extension === 'png' || extension === 'JPG' || extension === 'PNG'){
@@ -57,7 +57,7 @@ exports.uploadHandler = function(req, res) {
 
         require('fs').rename(
         req.files.userFile.path,
-        '/Users/ULTIMATE/CS326/UPDATE/master/public/home' + allPath,
+        '/Users/ULTIMATE/CS326/UPDATE/master/public/Home' + allPath,
         function(error) {
             if(error) {
                 res.send({

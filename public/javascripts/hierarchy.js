@@ -32,7 +32,7 @@ function rightClick(){
         menu.show();
         menu.css({top: event.pageY + "px", left: event.pageX + "px"});
         $(menu).click(function(){
-            if (that.id == "/home"){
+            if (that.id == "/Home"){
                 statusMessage("Cannot delete HOME", true);
                 return false;
             }
