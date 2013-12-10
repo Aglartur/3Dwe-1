@@ -49,8 +49,9 @@ app.get('/user/add', user.user_add);
 
 function getPath(filename){
         var path = String(filename);
-        path = path.replace(/\//g, '\\');
-        path = __dirname + "\\public\\home" + path;
+        //path = path.replace(/\//g, '\\');
+        path = __dirname + "/public/home" + path;
+        console.log(__dirname + "MUAHAHFUCKINGHA");
         return path;
     }
 
@@ -142,6 +143,7 @@ io.sockets.on('connection', function (socket) {
         var isDir = [];
         //check each file/folder to determine if directory
         for (var i = 0; i < files.length; i++){
+            console.log(path + "/" + files[i]);
             isDir[i] = fs.lstatSync(path + "/" + files[i]).isDirectory();
         }
         data.files = files;
