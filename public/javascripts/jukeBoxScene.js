@@ -14,7 +14,7 @@ function JUKEBOX() {
     // private variables
     var that = this;        // to reference JUKEBOX inside function that override 'this'
 
-    // variables for the Jkekbox model parts
+    // variables for the Jukebox model parts
     var radioBody, radioSeeker;         // body and rectangle that represents seeker
     var radioPlay;                      // play button
     var radioVolume, radioPower;        // volume knob and seeker knob (named power because use for knob may change in future)

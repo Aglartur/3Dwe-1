@@ -14,6 +14,7 @@
 
 var CORE = new CORE();
 var current_window; //the currently loaded window ROOM at this moment.
+var globalTest;
 
 $(document).ready(function () {
     // choose default requestAnimationFrame depending on the browser
@@ -61,6 +62,7 @@ function CORE() {
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize($('#viewer').width(), $('#viewer').height());     // take up entire space
         this.renderer.shadowMapEnabled = true;                                  // enable shadows
+        this.renderer.setClearColor(0x888888, 1);
 
         $('#viewer').html(this.renderer.domElement);                            // attach renderer to html
 
@@ -117,7 +119,9 @@ function CORE() {
         },2000);
 
         // loading the room
-        loadRoom();
+//        loadRoom();
+
+        loadTest();
     }
 
 
@@ -145,10 +149,10 @@ function CORE() {
         that.composer.render();
 //        rendererStats.update(that.renderer);
 //        stats.update();
-        if (TVObject.isLoaded)
-            TVObject.renderVideo();
-        if (ROOM.isLoaded)
-            ROOM.update();
+//        if (TVObject.isLoaded)
+//            TVObject.renderVideo();
+//        if (ROOM.isLoaded)
+//            ROOM.update();
     }
 
     // load everything in the room, except BOOK (PDF.js isn't optimized, need to load separately by pressing N)
@@ -175,6 +179,46 @@ function CORE() {
 
         controls.movementSpeed = 50;
         current_window = ROOM;
+
+        var fade_in = setInterval(function(){
+            fadeInEffect.uniforms[ 'amount' ].value+=0.04;
+            if (fadeInEffect.uniforms[ 'amount' ].value >= 1)
+                clearInterval(fade_in);
+        }, 100);
+    }
+
+    function loadTest() {
+        var light = new THREE.SpotLight();
+        light.position.set( 0, 800, 0 );
+        light.intensity = 1.0;
+        light.castShadow = true;
+        CORE.scene.add(light);
+
+        var light2 = new THREE.SpotLight();
+        light2.position.set( 100, 800, 100 );
+        light2.intensity = 0.5;
+        light2.castShadow = true;
+        CORE.scene.add(light2);
+
+        var light3 = new THREE.SpotLight();
+        light3.position.set( -100, 800, -100 );
+        light3.intensity = 0.5;
+        light3.castShadow = true;
+        CORE.scene.add(light3);
+
+        var plane = new THREE.Mesh(
+            new THREE.PlaneGeometry(1000, 1000),
+            new THREE.MeshPhongMaterial({color: 0xff0000})
+        );
+        plane.position.y = -50;
+        plane.rotation.x = -Math.PI / 2;
+        CORE.scene.add(plane);
+
+//        var testingItem = new TestingItem();
+//        testingItem.moveItemOffset(0, 50, 0);
+
+//        var sonyTV = new SonyTV();
+        globalTest = new SonyTV();
 
         var fade_in = setInterval(function(){
             fadeInEffect.uniforms[ 'amount' ].value+=0.04;
@@ -267,5 +311,9 @@ function CORE() {
     // freeze camera
     this.freezeCamera = function(bFreeze){
         controls.freeze = bFreeze;
+    }
+
+    this.load = function(object3D){
+        this.scene.add(object3D);
     }
 }
