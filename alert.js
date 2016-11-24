@@ -1,1 +1,1 @@
-window.onload = function() {alert()}
+alert('')
